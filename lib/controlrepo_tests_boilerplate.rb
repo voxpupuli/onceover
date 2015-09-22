@@ -1,5 +1,6 @@
 require 'pry'
 require 'r10k/puppetfile'
+require 'erb'
 
 desc "Generate"
 
@@ -39,8 +40,15 @@ task :generate_tests do
         }
     end
   end
-  puts "Repos: #{repositories}"
-  puts "Synlinks: #{symlinks}"
-  puts "Forge Modules #{forge_modules}"
-  puts "LOAD_PATH: #{$LOAD_PATH}"
+
+  # Use an ERB template to write the files
+  template_dir = File.expand_path('../templates',File.dirname(__FILE__))
+  fixtures_template = File.read(File.expand_path('./.fixtures.yml.erb',template_dir))
+
+  #b = binding
+  #b.local_variable_set(:symlinks, 'symlinks')
+  #b.local_variable_set(:forge_modules, 'forge_modules')
+  #b.local_variable_set(:repositories, 'repositories')
+  fixtures_yaml = ERB.new(fixtures_template, nil, '-').result(binding)
+  puts fixtures_yaml
 end
