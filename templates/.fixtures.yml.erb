@@ -1,0 +1,24 @@
+---
+fixtures:
+<% if symlinks.any? -%>
+  symlinks:
+  <% symlinks.each do |link| -%>
+    <%= link['name'] %>: <%= link['dir'] %>
+  <% end -%>
+<% end -%>
+<% if repositories.any? -%>
+  repositories:
+  <% repositories.each do |repo| -%>
+    <%= repo['name'] %>:
+      repo: <%= repo['repo'] %>
+      ref: <%= repo['ref'] %>
+  <% end -%>
+<% end -%>
+<% if forge_modules.any? -%>
+  forge_modules:
+  <% forge_modules.each do |mod| -%>
+        <%= mod['name'] %>:
+            repo: <%= mod['repo'] %>
+            ref: <%= mod['ref'] %>
+  <% end -%>
+<% end -%>
