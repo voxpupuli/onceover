@@ -2,6 +2,7 @@ require 'pry'
 require 'r10k/puppetfile'
 require 'erb'
 require 'json'
+require 'puppet'
 
 class Controlrepo
   attr_accessor :root
@@ -20,6 +21,20 @@ class Controlrepo
     @environment_conf = File.expand_path('./environment.conf',@root)
     @facts_dir = File.expand_path('./spec/facts',@root)
     @facts_files = Dir["#{@facts_dir}/*.json"]
+  end
+
+  def classes
+    # Get all of the possible places for puppet code and look for classes
+    code_dirs = self.config['modulepath']
+    # Remove relative references
+    code_dirs.delete_if { |dir| dir[0] == '$'}
+    
+    # Get all the classes from all of the manifests
+    classes = []
+    code_dirs.each do |dir|
+      classes << get_classes(dir)
+    end
+    classes.flatten
   end
 
   def facts
@@ -89,7 +104,6 @@ class Controlrepo
     end
   
     # Finally, split the modulepath values and return
-    binding.pry
     begin
       environment_config['modulepath'] = environment_config['modulepath'].split(':')
     rescue
@@ -100,8 +114,28 @@ class Controlrepo
 
   def read_facts(facts_file)
     file = File.read(facts_file)
-    binding.pry
     return JSON.parse(file)
+  end
+
+  def get_classes(dir)
+    classes = []
+    # Recurse over all the pp files under the dir we are given
+    Dir["#{dir}/**/*.pp"].each do |manifest|
+      classname = find_classname(manifest)
+      # Add it to the array as long as it is not nil
+      classes << classname if classname
+    end
+    classes
+  end
+
+  def find_classname(filename)
+    file = File.new(filename, "r")
+    while (line = file.gets)
+      if line =~ /^class (\w+(?:::\w+)*)/
+        return $1
+      end
+    end
+    return nil
   end
 
   private :read_facts
