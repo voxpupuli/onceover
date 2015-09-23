@@ -8,6 +8,8 @@ class Controlrepo
   attr_accessor :root
   attr_accessor :puppetfile
   attr_accessor :facts_files
+  attr_accessor :role_regex
+  attr_accessor :profile_regex
 
   def initialize(search_path = Dir.pwd)
     # When we initialize the object it is going to set some instance vars
@@ -21,6 +23,16 @@ class Controlrepo
     @environment_conf = File.expand_path('./environment.conf',@root)
     @facts_dir = File.expand_path('./spec/facts',@root)
     @facts_files = Dir["#{@facts_dir}/*.json"]
+    @role_regex = /role[s]?:{2}/
+    @profile_regex = /profile[s]?:{2}/
+  end
+
+  def roles
+    self.classes.keep_if { |c| c =~ @role_regex }
+  end
+
+  def profiles
+    self.classes.keep_if { |c| c =~ @profile_regex }
   end
 
   def classes
@@ -37,11 +49,23 @@ class Controlrepo
     classes.flatten
   end
 
-  def facts
+  def facts(filter = nil)
     # Returns an array facts hashes
     all_facts = []
     @facts_files.each do |file|
       all_facts << read_facts(file)['values']
+    end
+    if filter
+      # Allow us to pass a hash of facts to filter by
+      raise "Filter param must be a hash" unless filter.is_a?(Hash)
+      all_facts.keep_if do |hash|
+        filter.each do |filter_fact,value|
+          if hash[filter_fact] != value
+            return false
+          end
+        end
+        return true
+      end
     end
     return all_facts
   end
@@ -84,6 +108,21 @@ class Controlrepo
           }
       end
     end
+
+    # also add synlinks for anything that is in environment.conf
+    code_dirs = self.config['modulepath']
+    code_dirs.delete_if { |dir| dir[0] == '$'}
+    code_dirs.each do |dir|
+      # We need to traverse down into these directories and create a symlink for each
+      # module we find because fixtures.yml is expecting the module's root not the 
+      # root of modulepath
+      Dir["#{dir}/*"].each do |mod|
+        symlinks << {
+          'name' => File.basename(mod),
+          'dir' => File.expand_path(mod)
+        }
+      end
+    end
   
     # Use an ERB template to write the files
     template_dir = File.expand_path('../templates',File.dirname(__FILE__))
@@ -112,6 +151,8 @@ class Controlrepo
     return environment_config
   end
 
+  private
+
   def read_facts(facts_file)
     file = File.read(facts_file)
     return JSON.parse(file)
@@ -137,8 +178,6 @@ class Controlrepo
     end
     return nil
   end
-
-  private :read_facts
 end
 
 

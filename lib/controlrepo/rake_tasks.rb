@@ -1,7 +1,6 @@
 require 'controlrepo'
 
-task :generate_tests do
+task :controlrepo_generate_fixtures do
   repo = Controlrepo.new
   puts repo.fixtures
-  puts repo.config
 end
