@@ -2,7 +2,7 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "controlrepo_tests_boilerplate"
+  s.name        = "controlrepo"
   s.version     = "0.0.1"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppetlabs.com"]
@@ -17,4 +17,6 @@ Gem::Specification.new do |s|
 
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake'
+  s.add_runtime_dependency 'json'
+
 end
