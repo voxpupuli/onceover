@@ -59,12 +59,15 @@ class Controlrepo
       # Allow us to pass a hash of facts to filter by
       raise "Filter param must be a hash" unless filter.is_a?(Hash)
       all_facts.keep_if do |hash|
+        matches = []
         filter.each do |filter_fact,value|
-          if hash[filter_fact] != value
-            return false
-          end
+          matches << keypair_is_in_hash(hash,filter_fact,value)
         end
-        return true
+        if matches.include? false
+          false
+        else
+          true
+        end
       end
     end
     return all_facts
@@ -156,6 +159,30 @@ class Controlrepo
   def read_facts(facts_file)
     file = File.read(facts_file)
     return JSON.parse(file)
+  end
+
+  def keypair_is_in_hash(first_hash, key, value)
+    matches = []
+    if first_hash.has_key?(key)
+      if value.is_a?(Hash)
+        value.each do |k,v|
+          matches << keypair_is_in_hash(first_hash[key],k,v)
+        end
+      else
+        if first_hash[key] == value
+          matches << true
+        else
+          matches << false
+        end
+      end
+    else
+      matches << false
+    end
+    if matches.include? false
+      false
+    else
+      true
+    end
   end
 
   def get_classes(dir)
