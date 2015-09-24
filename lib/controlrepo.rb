@@ -52,6 +52,10 @@ class Controlrepo
   def self.facts(filter = nil)
     Controlrepo.new.facts(filter)
   end
+
+  def self.hiera_conf
+    Controlrepo.new.hiera_conf
+  end
   #
   # End class methods
   #
@@ -71,6 +75,7 @@ class Controlrepo
     @puppetfile = File.expand_path('./Puppetfile',@root)
     @environment_conf = File.expand_path('./environment.conf',@root)
     @facts_dir = File.expand_path('./spec/facts',@root)
+    @spec_dir = File.expand_path('./spec',@root)
     @facts_files = Dir["#{@facts_dir}/*.json"]
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/
@@ -181,6 +186,13 @@ class Controlrepo
     fixtures_template = File.read(File.expand_path('./.fixtures.yml.erb',template_dir))
     fixtures_yaml = ERB.new(fixtures_template, nil, '-').result(binding)
     return fixtures_yaml
+  end
+
+  def hiera_conf
+    # try to find the hiera.yaml file
+    hiera_conf = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
+    hiera_conf = File.expand_path('./hiera.yaml',@root) if File.exist?(File.expand_path('./hiera.yaml',@root))
+    hiera_conf
   end
 
   def config
