@@ -13,9 +13,13 @@ class Controlrepo
   def initialize(search_path = Dir.pwd)
     # When we initialize the object it is going to set some instance vars
 
-    # Find the root of the control repo by traversing up
-    until File.exist?(File.expand_path('./Puppetfile',search_path)) do
-      search_path = File.expand_path('..',search_path)
+    begin
+      # Find the root of the control repo by traversing up
+      until File.exist?(File.expand_path('./Puppetfile',search_path)) do
+        search_path = File.expand_path('..',search_path)
+      end
+    rescue
+      raise "Could not find a Puppetfile, is this being run from within the control repo? If not you can pass the location of the repo to Controlrepo.new()"
     end
     @root = search_path
     @puppetfile = File.expand_path('./Puppetfile',@root)
