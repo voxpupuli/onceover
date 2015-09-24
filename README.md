@@ -2,11 +2,15 @@
 
 ## Configuration
 
+You can modify the regexes that the gem uses to filter classes that it finds into roles and profiles. Just set up a Controlrepo object and pass regexes to the below settings. 
+
 ```ruby
 repo = Controlrepo.new()
 repo.role_regex = /.*/ # Tells the class how to find roles, will be applied to repo.classes
 repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applied to repo.classes
 ```
+
+Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not `Controlrepo.roles`
 
 # Running the tests
 
@@ -16,11 +20,9 @@ This gem allows us to easily and dynamically test all of the roles and profiles 
 require 'spec_helper'
 require 'controlrepo'
 
-controlrepo = Controlrepo.new()
-
-controlrepo.roles.each do |role|
+Controlrepo.roles.each do |role|
   describe role do
-    controlrepo.facts.each do |facts|
+    Controlrepo.facts.each do |facts|
       context "on #{facts['fqdn']}" do
         let(:facts) { facts }
         it { should compile }
@@ -38,11 +40,9 @@ The same can also be done with profiles just by using the profiles method instea
 require 'spec_helper'
 require 'controlrepo'
 
-controlrepo = Controlrepo.new()
-
-controlrepo.profiles.each do |profile|
+Controlrepo.profiles.each do |profile|
   describe profile do
-    controlrepo.facts.each do |facts|
+    Controlrepo.facts.each do |facts|
       context "on #{facts['fqdn']}" do
         let(:facts) { facts }
         it { should compile }
@@ -66,10 +66,8 @@ Just pass a hash to the `facts` method and it will return only the fact sets wit
 require 'spec_helper'
 require 'controlrepo'
 
-controlrepo = Controlrepo.new()
-
 describe 'profile::windows_appserver' do
-  controlrepo.facts({
+  Controlrepo.facts({
     'kernel' => 'windows'
     }).each do |facts|
     context "on #{facts['fqdn']}" do
@@ -77,5 +75,17 @@ describe 'profile::windows_appserver' do
       it { should compile }
     end
   end
+end
+```
+
+# Using hiera data
+
+You can also point these tests at your hiera data, you do this as you [normally would](Controlrepo.new.config) with rspec tests. However we do provide one helper to make this marginally easier. `Controlrepo.hiera_config` will look for hiera.yaml in the root of your control repo and also the spec directory, you will however need to set up the file itself e.g.
+
+```ruby
+require 'controlrepo'
+
+RSpec.configure do |c|
+  c.hiera_config = Controlrepo.hiera_conf
 end
 ```

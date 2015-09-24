@@ -11,8 +11,8 @@ class Controlrepo
   attr_accessor :profile_regex
 
   # Create methods on self so that we can access these basic things without 
-  # having to actually instanciate the class, I'm debating how much stuff 
-  # I should be putting in here, we don't reeeally need to instanciate the 
+  # having to actually instantiate the class, I'm debating how much stuff 
+  # I should be putting in here, we don't reeeally need to instantiate the 
   # object unless we want to modify it's parameters, so maybe everything.
   # We shall see...
   #
@@ -20,7 +20,7 @@ class Controlrepo
   #
   # Also it's probably pretty memory hungry, but let's be honest, how many 
   # times would be be calling this? If we call it over and over you can just
-  # instanciate it anyway
+  # instantiate it anyway
   def self.root
    Controlrepo.new.root
   end
