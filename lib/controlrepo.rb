@@ -2,7 +2,6 @@ require 'pry'
 require 'r10k/puppetfile'
 require 'erb'
 require 'json'
-require 'puppet'
 
 class Controlrepo
   attr_accessor :root
