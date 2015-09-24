@@ -2,6 +2,8 @@ require 'pry'
 require 'r10k/puppetfile'
 require 'erb'
 require 'json'
+require 'yaml'
+require 'find'
 
 class Controlrepo
   attr_accessor :root
@@ -53,8 +55,8 @@ class Controlrepo
     Controlrepo.new.facts(filter)
   end
 
-  def self.hiera_conf
-    Controlrepo.new.hiera_conf
+  def self.hiera_config_file
+    Controlrepo.new.hiera_config_file
   end
   #
   # End class methods
@@ -188,11 +190,28 @@ class Controlrepo
     return fixtures_yaml
   end
 
-  def hiera_conf
-    # try to find the hiera.yaml file
-    hiera_conf = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
-    hiera_conf = File.expand_path('./hiera.yaml',@root) if File.exist?(File.expand_path('./hiera.yaml',@root))
-    hiera_conf
+  def hiera_config_file
+    # try to find the hiera.iyaml file
+    hiera_config_file = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
+    hiera_config_file = File.expand_path('./hiera.yaml',@root) if File.exist?(File.expand_path('./hiera.yaml',@root))
+    hiera_config_file
+  end
+
+  def hiera_config
+    YAML.load_file(hiera_config_file)
+  end
+
+  def hiera_config=(data)
+    File.write(hiera_config_file,data.to_yaml)
+  end
+
+  def hiera_data
+    # This is going to try to find your hiera data directory, if you have named it something
+    # unexpected it won't work
+    possibe_datadirs = Dir["#{@root}/*/"]
+    possibe_datadirs.keep_if { |dir| dir =~ /hiera(?:.*data)?/i }
+    raise "There were too many directories that looked like hiera data: #{possibe_datadirs}" if possibe_datadirs.count > 1
+    File.expand_path(possibe_datadirs[0])
   end
 
   def config

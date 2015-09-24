@@ -1,4 +1,4 @@
-# Controlreo Gem
+# Controlrepo Gem
 
 ## Configuration
 
@@ -86,6 +86,6 @@ You can also point these tests at your hiera data, you do this as you [normally 
 require 'controlrepo'
 
 RSpec.configure do |c|
-  c.hiera_config = Controlrepo.hiera_conf
+  c.hiera_config = Controlrepo.hiera_config_file
 end
 ```
