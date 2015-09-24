@@ -10,16 +10,62 @@ class Controlrepo
   attr_accessor :role_regex
   attr_accessor :profile_regex
 
+  # Create methods on self so that we can access these basic things without 
+  # having to actually instanciate the class, I'm debating how much stuff 
+  # I should be putting in here, we don't reeeally need to instanciate the 
+  # object unless we want to modify it's parameters, so maybe everything.
+  # We shall see...
+  #
+  # And yeah I know this makes little sense, but it will look nicer to type, promise
+  #
+  # Also it's probably pretty memory hungry, but let's be honest, how many 
+  # times would be be calling this? If we call it over and over you can just
+  # instanciate it anyway
+  def self.root
+   Controlrepo.new.root
+  end
+
+  def self.puppetfile
+   Controlrepo.new.puppetfile
+  end
+
+  def self.facts_files
+   Controlrepo.new.facts_files
+  end
+
+  def self.classes
+   Controlrepo.new.classes
+  end
+
+  def self.roles
+    Controlrepo.new.roles
+  end
+
+  def self.profiles
+    Controlrepo.new.profiles
+  end
+
+  def self.config
+    Controlrepo.new.config
+  end
+
+  def self.facts(filter = nil)
+    Controlrepo.new.facts(filter)
+  end
+  #
+  # End class methods
+  #
+
   def initialize(search_path = Dir.pwd)
     # When we initialize the object it is going to set some instance vars
-
     begin
       # Find the root of the control repo by traversing up
       until File.exist?(File.expand_path('./Puppetfile',search_path)) do
         search_path = File.expand_path('..',search_path)
       end
-    rescue
-      raise "Could not find a Puppetfile, is this being run from within the control repo? If not you can pass the location of the repo to Controlrepo.new()"
+    rescue => e
+      raise " Could not find Puppetfile"
+      raise e
     end
     @root = search_path
     @puppetfile = File.expand_path('./Puppetfile',@root)
@@ -31,11 +77,11 @@ class Controlrepo
   end
 
   def roles
-    self.classes.keep_if { |c| c =~ @role_regex }
+    classes.keep_if { |c| c =~ @role_regex }
   end
 
   def profiles
-    self.classes.keep_if { |c| c =~ @profile_regex }
+    classes.keep_if { |c| c =~ @profile_regex }
   end
 
   def classes
@@ -43,7 +89,7 @@ class Controlrepo
     code_dirs = self.config['modulepath']
     # Remove relative references
     code_dirs.delete_if { |dir| dir[0] == '$'}
-    
+
     # Get all the classes from all of the manifests
     classes = []
     code_dirs.each do |dir|
@@ -80,12 +126,12 @@ class Controlrepo
     # Load up the Puppetfile using R10k
     puppetfile = R10K::Puppetfile.new(@root)
     modules = puppetfile.load
-  
+
     # Iterate over everything and seperate it out for the sake of readability
     symlinks = []
     forge_modules = []
     repositories = []
-  
+
     modules.each do |mod|
       # This logic could probably be cleaned up. A lot.
       if mod.is_a? R10K::Module::Forge
@@ -120,7 +166,7 @@ class Controlrepo
     code_dirs.delete_if { |dir| dir[0] == '$'}
     code_dirs.each do |dir|
       # We need to traverse down into these directories and create a symlink for each
-      # module we find because fixtures.yml is expecting the module's root not the 
+      # module we find because fixtures.yml is expecting the module's root not the
       # root of modulepath
       Dir["#{dir}/*"].each do |mod|
         symlinks << {
@@ -129,25 +175,25 @@ class Controlrepo
         }
       end
     end
-  
+
     # Use an ERB template to write the files
     template_dir = File.expand_path('../templates',File.dirname(__FILE__))
     fixtures_template = File.read(File.expand_path('./.fixtures.yml.erb',template_dir))
     fixtures_yaml = ERB.new(fixtures_template, nil, '-').result(binding)
     return fixtures_yaml
   end
-  
+
   def config
     # Parse the file
     env_conf = File.read(@environment_conf)
     env_conf = env_conf.split("\n")
-  
+
     # Map the lines into a hash
     environment_config = {}
     env_conf.each do |line|
       environment_config.merge!(Hash[*line.split('=').map { |s| s.strip}])
     end
-  
+
     # Finally, split the modulepath values and return
     begin
       environment_config['modulepath'] = environment_config['modulepath'].split(':')
