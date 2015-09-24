@@ -1,4 +1,5 @@
 require 'controlrepo'
+require 'pathname'
 
 task :generate_fixtures do
   repo = Controlrepo.new
@@ -12,7 +13,7 @@ task :hiera_setup do
   current_config.each do |key, value|
     if value.is_a?(Hash)
       if value.has_key?(:datadir)
-        current_config[key][:datadir] = repo.hiera_data
+        current_config[key][:datadir] = Pathname.new(repo.hiera_data).relative_path_from(Pathname.new(File.expand_path('..',repo.hiera_config_file))).to_s
       end
     end
   end

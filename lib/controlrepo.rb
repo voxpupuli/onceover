@@ -4,6 +4,7 @@ require 'erb'
 require 'json'
 require 'yaml'
 require 'find'
+require 'pathname'
 
 class Controlrepo
   attr_accessor :root
@@ -178,7 +179,7 @@ class Controlrepo
       Dir["#{dir}/*"].each do |mod|
         symlinks << {
           'name' => File.basename(mod),
-          'dir' => File.expand_path(mod)
+          'dir' => Pathname.new(File.expand_path(mod)).relative_path_from(Pathname.new(@root))#File.expand_path(mod)
         }
       end
     end
