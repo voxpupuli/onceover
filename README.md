@@ -14,7 +14,13 @@ Note that you will need to call the `roles` and `profiles` methods on the object
 
 # Rake tasks
 
-I have included a couple of little rake tasks to help get you started with testing your control repos, they are as follows:
+I have included a couple of little rake tasks to help get you started with testing your control repos. Set them up by adding this to your `Rakefile`
+
+```ruby
+require 'controlrepo'
+```
+
+The tasks are as follows:
 
 ## generate_fixtures
 
