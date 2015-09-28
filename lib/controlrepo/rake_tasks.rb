@@ -20,3 +20,42 @@ task :hiera_setup do
   puts "Changing hiera config from \n#{repo.hiera_config}\nto\n#{current_config}"
   repo.hiera_config = current_config
 end
+
+task :generate_nodesets do
+  require 'controlrepo/beaker'
+  require 'net/http'
+  require 'json'
+
+  repo = Controlrepo.new
+
+  begin
+    Dir.mkdir("#{repo.root}/spec/acceptance")
+    puts "Created #{repo.root}/spec/acceptance"
+    Dir.mkdir("#{repo.root}/spec/acceptance/nodesets")
+    puts "Created #{repo.root}/spec/acceptance/nodesets"
+  rescue Errno::EEXIST
+    # Do nothing, this is okay
+  end
+
+  facts = repo.facts
+  facts.each do |fact_set|
+    boxname = Controlrepo_beaker.facts_to_vagrant_box(fact_set)
+    box_info = JSON.parse(Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}")))
+    url = 'URL goes here'
+    box_info['current_version']['providers'].each do |provider|
+      if provider['name'] == 'virtualbox'
+        url = provider['original_url']
+      end
+    end
+    # Use an ERB template to write the files
+    template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+    fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb',template_dir))
+    output_file = File.expand_path("spec/acceptance/nodesets/#{fact_set['fqdn']}.yaml",repo.root)
+    if File.exists?(output_file) == false
+      File.write(output_file,ERB.new(fixtures_template, nil, '-').result(binding))
+      puts "Created #{output_file}"
+    else
+      puts "#{output_file} already exists, not going to overwrite because scared"
+    end
+  end
+end

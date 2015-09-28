@@ -1,0 +1,8 @@
+HOSTS:
+  <%= fact_set['fqdn'] %>:
+    roles:
+      - agent
+    platform: <%= boxname %>
+    box: <%= boxname %>
+    box_url: <%= url %>
+    hypervisor: vagrant_virtualbox
