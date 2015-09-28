@@ -62,6 +62,12 @@ fixtures:
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
 
+## generate_nodesets
+
+`bundle exec rake generate_nodesets`
+
+This task will generate nodeset file required by beaker, based on the fact sets that exist in the repository. If you have any fact sets for which puppetlabs has a compatible vagrant box (i.e. centos, debian, ubuntu) it will detect the version specifics and set up the nodeset file, complete with box URL. If it doesn't know how to deal with a fact set it will output a boilerplate nodeset file that will need to be altered before it can be used.
+
 ## hiera_setup
 
 `bundle exec rake hiera_setup`
