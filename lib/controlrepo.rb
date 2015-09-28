@@ -5,6 +5,7 @@ require 'json'
 require 'yaml'
 require 'find'
 require 'pathname'
+require 'controlrepo/beaker'
 
 class Controlrepo
   attr_accessor :root
@@ -13,15 +14,15 @@ class Controlrepo
   attr_accessor :role_regex
   attr_accessor :profile_regex
 
-  # Create methods on self so that we can access these basic things without 
-  # having to actually instantiate the class, I'm debating how much stuff 
-  # I should be putting in here, we don't reeeally need to instantiate the 
+  # Create methods on self so that we can access these basic things without
+  # having to actually instantiate the class, I'm debating how much stuff
+  # I should be putting in here, we don't reeeally need to instantiate the
   # object unless we want to modify it's parameters, so maybe everything.
   # We shall see...
   #
   # And yeah I know this makes little sense, but it will look nicer to type, promise
   #
-  # Also it's probably pretty memory hungry, but let's be honest, how many 
+  # Also it's probably pretty memory hungry, but let's be honest, how many
   # times would be be calling this? If we call it over and over you can just
   # instantiate it anyway
   def self.root
