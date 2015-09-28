@@ -38,7 +38,7 @@ class Controlrepo_beaker
       # Do nothing
     end
 
-    raise "Could not detect the os when generating vagrant box name" unless os.is_a?(String)
+    return "UNKNOWN" unless os.is_a?(String)
 
     if facts['os']['architecture'] =~ /64/
       arch = '64'

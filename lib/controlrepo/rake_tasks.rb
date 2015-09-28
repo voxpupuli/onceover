@@ -31,6 +31,11 @@ task :generate_nodesets do
   begin
     Dir.mkdir("#{repo.root}/spec/acceptance")
     puts "Created #{repo.root}/spec/acceptance"
+  rescue Errno::EEXIST
+    # Do nothing, this is okay
+  end
+
+  begin
     Dir.mkdir("#{repo.root}/spec/acceptance/nodesets")
     puts "Created #{repo.root}/spec/acceptance/nodesets"
   rescue Errno::EEXIST
@@ -40,13 +45,18 @@ task :generate_nodesets do
   facts = repo.facts
   facts.each do |fact_set|
     boxname = Controlrepo_beaker.facts_to_vagrant_box(fact_set)
-    box_info = JSON.parse(Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}")))
+    response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
     url = 'URL goes here'
-    box_info['current_version']['providers'].each do |provider|
-      if provider['name'] == 'virtualbox'
-        url = provider['original_url']
+
+    unless response =~ /404 Not Found/
+      box_info = JSON.parse(response)
+      box_info['current_version']['providers'].each do |provider|
+        if provider['name'] == 'virtualbox'
+          url = provider['original_url']
+        end
       end
     end
+
     # Use an ERB template to write the files
     template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
     fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb',template_dir))

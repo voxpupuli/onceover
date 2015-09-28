@@ -240,7 +240,12 @@ class Controlrepo
 
   def read_facts(facts_file)
     file = File.read(facts_file)
-    return JSON.parse(file)
+    begin
+      result = JSON.parse(file)
+    rescue JSON::ParserError
+      raise "Could not parse the JSON file, check that it is valid JSON and that the encoding is correct"
+    end
+    result
   end
 
   def keypair_is_in_hash(first_hash, key, value)
