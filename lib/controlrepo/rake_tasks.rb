@@ -60,7 +60,7 @@ task :generate_nodesets do
     # Use an ERB template to write the files
     template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
     fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb',template_dir))
-    output_file = File.expand_path("spec/acceptance/nodesets/#{fact_set['fqdn']}.yaml",repo.root)
+    output_file = File.expand_path("spec/acceptance/nodesets/#{fact_set['fqdn']}.yml",repo.root)
     if File.exists?(output_file) == false
       File.write(output_file,ERB.new(fixtures_template, nil, '-').result(binding))
       puts "Created #{output_file}"
