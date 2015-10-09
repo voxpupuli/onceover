@@ -45,6 +45,7 @@ task :generate_nodesets do
   facts = repo.facts
   facts.each do |fact_set|
     boxname = Controlrepo_beaker.facts_to_vagrant_box(fact_set)
+    platform = Controlrepo_beaker.facts_to_platform(fact_set)
     response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
     url = 'URL goes here'
 

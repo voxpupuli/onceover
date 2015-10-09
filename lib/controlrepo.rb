@@ -236,6 +236,20 @@ class Controlrepo
     return environment_config
   end
 
+  def r10k_config_file
+    r10k_config_file = File.expand_path('./r10k.yaml',@spec_dir) if File.exist?(File.expand_path('./r10k.yaml',@spec_dir))
+    r10k_config_file = File.expand_path('./r10k.yaml',@root) if File.exist?(File.expand_path('./r10k.yaml',@root))
+    r10k_config_file
+  end
+
+  def r10k_config
+    YAML.load_file(r10k_config_file)
+  end
+
+  def r10k_config=(data)
+    File.write(r10k_config_file,data.to_yaml)
+  end
+
   private
 
   def read_facts(facts_file)

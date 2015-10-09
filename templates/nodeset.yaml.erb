@@ -2,7 +2,8 @@ HOSTS:
   <%= fact_set['fqdn'] %>:
     roles:
       - agent
-    platform: <%= boxname %>
+    type: aio
+    platform: <%= platform %>
     box: <%= boxname %>
     box_url: <%= url %>
     hypervisor: vagrant_virtualbox
