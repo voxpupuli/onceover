@@ -16,11 +16,19 @@ class Controlrepo
 
     def self.find(node_name)
       @@all.each do |node|
-        if node.name == node_name
+        if node_name.is_a?(Controlrepo::Node)
+          if node = node_name
+            return node
+          end
+        elsif node.name == node_name
           return node
         end
       end
       nil
+    end
+
+    def self.all
+      @@all  
     end
   end
 end

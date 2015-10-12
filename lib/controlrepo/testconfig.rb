@@ -1,6 +1,7 @@
 require 'controlrepo/class'
 require 'controlrepo/node'
 require 'controlrepo/group'
+require 'controlrepo/test'
 
 class Controlrepo
   class TestConfig
@@ -21,7 +22,7 @@ class Controlrepo
       @classes =[]
       @nodes =[]
       @groups =[]
-      @test_matrix = []
+      @tests = []
       
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
@@ -31,8 +32,10 @@ class Controlrepo
       @groups << Controlrepo::Group.new('all_nodes',@nodes)
       @groups << Controlrepo::Group.new('all_classes',@classes)
 
-      binding.pry
-      #config['test_matrix'].each do |machines, roles|
+      # TODO: Consider renaming test_matrrix
+      config['test_matrix'].each do |machines, roles|
+        @tests << Controlrepo::Test.new(machines,roles)
+      end
         
       #@test_matrix = config['test_matrix']
     end
