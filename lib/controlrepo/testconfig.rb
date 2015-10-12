@@ -18,19 +18,18 @@ class Controlrepo
         raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
       end
 
-      @classes, @nodes, @groups, @test_matrix = []
+      @classes =[]
+      @nodes =[]
+      @groups =[]
+      @test_matrix = []
       
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
+      binding.pry
       config['groups'].each { |name, members| @groups << Controlrepo::Group.new(name, members) }
-      config['test_matrix'].each do |machines, roles|
+      #config['test_matrix'].each do |machines, roles|
         
-
-      # Set variables
-      @classes     = config['classes']
-      @nodes       = config['nodes']
-      @groups      = config['groups']
-      @test_matrix = config['test_matrix']
+      #@test_matrix = config['test_matrix']
     end
   end
 end
