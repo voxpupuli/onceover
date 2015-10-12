@@ -37,5 +37,30 @@ class Controlrepo
         @tests << Controlrepo::Test.new(machines,roles)
       end
     end
+
+    def r10k_deploy_local(repo = Controlrepo.new)
+      require 'controlrepo'
+      tempdir = Dir.mktmpdir('r10k')
+
+      # Read in the config and change all the directories, then create them
+      r10k_config = repo.r10k_config
+      r10k_config[:cachedir] = "#{tempdir}#{r10k_config[:cachedir]}"
+      FileUtils::mkdir_p(r10k_config[:cachedir])
+      r10k_config[:sources].map do |name,source_settings|
+        source_settings["basedir"] = "#{tempdir}#{source_settings["basedir"]}"
+        FileUtils::mkdir_p(source_settings["basedir"])
+        # Yes, I realise this is going to set it many times
+        repo.temp_environmentpath = source_settings["basedir"]
+      end
+      File.write("#{tempdir}/r10k.yaml",r10k_config.to_yaml)
+
+      # Pull the trigger!
+      Dir.chdir(tempdir) do
+        `r10k deploy environment -p --color --config #{tempdir}/r10k.yaml --verbose`
+      end
+
+      # Return tempdir for use
+      tempdir
+    end
   end
 end

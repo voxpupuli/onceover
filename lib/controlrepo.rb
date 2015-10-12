@@ -13,6 +13,7 @@ class Controlrepo
   attr_accessor :facts_files
   attr_accessor :role_regex
   attr_accessor :profile_regex
+  attr_accessor :temp_environmentpath
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -83,6 +84,8 @@ class Controlrepo
     @facts_files = Dir["#{@facts_dir}/*.json"]
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/
+    @temp_environmentpath = nil
+
   end
 
   def roles

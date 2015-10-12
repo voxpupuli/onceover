@@ -2,6 +2,9 @@ class Controlrepo
   class Test
     @@all =[]
 
+    attr_accessor :nodes
+    attr_accessor :classes
+    
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
