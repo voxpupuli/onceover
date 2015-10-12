@@ -13,8 +13,8 @@ class Controlrepo
         if cls.name == class_name
           return cls
         end
-        nil
       end
+      nil
     end
   end
 end

@@ -34,7 +34,6 @@ class Controlrepo
         elsif member_objects.all? { |item| item.is_a?(Controlrepo::Node) }
           type = Controlrepo::Node
         else
-          binding.pry
           raise 'Groups must contain either all nodes or all classes. Either there was a mix, or something was spelled wrong'
         end
 
