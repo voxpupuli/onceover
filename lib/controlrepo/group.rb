@@ -44,5 +44,18 @@ class Controlrepo
       # Finally add it to the list of all grops
       @@all << self
     end
+
+    def self.find(group_name)
+      @@all.each do |group|
+        if group.name == group_name
+          return group
+        end
+      end
+      nil
+    end
+
+    def self.all
+      @@all
+    end
   end
 end

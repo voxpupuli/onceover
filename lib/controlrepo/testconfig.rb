@@ -26,6 +26,12 @@ class Controlrepo
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
       config['groups'].each { |name, members| @groups << Controlrepo::Group.new(name, members) }
+
+      # Add the 'all_classes' and 'all_nodes' default groups
+      @groups << Controlrepo::Group.new('all_nodes',@nodes)
+      @groups << Controlrepo::Group.new('all_classes',@classes)
+
+      binding.pry
       #config['test_matrix'].each do |machines, roles|
         
       #@test_matrix = config['test_matrix']

@@ -10,11 +10,19 @@ class Controlrepo
 
     def self.find(class_name)
       @@all.each do |cls|
-        if cls.name == class_name
+        if class_name.is_a?(Controlrepo::Class)
+          if cls = class_name
+            return cls
+          end
+        elsif cls.name == class_name
           return cls
         end
       end
       nil
+    end
+
+    def self.all
+      @@all
     end
   end
 end
