@@ -10,7 +10,7 @@ class Controlrepo
     attr_accessor :classes
     attr_accessor :nodes
     attr_accessor :groups
-    attr_accessor :test_matrix
+    attr_accessor :tests
 
     def initialize(file)
       begin
@@ -32,12 +32,10 @@ class Controlrepo
       @groups << Controlrepo::Group.new('all_nodes',@nodes)
       @groups << Controlrepo::Group.new('all_classes',@classes)
 
-      # TODO: Consider renaming test_matrrix
+      # TODO: Consider renaming test_matrix
       config['test_matrix'].each do |machines, roles|
         @tests << Controlrepo::Test.new(machines,roles)
       end
-        
-      #@test_matrix = config['test_matrix']
     end
   end
 end

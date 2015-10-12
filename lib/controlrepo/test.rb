@@ -48,7 +48,6 @@ class Controlrepo
 
         # Then remove any excluded ones
         if Controlrepo::Group.find(test_this['exclude'])
-          binding.pry
           Controlrepo::Group.find(test_this['exclude']).members.each do |clarse|
             @classes.delete(clarse)
           end

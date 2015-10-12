@@ -1,3 +1,5 @@
+require 'controlrepo'
+
 class Controlrepo
   class Node
     @@all = []
@@ -10,8 +12,15 @@ class Controlrepo
     def initialize(name)
       @name = name
       @beaker_node = nil
-      @fact_set = nil
+      
+      # If we can't find the factset it will fail, so just catch that error and ignore it
+      begin
+        @fact_set = Controlrepo.facts[(Controlrepo.facts_files.index{|facts_file| File.basename(facts_file,'.json') == name})]
+      rescue TypeError
+        @fact_set = nil
+      end
       @@all << self
+
     end
 
     def self.find(node_name)
