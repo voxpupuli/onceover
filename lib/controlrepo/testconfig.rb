@@ -62,5 +62,26 @@ class Controlrepo
       # Return tempdir for use
       tempdir
     end
+
+    def write_spec_test(test)
+      # Use an ERB template to write a spec test
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      spec_template = File.read(File.expand_path('./test_spec.rb.erb',template_dir))
+      output_file = Tempfile.new(['test','_spec.rb'])
+      File.write(output_file,ERB.new(spec_template, nil, '-').result(binding))
+      output_file
+    end
+
+    def run_tests(repo)
+      require 'puppetlabs_spec_helper/puppet_spec_helper'
+      require 'rspec-puppet'
+
+      RSpec.configure do |c|
+        c.hiera_config = repo.hiera_config_file
+        c.environmentpath = repo.temp_environmentpath
+      end
+
+      binding.pry
+    end
   end
 end

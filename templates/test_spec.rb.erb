@@ -1,0 +1,13 @@
+require 'spec_helper'
+
+<% test.classes.each do |cls| -%>
+describe "<%= cls.name %>" do
+<% test.nodes.each do |node| -%>
+  context "on <%= node.name %>" do
+    let(:facts) { <%= node.fact_set %> }
+    it { should compile }
+  end
+<% end -%>
+end
+
+<% end -%>
