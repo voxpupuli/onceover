@@ -41,6 +41,7 @@ class Controlrepo
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
       tempdir = Dir.mktmpdir('r10k')
+      repo.tempdir = tempdir
 
       # Read in the config and change all the directories, then create them
       r10k_config = repo.r10k_config
@@ -63,14 +64,28 @@ class Controlrepo
       tempdir
     end
 
-    def write_spec_test(test)
+    def write_spec_test(location, test)
       # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_template = File.read(File.expand_path('./test_spec.rb.erb',template_dir))
-      output_file = Tempfile.new(['test','_spec.rb'])
+      output_file = Tempfile.new(['test','_spec.rb'],location)
       File.write(output_file,ERB.new(spec_template, nil, '-').result(binding))
       output_file
     end
+
+    def write_rakefile(location, pattern)
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      rakefile_template = File.read(File.expand_path('./Rakefile.erb',template_dir))
+      File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
+    end
+
+    def write_spec_helper(location, environmentpath)
+       # Use an ERB template to write a spec test
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      spec_helper_template = File.read(File.expand_path('./spec_helper.rb.erb',template_dir))
+      File.write("#{location}/spec_helper.rb",ERB.new(spec_helper_template, nil, '-').result(binding))
+    end
+
 
     def run_tests(repo)
       require 'puppetlabs_spec_helper/puppet_spec_helper'
