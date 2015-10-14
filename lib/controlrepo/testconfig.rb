@@ -102,15 +102,15 @@ class Controlrepo
         "#{environmentpath}/#{@environment}/#{path}"
       end
       modulepath = modulepath.join(":")
-      hiera_yaml = "#{environmentpath}/#{@environment}/hiera.yaml"
 
-       # Use an ERB template to write a spec test
+      # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_helper_template = File.read(File.expand_path('./spec_helper.rb.erb',template_dir))
       File.write("#{location}/spec_helper.rb",ERB.new(spec_helper_template, nil, '-').result(binding))
     end
 
-
+    # TODO: Work out the best way to format the output
+    # TODO: Look into bundling bundler into the temp dir
     def run_tests(repo)
       require 'puppetlabs_spec_helper/puppet_spec_helper'
       require 'rspec-puppet'

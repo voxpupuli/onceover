@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "controlrepo"
-  s.version     = "0.0.1"
+  s.version     = "0.1.0"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppetlabs.com"]
   s.homepage    = ""
@@ -19,5 +19,11 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rake'
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'beaker-rspec'
+  s.add_runtime_dependency 'rspec-puppet'
+  s.add_runtime_dependency 'rspec'
+  s.add_runtime_dependency 'rake'
+  s.add_runtime_dependency 'bundler'
+  s.add_runtime_dependency 'puppet'
+
 
 end
