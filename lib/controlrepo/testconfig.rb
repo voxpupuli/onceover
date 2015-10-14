@@ -23,7 +23,7 @@ class Controlrepo
       @environment = environment
       @classes =[]
       @nodes =[]
-      @groups =[]
+      @groups = []
       @tests = []
       
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }

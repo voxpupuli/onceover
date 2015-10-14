@@ -75,18 +75,16 @@ class Controlrepo
       
       # this will be an array of arrays, or maybe hashes
       combinations = []
+      new_tests = []
       tests.each do |test|
         test.nodes.each do |node|
           test.classes.each do |cls|
             combo = {node => cls}
-            combinations << combo unless combinations.member?(combo)
+            unless combinations.member?(combo)
+              combinations << combo 
+              new_tests << Controlrepo::Test.new(node,cls,test.options)
+            end
           end
-        end
-      end
-      new_tests = []
-      combinations.each do |combo|
-        combo.each do |node,cls|
-          new_tests << Controlrepo::Test.new(node,cls)
         end
       end
 
