@@ -111,16 +111,5 @@ class Controlrepo
 
     # TODO: Work out the best way to format the output
     # TODO: Look into bundling bundler into the temp dir
-    def run_tests(repo)
-      require 'puppetlabs_spec_helper/puppet_spec_helper'
-      require 'rspec-puppet'
-
-      RSpec.configure do |c|
-        c.hiera_config = repo.hiera_config_file
-        c.environmentpath = repo.temp_environmentpath
-      end
-
-      binding.pry
-    end
   end
 end
