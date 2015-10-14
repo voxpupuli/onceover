@@ -21,8 +21,8 @@ class Controlrepo
       end
 
       @environment = environment
-      @classes =[]
-      @nodes =[]
+      @classes = []
+      @nodes = []
       @groups = []
       @tests = []
       
@@ -35,6 +35,7 @@ class Controlrepo
       @groups << Controlrepo::Group.new('all_classes',@classes)
 
       config['test_matrix'].each do |machines, roles|
+        # TODO: Work out some way to set per-test options like idempotency
         @tests << Controlrepo::Test.new(machines,roles)
       end
     end
