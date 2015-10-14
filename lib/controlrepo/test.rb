@@ -87,7 +87,7 @@ class Controlrepo
           new_tests << Controlrepo::Test.new(node,cls)
         end
       end
-      binding.pry
+      new_tests
     end
 
     def self.all
