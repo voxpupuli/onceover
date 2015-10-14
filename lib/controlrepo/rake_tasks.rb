@@ -1,6 +1,9 @@
 require 'controlrepo'
 require 'pathname'
 
+@repo = nil
+@config = nil
+
 task :generate_fixtures do
   repo = Controlrepo.new
   raise ".fixtures.yml already exits, we won't overwrite because we are scared" if File.exists?(File.expand_path('./.fixtures.yml',repo.root))
@@ -73,14 +76,19 @@ end
 
 task :controlrepo_autotest_prep do
   require 'controlrepo/testconfig'
-  repo = Controlrepo.new
-  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  @repo = Controlrepo.new
+  @config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
 
+  binding.pry
   # Deploy r10k to a temp dir
-  config.r10k_deploy_local(repo)
+  #config.r10k_deploy_local(repo)
 
   # Create the other directories we need
   FileUtils.mkdir_p("#{repo.tempdir}/spec/classes")
+  FileUtils.mkdir_p("#{repo.tempdir}/spec/acceptance/nodesets")
+
+  # Copy our nodesets over
+  FileUtils.cp_r("#{repo.spec_dir}/acceptance/nodesets","#{repo.tempdir}/spec/acceptance")
 
   # Create the Rakefile so that we can take advantage of the existing tasks
   config.write_rakefile(repo.tempdir, "spec/classes/**/*_spec.rb")
@@ -111,10 +119,19 @@ task :controlrepo_autotest_prep do
   binding.pry
 end
 
+task :controlrepo_autotest_spec do
+  system('rake spec_standalone',@repo.tempdir)
+end
+
+task :controlrepo_spec => [
+  :controlrepo_autotest_prep,
+  :controlrepo_autotest_spec
+  ]
+
 task :r10k_deploy_local do
   require 'controlrepo/testconfig'
-  repo = Controlrepo.new
-  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  @repo = Controlrepo.new
+  @config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
 
   # Deploy r10k to a temp dir
   config.r10k_deploy_local(repo)

@@ -1,10 +1,10 @@
 require 'spec_helper_acceptance'
 
 <% test.nodes.each do |node| -%>
-describe '<%= node %>' do
-<% test.classes.each do |cls| -%>
-  context 'when classified with <%= cls %>' do
-    role = '<%= cls %>'
+describe '<%= node.name %>' do
+<% test.classes.each do |cls| %>
+  context 'when classified with <%= cls.name %>' do
+    role = '<%= cls.name %>'
     apply_manifest(role, :catch_failures => true)
 <% if test.options[:runs_for_idempotency] -%>
 <% (test.options[:runs_for_idempotency] - 1).times do -%>
