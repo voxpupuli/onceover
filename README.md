@@ -4,7 +4,7 @@
 
 This gem gives you a bunch of tools to use for testing and generally managing Puppet controlrepos. The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running both spec and acceptance tests for a controlrepo. Due to the fact that controlrepos are fairly standardise in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that test a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
 
-This toolset has two distinct ways of being used, easy mode and hard mode. 
+This toolset has two distinct ways of being used, easy mode and hard mode.
 
 ### Easy Mode
 
@@ -52,7 +52,7 @@ It consists of the following sections:
 
 ##### Classes:
 
-This is where we list all of the classes that we want to test, normally this will just be a list of roles. Note that these classes must *actually exist* for reasons that should be obvious. 
+This is where we list all of the classes that we want to test, normally this will just be a list of roles. Note that these classes must *actually exist* for reasons that should be obvious.
 
 ##### Nodes:
 
@@ -257,7 +257,7 @@ end
 
 ## Extra Configuration
 
-You can modify the regexes that the gem uses to filter classes that it finds into roles and profiles. Just set up a Controlrepo object and pass regexes to the below settings. 
+You can modify the regexes that the gem uses to filter classes that it finds into roles and profiles. Just set up a Controlrepo object and pass regexes to the below settings.
 
 ```ruby
 repo = Controlrepo.new()

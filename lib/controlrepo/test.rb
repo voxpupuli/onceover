@@ -5,7 +5,7 @@ class Controlrepo
     attr_accessor :nodes
     attr_accessor :classes
     attr_accessor :options
-    
+
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
@@ -72,7 +72,7 @@ class Controlrepo
 
     def self.deduplicate(tests)
       # This should take an array of tests and remove any duplicates from them
-      
+
       # this will be an array of arrays, or maybe hashes
       combinations = []
       new_tests = []
@@ -81,19 +81,19 @@ class Controlrepo
           test.classes.each do |cls|
             combo = {node => cls}
             unless combinations.member?(combo)
-              combinations << combo 
+              combinations << combo
               new_tests << Controlrepo::Test.new(node,cls,test.options)
             end
           end
         end
       end
 
-      # The array that this returns should be ephemeral, it does not 
-      # represent anything defined in a controlrepo and should just 
+      # The array that this returns should be ephemeral, it does not
+      # represent anything defined in a controlrepo and should just
       # be passed into the thing doing the testing and then killed,
       # we don't want too many copies of the same shit going around
       #
-      # Actually based on the way things are written I don't think this 
+      # Actually based on the way things are written I don't think this
       # will duplicated node or class objects, just test objects,
       # everything else is passed by reference
       new_tests

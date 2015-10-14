@@ -126,7 +126,7 @@ class Controlrepo
         })
     end
 
-    # This actually provisions a node and checks that puppet will be able to run and 
+    # This actually provisions a node and checks that puppet will be able to run and
     # be idempotent. It hacks the beaker NetworkManager object to do this. The reason
     # is that beaker is designed to run in the following order:
     #   1. Spin up nodes

@@ -25,7 +25,7 @@ class Controlrepo
       @nodes = []
       @groups = []
       @tests = []
-      
+
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
       config['groups'].each { |name, members| @groups << Controlrepo::Group.new(name, members) }
