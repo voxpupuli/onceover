@@ -87,6 +87,15 @@ class Controlrepo
           new_tests << Controlrepo::Test.new(node,cls)
         end
       end
+
+      # The array that this returns should be ephemeral, it does not 
+      # represent anything defined in a controlrepo and should just 
+      # be passed into the thing doing the testing and then killed,
+      # we don't want too many copies of the same shit going around
+      #
+      # Actually based on the way things are written I don't think this 
+      # will duplicated node or class objects, just test objects,
+      # everything else is passed by reference
       new_tests
     end
 
