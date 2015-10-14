@@ -77,49 +77,50 @@ end
 task :controlrepo_autotest_prep do
   require 'controlrepo/testconfig'
   @repo = Controlrepo.new
-  @config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  @config = Controlrepo::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
 
   binding.pry
   # Deploy r10k to a temp dir
-  #config.r10k_deploy_local(repo)
+  #@config.r10k_deploy_local(@repo)
 
   # Create the other directories we need
-  FileUtils.mkdir_p("#{repo.tempdir}/spec/classes")
-  FileUtils.mkdir_p("#{repo.tempdir}/spec/acceptance/nodesets")
+  FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
+  FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")
 
   # Copy our nodesets over
-  FileUtils.cp_r("#{repo.spec_dir}/acceptance/nodesets","#{repo.tempdir}/spec/acceptance")
+  FileUtils.cp_r("#{@repo.spec_dir}/acceptance/nodesets","#{@repo.tempdir}/spec/acceptance")
 
   # Create the Rakefile so that we can take advantage of the existing tasks
-  config.write_rakefile(repo.tempdir, "spec/classes/**/*_spec.rb")
+  @config.write_rakefile(@repo.tempdir, "spec/classes/**/*_spec.rb")
 
   # Create spec_helper.rb
-  config.write_spec_helper("#{repo.tempdir}/spec",repo)
+  @config.write_spec_helper("#{@repo.tempdir}/spec",@repo)
 
   # Create spec_helper_accpetance.rb
-  config.write_spec_helper_acceptance("#{repo.tempdir}/spec",repo)
+  @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec",@repo)
 
   # Deduplicate and write the tests (Spec and Acceptance)
-  Controlrepo::Test.deduplicate(config.tests).each do |test|
-    config.write_spec_test("#{repo.tempdir}/spec/classes",test)
-    config.write_acceptance_test("#{repo.tempdir}/spec/acceptance",test)
+  Controlrepo::Test.deduplicate(@config.tests).each do |test|
+    @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
+    @config.write_acceptance_test("#{@repo.tempdir}/spec/acceptance",test)
   end
 
   # Parse the current hiera config, modify, and write it to the temp dir
-  hiera_config = repo.hiera_config
+  hiera_config = @repo.hiera_config
   hiera_config.each do |setting,value|
     if value.is_a?(Hash)
       if value.has_key?(:datadir)
-        hiera_config[setting][:datadir] = "#{repo.temp_environmentpath}/#{config.environment}/#{value[:datadir]}"
+        hiera_config[setting][:datadir] = "#{@repo.temp_environmentpath}/#{@config.environment}/#{value[:datadir]}"
       end
     end
   end
-  File.write("#{repo.temp_environmentpath}/#{config.environment}/hiera.yaml",hiera_config.to_yaml)
+  File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
 
   binding.pry
 end
 
 task :controlrepo_autotest_spec do
+  # TODO: Look at how this outputs and see if it needs to be improved
   system('rake spec_standalone',@repo.tempdir)
 end
 
