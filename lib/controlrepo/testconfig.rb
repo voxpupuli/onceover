@@ -11,14 +11,16 @@ class Controlrepo
     attr_accessor :nodes
     attr_accessor :groups
     attr_accessor :tests
+    attr_accessor :environment
 
-    def initialize(file)
+    def initialize(file, environment = 'production')
       begin
         config = YAML.load(File.read(file))
       rescue YAML::ParserError
         raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
       end
 
+      @environment = environment
       @classes =[]
       @nodes =[]
       @groups =[]
@@ -78,17 +80,15 @@ class Controlrepo
       File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
     end
 
-    # TODO: allow this to accept an environment, probably re run the whole thing with a
-    # different environment
     def write_spec_helper(location, repo)
       environmentpath = repo.temp_environmentpath
       modulepath = repo.config['modulepath']
       modulepath.delete("$basemodulepath")
       modulepath.map! do |path|
-        "#{environmentpath}/production/#{path}"
+        "#{environmentpath}/#{@environment}/#{path}"
       end
       modulepath = modulepath.join(":")
-      hiera_yaml = "#{environmentpath}/production/hiera.yaml"
+      hiera_yaml = "#{environmentpath}/#{@environment}/hiera.yaml"
 
        # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))

@@ -82,7 +82,6 @@ task :controlrepo_test_spec do
   # Create the other directories we need
   FileUtils.mkdir_p("#{repo.tempdir}/spec/classes")
 
-  # TODO: refactor
   config.write_rakefile(repo.tempdir, "spec/classes/**/*_spec.rb")
 
   config.write_spec_helper("#{repo.tempdir}/spec",repo)
@@ -95,11 +94,11 @@ task :controlrepo_test_spec do
   hiera_config.each do |setting,value|
     if value.is_a?(Hash)
       if value.has_key?(:datadir)
-        hiera_config[setting][:datadir] = "#{repo.temp_environmentpath}/production/#{value[:datadir]}"
+        hiera_config[setting][:datadir] = "#{repo.temp_environmentpath}/#{config.environment}/#{value[:datadir]}"
       end
     end
   end
-  File.write("#{repo.temp_environmentpath}/production/hiera.yaml",hiera_config.to_yaml)
+  File.write("#{repo.temp_environmentpath}/#{config.environment}/hiera.yaml",hiera_config.to_yaml)
 
   binding.pry
 
