@@ -70,3 +70,42 @@ task :generate_nodesets do
     end
   end
 end
+
+task :controlrepo_test_spec do
+  require 'controlrepo/testconfig'
+  repo = Controlrepo.new
+  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+
+  # Deploy r10k to a temp dir
+  config.r10k_deploy_local(repo)
+
+  # Create the other directories we need
+  FileUtils.mkdir_p("#{repo.tempdir}/spec/classes")
+
+  # TODO: refactor
+  config.write_rakefile(repo.tempdir, "spec/classes/**/*_spec.rb")
+
+  config.write_spec_helper("#{repo.tempdir}/spec",repo)
+
+  config.tests.each do |test|
+    config.write_spec_test("#{repo.tempdir}/spec/classes",test)
+  end
+
+  hiera_config = repo.hiera_config
+  hiera_config.each do |setting,value|
+    if value.is_a?(Hash)
+      if value.has_key?(:datadir)
+        hiera_config[setting][:datadir] = "#{repo.temp_environmentpath}/production/#{value[:datadir]}"
+      end
+    end
+  end
+  File.write("#{repo.temp_environmentpath}/production/hiera.yaml",hiera_config.to_yaml)
+
+  binding.pry
+
+
+end
+
+
+
+

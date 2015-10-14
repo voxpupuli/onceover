@@ -59,7 +59,35 @@ class Controlrepo
         else
           raise "#{test_this['exclude']} was not found in the list of classes or groups!"
         end
+      elsif test_this.is_a?(Controlrepo::Class)
+        @classes << test_this
       end
+    end
+
+    def eql?(other)
+      (@nodes.sort.eql?(other.nodes.sort)) and (@classes.sort.eql?(other.classes.sort))
+    end
+
+    def self.deduplicate(tests)
+      # This should take an array of tests and remove any duplicates from them
+      
+      # this will be an array of arrays, or maybe hashes
+      combinations = []
+      tests.each do |test|
+        test.nodes.each do |node|
+          test.classes.each do |cls|
+            combo = {node => cls}
+            combinations << combo unless combinations.member?(combo)
+          end
+        end
+      end
+      new_tests = []
+      combinations.each do |combo|
+        combo.each do |node,cls|
+          new_tests << Controlrepo::Test.new(node,cls)
+        end
+      end
+      binding.pry
     end
 
     def self.all

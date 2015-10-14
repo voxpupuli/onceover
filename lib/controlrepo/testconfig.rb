@@ -32,7 +32,6 @@ class Controlrepo
       @groups << Controlrepo::Group.new('all_nodes',@nodes)
       @groups << Controlrepo::Group.new('all_classes',@classes)
 
-      # TODO: Consider renaming test_matrix
       config['test_matrix'].each do |machines, roles|
         @tests << Controlrepo::Test.new(machines,roles)
       end
@@ -79,7 +78,18 @@ class Controlrepo
       File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
     end
 
-    def write_spec_helper(location, environmentpath)
+    # TODO: allow this to accept an environment, probably re run the whole thing with a
+    # different environment
+    def write_spec_helper(location, repo)
+      environmentpath = repo.temp_environmentpath
+      modulepath = repo.config['modulepath']
+      modulepath.delete("$basemodulepath")
+      modulepath.map! do |path|
+        "#{environmentpath}/production/#{path}"
+      end
+      modulepath = modulepath.join(":")
+      hiera_yaml = "#{environmentpath}/production/hiera.yaml"
+
        # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_helper_template = File.read(File.expand_path('./spec_helper.rb.erb',template_dir))
