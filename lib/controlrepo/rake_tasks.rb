@@ -105,6 +105,8 @@ task :controlrepo_test_spec do
 
 end
 
+# TODO: We need think about how to deal with node duplication for acceptance tests
+
 
 
 

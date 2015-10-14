@@ -58,7 +58,7 @@ class Controlrepo
 
       # Pull the trigger!
       Dir.chdir(tempdir) do
-        `r10k deploy environment -p --color --config #{tempdir}/r10k.yaml --verbose`
+        `r10k deploy environment #{@environment} -p --color --config #{tempdir}/r10k.yaml --verbose`
       end
 
       # Return tempdir for use
