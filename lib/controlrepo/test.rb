@@ -4,13 +4,15 @@ class Controlrepo
 
     attr_accessor :nodes
     attr_accessor :classes
+    attr_accessor :options
     
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
-    def initialize(on_these,test_this)
+    def initialize(on_these,test_this,options = {})
       @nodes = []
       @classes = []
+      @options = options
 
       # Get the nodes we are working on
       if Controlrepo::Group.find(on_these)

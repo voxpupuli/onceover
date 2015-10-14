@@ -74,6 +74,19 @@ class Controlrepo
       output_file
     end
 
+    def write_acceptance_test(location, test)
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      rakefile_template = File.read(File.expand_path('./spec_helper_acceptance.rb.erb',template_dir))
+      raise 'We only support writing acceptance tests for one node at the moment' unless test.nodes.count == 1
+      File.write("#{location}/spec_helper_acceptance.rb",ERB.new(rakefile_template, nil, '-').result(binding))
+    end
+
+    def write_spec_helper_acceptance(location, test)
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      rakefile_template = File.read(File.expand_path('./spec_helper_acceptance.rb.erb',template_dir))
+      File.write("#{location}/#{test.nodes[0]}_spec.rb",ERB.new(rakefile_template, nil, '-').result(binding))
+    end
+
     def write_rakefile(location, pattern)
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       rakefile_template = File.read(File.expand_path('./Rakefile.erb',template_dir))

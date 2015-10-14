@@ -1,0 +1,18 @@
+require 'spec_helper_acceptance'
+
+<% test.nodes.each do |node| -%>
+describe '<%= node %>' do
+<% test.classes.each do |cls| -%>
+  context 'when classified with <%= cls %>' do
+    role = '<%= cls %>'
+    apply_manifest(role, :catch_failures => true)
+<% if test.options[:runs_for_idempotency] -%>
+<% (test.options[:runs_for_idempotency] - 1).times do -%>
+    apply_manifest(role, :catch_failures => true)
+<% end -%>
+<% end -%>
+    apply_manifest(role, :catch_changes => true)
+  end
+<% end %>
+end
+<% end %>
