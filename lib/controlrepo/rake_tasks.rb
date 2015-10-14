@@ -71,7 +71,7 @@ task :generate_nodesets do
   end
 end
 
-task :controlrepo_test_spec do
+task :controlrepo_autotest_prep do
   require 'controlrepo/testconfig'
   repo = Controlrepo.new
   config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
@@ -82,14 +82,22 @@ task :controlrepo_test_spec do
   # Create the other directories we need
   FileUtils.mkdir_p("#{repo.tempdir}/spec/classes")
 
+  # Create the Rakefile so that we can take advantage of the existing tasks
   config.write_rakefile(repo.tempdir, "spec/classes/**/*_spec.rb")
 
+  # Create spec_helper.rb
   config.write_spec_helper("#{repo.tempdir}/spec",repo)
 
-  config.tests.each do |test|
+  # Create spec_helper_accpetance.rb
+  config.write_spec_helper_acceptance("#{repo.tempdir}/spec",repo)
+
+  # Deduplicate and write the tests (Spec and Acceptance)
+  Controlrepo::Test.deduplicate(config.tests).each do |test|
     config.write_spec_test("#{repo.tempdir}/spec/classes",test)
+    config.write_acceptance_test("#{repo.tempdir}/spec/acceptance",test)
   end
 
+  # Parse the current hiera config, modify, and write it to the temp dir
   hiera_config = repo.hiera_config
   hiera_config.each do |setting,value|
     if value.is_a?(Hash)
@@ -101,12 +109,18 @@ task :controlrepo_test_spec do
   File.write("#{repo.temp_environmentpath}/#{config.environment}/hiera.yaml",hiera_config.to_yaml)
 
   binding.pry
-
-
 end
 
-# TODO: We need think about how to deal with node duplication for acceptance tests
+task :r10k_deploy_local do
+  require 'controlrepo/testconfig'
+  repo = Controlrepo.new
+  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
 
+  # Deploy r10k to a temp dir
+  config.r10k_deploy_local(repo)
+end
+
+# TODO: We could use rspec's tagging abilities to choose which if the acceptance tests to run.
 
 
 
