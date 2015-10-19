@@ -86,6 +86,11 @@ This is assuming that you have all of your linux nodes in the `linux_nodes` grou
 
 When setting up your tests matrix don't worry too much about using groups that will cause duplicate combinations of `node -> class` pairs. The rake tasks run deduplication before running any of the tests to make sure that we are not wasting time. This happens at runtime and does not affect the file or anything.
 
+#### Lets go!
+
+Now to run the spec tests just do a `bundler exec rake controlrepo_spec`
+
+
 ### Hard mode
 
 The point of *hard mode* is to give people who are familiar with RSpec testing with puppet a set of useful tools that they can mix into their tests to save some hassle. We also want to help in getting your tests set up by automatically generating `.fixtures.yml` and nodesets.
@@ -117,7 +122,7 @@ end
 I have included a couple of little rake tasks to help get you started with testing your control repos. Set them up by adding this to your `Rakefile`
 
 ```ruby
-require 'controlrepo'
+require 'controlrepo/rake_tasks'
 ```
 
 The tasks are as follows:

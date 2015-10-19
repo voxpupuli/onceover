@@ -70,6 +70,24 @@ class Controlrepo
       (@nodes.sort.eql?(other.nodes.sort)) and (@classes.sort.eql?(other.classes.sort))
     end
 
+    def to_s
+      class_msg = ""
+      node_msg = ""
+      if classes.count > 1
+        class_msg = "#{classes.count}_classes"
+      else
+        class_msg = classes[0].name
+      end
+
+      if nodes.count > 1
+        node_msg = "#{nodes.count}_nodes"
+      else
+        node_msg = nodes[0].name
+      end
+
+      "#{class_msg}_on_#{node_msg}"
+    end
+
     def self.deduplicate(tests)
       # This should take an array of tests and remove any duplicates from them
 

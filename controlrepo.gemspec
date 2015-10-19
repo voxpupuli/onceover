@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'beaker-rspec'
   s.add_runtime_dependency 'rspec-puppet'
   s.add_runtime_dependency 'rspec'
-  s.add_runtime_dependency 'rake'
   s.add_runtime_dependency 'bundler'
   s.add_runtime_dependency 'puppet'
 

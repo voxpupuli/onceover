@@ -70,16 +70,16 @@ class Controlrepo
       # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_template = File.read(File.expand_path('./test_spec.rb.erb',template_dir))
-      output_file = Tempfile.new(['test','_spec.rb'],location)
-      File.write(output_file,ERB.new(spec_template, nil, '-').result(binding))
-      output_file
+      randomness = (0...6).map { (65 + rand(26)).chr }.join
+      File.write("#{location}/#{randomness}_#{test.to_s}_spec.rb",ERB.new(spec_template, nil, '-').result(binding))
     end
 
     def write_acceptance_test(location, test)
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       acc_test_template = File.read(File.expand_path('./acceptance_test_spec.rb.erb',template_dir))
       raise 'We only support writing acceptance tests for one node at the moment' unless test.nodes.count == 1
-      File.write("#{location}/#{test.nodes[0].name}_spec.rb",ERB.new(acc_test_template, nil, '-').result(binding))
+      randomness = (0...6).map { (65 + rand(26)).chr }.join
+      File.write("#{location}/#{randomness}_#{test.to_s}_spec.rb",ERB.new(acc_test_template, nil, '-').result(binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
@@ -94,6 +94,12 @@ class Controlrepo
       File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
     end
 
+    def write_gemfile(location)
+      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+      gemfile_template = File.read(File.expand_path('./Gemfile.erb',template_dir))
+      File.write("#{location}/Gemfile",ERB.new(gemfile_template, nil, '-').result(binding))
+    end
+
     def write_spec_helper(location, repo)
       environmentpath = repo.temp_environmentpath
       modulepath = repo.config['modulepath']
@@ -102,11 +108,22 @@ class Controlrepo
         "#{environmentpath}/#{@environment}/#{path}"
       end
       modulepath = modulepath.join(":")
+      repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_helper_template = File.read(File.expand_path('./spec_helper.rb.erb',template_dir))
       File.write("#{location}/spec_helper.rb",ERB.new(spec_helper_template, nil, '-').result(binding))
+    end
+
+    def create_fixtures_symlinks(repo)
+      FileUtils.mkdir_p("#{repo.tempdir}/spec/fixtures/modules")
+      repo.temp_modulepath.split(':').each do |path|
+        Dir["#{path}/*"].each do |mod|
+          modulename = File.basename(mod)
+          FileUtils.ln_s(mod, "#{repo.tempdir}/spec/fixtures/modules/#{modulename}")
+        end
+      end
     end
 
     # TODO: Work out the best way to format the output

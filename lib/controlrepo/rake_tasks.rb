@@ -79,9 +79,8 @@ task :controlrepo_autotest_prep do
   @repo = Controlrepo.new
   @config = Controlrepo::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
 
-  binding.pry
   # Deploy r10k to a temp dir
-  #@config.r10k_deploy_local(@repo)
+  @config.r10k_deploy_local(@repo)
 
   # Create the other directories we need
   FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
@@ -98,6 +97,9 @@ task :controlrepo_autotest_prep do
 
   # Create spec_helper_accpetance.rb
   @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec",@repo)
+
+  # Create Gemfile
+  @config.write_gemfile(@repo.tempdir)
 
   # Deduplicate and write the tests (Spec and Acceptance)
   Controlrepo::Test.deduplicate(@config.tests).each do |test|
@@ -116,12 +118,16 @@ task :controlrepo_autotest_prep do
   end
   File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
 
-  binding.pry
+  @config.create_fixtures_symlinks(@repo)
 end
 
 task :controlrepo_autotest_spec do
+  Dir.chdir(@repo.tempdir) do
+    #`bundle install --binstubs`
+    #`bin/rake spec_standalone`
+    exec("bundle install --binstubs; bundle exec rake spec_standalone")
+  end
   # TODO: Look at how this outputs and see if it needs to be improved
-  system('rake spec_standalone',@repo.tempdir)
 end
 
 task :controlrepo_spec => [

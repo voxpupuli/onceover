@@ -16,6 +16,7 @@ class Controlrepo
   attr_accessor :temp_environmentpath
   attr_accessor :tempdir
   attr_accessor :spec_dir
+  attr_accessor :temp_modulepath
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -88,6 +89,7 @@ class Controlrepo
     @profile_regex = /profile[s]?:{2}/
     @temp_environmentpath = nil
     @tempdir = nil
+    $temp_modulepath = nil
   end
 
   def roles
