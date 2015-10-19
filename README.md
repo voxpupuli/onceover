@@ -88,7 +88,9 @@ When setting up your tests matrix don't worry too much about using groups that w
 
 #### Lets go!
 
-Now to run the spec tests just do a `bundler exec rake controlrepo_spec`
+Now to **run the spec tests** just do a:
+
+`bundler exec rake controlrepo_spec`
 
 
 ### Hard mode
