@@ -6,7 +6,7 @@ This gem gives you a bunch of tools to use for testing and generally managing Pu
 
 This toolset has two distinct ways of being used, easy mode and hard mode.
 
-### Easy Mode
+## Easy Mode
 
 The object of *easy mode* is to allow people to run simple `it { should compile }` acceptance tests without needing to set up any of the extra stuff required by the rspec-puppet testing framework.
 
@@ -14,7 +14,7 @@ The object of *easy mode* is to allow people to run simple `it { should compile 
 
 A stretch goal is to also include acceptance testing, allowing people to spin up boxes for each role they have and test them before merging code into development environments or production. At the moment we can't do this, hold tight.
 
-#### Easy mode config
+### Easy mode config
 
 The whole idea of easy mode is that we should just be able to write down which classes we want to test on which machines and this tool should be able to do the rest. This all has to be set up somewhere, this is **spec/controlrepo.yaml** which looks something like this:
 
@@ -50,15 +50,15 @@ test_matrix:
 
 It consists of the following sections:
 
-##### Classes:
+#### Classes:
 
 This is where we list all of the classes that we want to test, normally this will just be a list of roles. Note that these classes must *actually exist* for reasons that should be obvious.
 
-##### Nodes:
+#### Nodes:
 
 Each node in the list refers one of two things depending on weather we are running **spec** or **acceptance** tests. If we are running **spec** tests each node refers to the name of a [fact set](#fact-sets) because this will be the set of facts that the `it { should compile }` test will be run against. If we are are running **acceptance** tests then each node will refer to a *nodeset* file which we can generate (or at least try to) using the `generate_nodesets` rake task. For acceptance testing the nodeset file will tell us how to spin up the VMs for each machine.
 
-##### Groups:
+#### Groups:
 
 Groups are used to save us a bit of time and code (if you can call yaml that). Unsurprisingly a group is a way to bundle either classes or nodes into a group that we can refer to but it's name instead of repeating ourselves a whole bunch. There are 2 **default groups:**
 
@@ -69,7 +69,7 @@ You can guess what they are for I hope.
 
 *Note that groups CANNOT contain a mix of classes and nodes, only one or the other.*
 
-##### Test Matrix:
+#### Test Matrix:
 
 This is the section of th config file that makes the magic happen. In the test matrix we choose on which nodes we will tests which classes. You can use groups anywhere here as you can see in the example above. We also have the option of using *include* and *exclude* which will be useful if you have a lot of groups.
 
@@ -86,14 +86,24 @@ This is assuming that you have all of your linux nodes in the `linux_nodes` grou
 
 When setting up your tests matrix don't worry too much about using groups that will cause duplicate combinations of `node -> class` pairs. The rake tasks run deduplication before running any of the tests to make sure that we are not wasting time. This happens at runtime and does not affect the file or anything.
 
-#### Lets go!
+## Hiera Data
+
+If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory and you are good to go. **NOTE:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over
+
+## R10k.yaml
+
+For the Controlrepo gem to be able to clone the controlrepo (itself) from git (into a temp dir) it needs an `r10k.yaml` file under the `spec/` directory. Don't worry about any of the paths here, we dynamically generate and override them. I realise that this is kind of redundant and will be looking into changing it in the future.
+
+TODO: Look into this ^
+
+## Lets go!
 
 Now to **run the spec tests** just do a:
 
 `bundler exec rake controlrepo_spec`
 
 
-### Hard mode
+## Hard mode
 
 The point of *hard mode* is to give people who are familiar with RSpec testing with puppet a set of useful tools that they can mix into their tests to save some hassle. We also want to help in getting your tests set up by automatically generating `.fixtures.yml` and nodesets.
 
