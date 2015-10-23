@@ -96,6 +96,32 @@ For the Controlrepo gem to be able to clone the controlrepo (itself) from git (i
 
 TODO: Look into this ^
 
+## pre_conditions
+
+If your spec tests are failing because if dependencies on the (closed source) PE modules, don't stress, there is a way around this! Let's start with an example: Somewhere in my puppet code I am managing something that needs to restart the Puppet Server i.e.
+
+```puppet
+file { '/etc/puppetlabs/puppet/puppet.conf':
+  ensure  => file,
+  content => '#nothing',
+  notify  => Service['pe-puppetserver'], # This will fail without the PE module!
+  }
+```
+
+If we try to compile a catalog against this code it will fail because we are not including the PE class that manages `Service['pe-puppetserver']`, therefore it is not in the catalog and we cannot establist dependencies upon it. 
+
+If we run into a situations like this we can use the `spec/pre_conditions` folder to get around them e.g. Putting this in the `spec/pre_conditions` folder will solve our issues:
+
+```puppet
+service { 'pe-puppetserver':
+  ensure => 'running',
+}
+```
+
+This is because anything in this folder will get add to the catalog along with the class (role) we are testing. 
+
+NOTE: [resource collector ovverides](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources_advanced.html#amending-attributes-with-a-collector) could be useful in this situation.
+
 ## Lets go!
 
 Now to **run the spec tests** just do a:

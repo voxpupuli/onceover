@@ -22,5 +22,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec-puppet'
   s.add_runtime_dependency 'rspec'
   s.add_runtime_dependency 'bundler'
+  s.add_runtime_dependency 'r10k'
   s.add_runtime_dependency 'puppet'
 end
