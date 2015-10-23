@@ -5,6 +5,13 @@ describe "<%= cls.name %>" do
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
     let(:facts) { <%= node.fact_set %> }
+<% if pre_condition -%>
+    let(:pre_condition) { 
+      pp = <<END
+<%= pre_condition.chomp %>
+END
+    }
+<% end -%>
     it { should compile }
   end
 <% end -%>

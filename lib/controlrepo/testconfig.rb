@@ -40,6 +40,17 @@ class Controlrepo
       end
     end
 
+    def pre_condition
+      # Read all the pre_conditions and return the string
+      spec_dir = Controlrepo.new.spec_dir
+      puppetcode = []
+      Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
+        puppetcode << File.read(condition_file)
+      end
+      return false if puppetcode.count == 0
+      puppetcode.join("\n")
+    end
+
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
       tempdir = Dir.mktmpdir('r10k')
