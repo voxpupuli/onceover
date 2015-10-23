@@ -1,5 +1,12 @@
-gem 'puppet'
-gem 'rspec'
-gem 'rspec-puppet'
+group :spec do
+  gem 'puppet'
+  gem 'rspec'
+  gem 'rspec-puppet'
+  gem 'puppetlabs_spec_helper'
+end
+
+group :acceptance do
+  gem 'beaker-rspec'
+end
+
 gem 'rake'
-gem 'puppetlabs_spec_helper'
