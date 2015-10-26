@@ -162,11 +162,6 @@ class Controlrepo
         network_manager.configure
       end
 
-      if opts[:deploy_controlrepo]
-        # Get the code onto the host
-        Controlrepo::Beaker.deploy_controlrepo_on(host,repo)
-      end
-
       # Actually run the tests
       manifest = "include #{puppet_class}"
 
