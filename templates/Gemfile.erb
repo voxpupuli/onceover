@@ -1,12 +1,13 @@
+source 'https://rubygems.org'
+
 group :spec do
-  gem 'puppet'
-  gem 'rspec'
   gem 'rspec-puppet'
   gem 'puppetlabs_spec_helper'
 end
 
 group :acceptance do
   gem 'beaker-rspec'
+#  gem "vagrant", git: "https://github.com/mitchellh/vagrant.git"
 end
 
 gem 'rake'

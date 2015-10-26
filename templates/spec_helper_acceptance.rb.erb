@@ -1,24 +1,67 @@
-require 'beaker-rspec'
+require 'beaker-rspec/beaker_shim' # This overloads Rspec's methods and provides the interface between beaker and RSpec
+require 'pry'
 
-scp_to hosts, '<%= repo.tempdir %>/etc', '/etc' # Check that this wil work recursively
+#scp_to hosts, '<%= repo.tempdir %>/etc', '/'
 
 RSpec.configure do |c|
-  # Project root
-  proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  # Enable color
+  c.tty = true
 
   # Readable test descriptions
   c.formatter = :documentation
 
+  # Define persistant hosts setting
+  c.add_setting :hosts, :default => []
+  # Define persistant options setting
+  c.add_setting :options, :default => {}
+  # Define persistant metadata object
+  c.add_setting :metadata, :default => {}
+  # Define persistant logger object
+  c.add_setting :logger, :default => nil
+  # Define persistant default node
+  c.add_setting :default_node, :default => nil
+
+  #default option values
+  defaults = {
+    :nodeset     => 'controlrepo',
+  }
+  #read env vars
+  env_vars = {
+    :color       => ENV['BEAKER_color'] || ENV['RS_COLOR'],
+    :nodeset     => ENV['BEAKER_set'] || ENV['RS_SET'],
+    :nodesetfile => ENV['BEAKER_setfile'] || ENV['RS_SETFILE'],
+    :provision   => ENV['BEAKER_provision'] || ENV['RS_PROVISION'],
+    :keyfile     => ENV['BEAKER_keyfile'] || ENV['RS_KEYFILE'],
+    :debug       => ENV['BEAKER_debug'] || ENV['RS_DEBUG'],
+    :destroy     => ENV['BEAKER_destroy'] || ENV['RS_DESTROY'],
+  }.delete_if {|key, value| value.nil?}
+  #combine defaults and env_vars to determine overall options
+  options = defaults.merge(env_vars)
+
+  # process options to construct beaker command string
+  nodesetfile = options[:nodesetfile] || File.join('spec/acceptance/nodesets',"#{options[:nodeset]}.yml")
+  fresh_nodes = options[:provision] == 'no' ? '--no-provision' : nil
+  keyfile = options[:keyfile] ? ['--keyfile', options[:keyfile]] : nil
+  debug = options[:debug] ? ['--log-level', 'debug'] : nil
+  color = options[:color] == 'no' ? ['--no-color'] : nil
+
   # Configure all nodes in nodeset
-  #c.before :suite do
-  #  # Install module
-  #  puppet_module_install(:source => proj_root, :module_name => 'virtualbox')
-  #  hosts.each do |host|
-  #    on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
-  #    on host, puppet('module','install','puppetlabs-apt'), { :acceptable_exit_codes => [0,1] }
-  #    on host, puppet('module','install','stahnma-epel'), { :acceptable_exit_codes => [0,1] }
-  #    on host, puppet('module','install','camptocamp-archive'), { :acceptable_exit_codes => [0,1] }
-  #    on host, puppet('module','install','darin-zypprepo'), { :acceptable_exit_codes => [0,1] }
-  #  end
-  #end
+  c.setup([fresh_nodes, '--hosts', nodesetfile, keyfile, debug, color].flatten.compact)
+  #c.provision
+  #c.validate
+  #c.configure
+
+  # Destroy nodes if no preserve hosts
+  c.after :suite do
+    case options[:destroy]
+    when 'no'
+      # Don't cleanup
+    when 'onpass'
+      c.cleanup if RSpec.world.filtered_examples.values.flatten.none?(&:exception)
+    else
+      c.cleanup
+    end
+  end
 end
+
+binding.pry
