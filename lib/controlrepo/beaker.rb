@@ -151,7 +151,7 @@ class Controlrepo
       network_manager = ::Beaker::NetworkManager.new(options,logger)
 
       # Hack the network manager to smash our host in there without provisioning
-      network_manager.instance_variable_set(:@hosts,host)
+      network_manager.instance_variable_set(:@hosts,[host])
 
       # Now that we have a working network manager object, we can provision, but only if
       # we need to, ahhh smart...
