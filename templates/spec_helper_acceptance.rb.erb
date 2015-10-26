@@ -69,4 +69,13 @@ RSpec.configure do |c|
   end
 end
 
+original_options = options.dup
+
+original_options[:HOSTS].each do |name,opts|
+  # This is where we can interact with each host
+  options[:HOSTS] = {name => opts}
+  binding.pry
+  Controlrepo::Beaker.provision_and_test(Beaker::NetworkManager.new(options, RSpec.configuration.logger).provision[0],'test')
+end
+
 binding.pry
