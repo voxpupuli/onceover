@@ -32,9 +32,11 @@ describe "Acceptance Testing" do
         #options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
         #current_opts = options.dup
         #current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
+        binding.pry
         current_opts = {}
         options.each do |opt,val|
           if opt == :HOSTS
+            binding.pry
             val.each do |k,v|
               if k == :<%= node.name %>
                 current_opts[:HOSTS] = {k => v}
