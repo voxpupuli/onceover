@@ -16,6 +16,7 @@ describe "Acceptance Testing" do
 <% test.classes.each do |cls| -%>
   describe "<%= cls.name %> on <%= node.name %>" do
     after :all do
+      logger.line_prefix = "  "
       $nwm.cleanup
     end
 
@@ -27,9 +28,11 @@ describe "Acceptance Testing" do
 
       it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
         # Create a new options hash and remove other hosts
-        options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
+        #options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
+        current_opts = options.dup
+        current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
         expect {
-          $nwm = Beaker::NetworkManager.new(options,logger)
+          $nwm = Beaker::NetworkManager.new(current_opts,logger)
         }.to_not raise_exception
       end
 

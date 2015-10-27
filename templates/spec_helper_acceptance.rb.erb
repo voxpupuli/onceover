@@ -68,4 +68,8 @@ RSpec.configure do |c|
   end
 end
 
-$original_hosts = options[:HOSTS].dup
+$original_hosts = {}
+
+options[:HOSTS].each do |k,v|
+  $original_hosts[k.dup] = v.dup
+end
