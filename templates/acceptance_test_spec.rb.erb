@@ -29,8 +29,20 @@ describe "Acceptance Testing" do
       it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
         # Create a new options hash and remove other hosts
         #options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
-        current_opts = options.dup
-        current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
+        #current_opts = options.dup
+        #current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
+        current_opts = {}
+        options.each do |opt,val|
+          if opt == :HOSTS
+            val.each do |k,v|
+              if k == :<%= node.name %>
+                current_opts[:HOSTS] = {k => v}
+              end
+            end
+          else
+            current_opts[opt] = val
+          end
+        end
         expect {
           $nwm = Beaker::NetworkManager.new(current_opts,logger)
         }.to_not raise_exception
