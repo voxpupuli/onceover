@@ -1,18 +1,71 @@
 require 'spec_helper_acceptance'
 
-<% test.nodes.each do |node| -%>
-describe '<%= node.name %>' do
-<% test.classes.each do |cls| %>
-  context 'when classified with <%= cls.name %>' do
-    role = '<%= cls.name %>'
-    apply_manifest(role, :catch_failures => true)
-<% if test.options[:runs_for_idempotency] -%>
-<% (test.options[:runs_for_idempotency] - 1).times do -%>
-    apply_manifest(role, :catch_failures => true)
-<% end -%>
-<% end -%>
-    apply_manifest(role, :catch_changes => true)
+
+describe "Acceptance Testing" do
+  before :each do |test|
+    #try to find the indentation level and mirror it in beaker logger
+    padding = ""
+    # Get the depth and add that as padding
+    (test.metadata[:scoped_id].split(':').count - 1).times do
+      padding << "  "
+    end
+    logger.line_prefix = padding
   end
-<% end %>
+<% tests.each do |test| -%>
+<% test.nodes.each do |node| -%>
+<% test.classes.each do |cls| -%>
+  describe "<%= cls %> on <%= node %>" do
+    describe "provisioning <%= node %>" do
+      after :all do
+        # Reset the HOSTS hash to its original value
+        options[:HOSTS] = $original_hosts
+      end
+
+      it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
+        # Create a new options hash and remove other hosts
+        options[:HOSTS].delete_if { |k,v| k != :<%= node %> }
+        expect {
+          $nwm = Beaker::NetworkManager.new(options,logger)
+        }.to_not raise_exception
+      end
+
+      it "should be able to provision using Beaker" do
+        expect {
+          $nwm.provision
+          $nwm.proxy_package_manager
+          $nwm.validate
+          $nwm.configure
+          $hosts = $nwm.instance_variable_get(:@hosts)
+        }.not_to raise_exception
+      end
+    end
+
+    describe "copying code to <%= node %>" do
+      it "should copy the code successfully" do
+        expect {
+          scp_to $hosts, 'etc', '/'
+        }.not_to raise_exception
+      end
+    end
+
+    describe "running puppet" do
+      it "should run with no errors" do
+        expect {
+          apply_manifest_on($hosts,"include <%= cls %>",{:catch_failures => true})
+        }.not_to raise_exception
+      end
+    end
+
+    describe "checking for idempotency" do
+      it "should run with no changes" do
+        expect {
+          apply_manifest_on($hosts,"include <%= cls %>",{:catch_changes => true})
+        }.not_to raise_exception
+      end
+    end
+  end
+<% end -%>
+<% end -%>
+<% end -%>
 end
-<% end %>
+

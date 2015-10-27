@@ -104,8 +104,9 @@ task :controlrepo_autotest_prep do
   # Deduplicate and write the tests (Spec and Acceptance)
   Controlrepo::Test.deduplicate(@config.tests).each do |test|
     @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
-    @config.write_acceptance_test("#{@repo.tempdir}/spec/acceptance",test)
   end
+
+  @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",Controlrepo::Test.deduplicate(@config.tests))
 
   # Parse the current hiera config, modify, and write it to the temp dir
   hiera_config = @repo.hiera_config

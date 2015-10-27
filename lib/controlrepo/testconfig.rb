@@ -85,12 +85,10 @@ class Controlrepo
       File.write("#{location}/#{randomness}_#{test.to_s}_spec.rb",ERB.new(spec_template, nil, '-').result(binding))
     end
 
-    def write_acceptance_test(location, test)
+    def write_acceptance_tests(location, tests)
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       acc_test_template = File.read(File.expand_path('./acceptance_test_spec.rb.erb',template_dir))
-      raise 'We only support writing acceptance tests for one node at the moment' unless test.nodes.count == 1
-      randomness = (0...6).map { (65 + rand(26)).chr }.join
-      File.write("#{location}/#{randomness}_#{test.to_s}_spec.rb",ERB.new(acc_test_template, nil, '-').result(binding))
+      File.write("#{location}/acceptance_spec.rb",ERB.new(acc_test_template, nil, '-').result(binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
