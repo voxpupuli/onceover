@@ -14,8 +14,8 @@ describe "Acceptance Testing" do
 <% tests.each do |test| -%>
 <% test.nodes.each do |node| -%>
 <% test.classes.each do |cls| -%>
-  describe "<%= cls %> on <%= node %>" do
-    describe "provisioning <%= node %>" do
+  describe "<%= cls.name %> on <%= node.name %>" do
+    describe "provisioning <%= node.name %>" do
       after :all do
         # Reset the HOSTS hash to its original value
         options[:HOSTS] = $original_hosts
@@ -23,7 +23,7 @@ describe "Acceptance Testing" do
 
       it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
         # Create a new options hash and remove other hosts
-        options[:HOSTS].delete_if { |k,v| k != :<%= node %> }
+        options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
         expect {
           $nwm = Beaker::NetworkManager.new(options,logger)
         }.to_not raise_exception
@@ -40,7 +40,7 @@ describe "Acceptance Testing" do
       end
     end
 
-    describe "copying code to <%= node %>" do
+    describe "copying code to <%= node.name %>" do
       it "should copy the code successfully" do
         expect {
           scp_to $hosts, 'etc', '/'
@@ -51,7 +51,7 @@ describe "Acceptance Testing" do
     describe "running puppet" do
       it "should run with no errors" do
         expect {
-          apply_manifest_on($hosts,"include <%= cls %>",{:catch_failures => true})
+          apply_manifest_on($hosts,"include <%= cls.name %>",{:catch_failures => true})
         }.not_to raise_exception
       end
     end
@@ -59,7 +59,7 @@ describe "Acceptance Testing" do
     describe "checking for idempotency" do
       it "should run with no changes" do
         expect {
-          apply_manifest_on($hosts,"include <%= cls %>",{:catch_changes => true})
+          apply_manifest_on($hosts,"include <%= cls.name %>",{:catch_changes => true})
         }.not_to raise_exception
       end
     end
