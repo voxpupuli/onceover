@@ -22,10 +22,10 @@ describe "Acceptance Testing" do
     end
 
     describe "provisioning <%= node.name %>" do
-      after :all do
-        # Reset the HOSTS hash to its original value
-        options[:HOSTS] = $original_hosts
-      end
+      #after :all do
+      #  # Reset the HOSTS hash to its original value
+      #  options[:HOSTS] = $original_hosts
+      #end
 
       it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
         # Create a new options hash and remove other hosts
@@ -34,7 +34,7 @@ describe "Acceptance Testing" do
         #current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
         binding.pry
         current_opts = {}
-        options.each do |opt,val|
+        OPTIONS.each do |opt,val|
           if opt == :HOSTS
             binding.pry
             val.each do |k,v|
