@@ -7,9 +7,9 @@ require 'controlrepo/beaker'
 
 
 #scp_to hosts, '<%= repo.tempdir %>/etc', '/'
-
 RSpec.configure do |c|
   # Enable color
+  c.color = true
   c.tty = true
 
   # Readable test descriptions
@@ -69,18 +69,4 @@ RSpec.configure do |c|
   end
 end
 
-
-original_options = options.dup
-
-original_options[:HOSTS].each do |name,opts|
-  # This is where we can interact with each host
-  options[:HOSTS] = {name => opts}
-  binding.pry
-
-  nwm = Beaker::NetworkManager.new(options, RSpec.configuration.logger)
-  current_host = nwm.provision[0]
-  scp_to current_host, 'etc', '/'
-  Controlrepo::Beaker.provision_and_test(current_host,'role::dbserver')
-end
-
-binding.pry
+$original_hosts = options[:HOSTS].dup
