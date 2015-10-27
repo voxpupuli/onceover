@@ -1,6 +1,4 @@
 require 'spec_helper_acceptance'
-require 'pry'
-
 
 describe "Acceptance Testing" do
   before :each do |test|
@@ -28,15 +26,9 @@ describe "Acceptance Testing" do
       #end
 
       it "should be able to set up a Beaker Network Manger object to handle the hypervisors" do
-        # Create a new options hash and remove other hosts
-        #options[:HOSTS].delete_if { |k,v| k != :<%= node.name %> }
-        #current_opts = options.dup
-        #current_opts[:HOSTS] = options[:HOSTS].select { |k,v| K == :<%= node.name %> }
-        binding.pry
         current_opts = {}
         OPTIONS.each do |opt,val|
           if opt == :HOSTS
-            binding.pry
             val.each do |k,v|
               if k == :<%= node.name %>
                 current_opts[:HOSTS] = {k => v}
@@ -56,7 +48,6 @@ describe "Acceptance Testing" do
           end
         end
 
-        binding.pry
         expect {
           $nwm = Beaker::NetworkManager.new(current_opts,logger)
         }.to_not raise_exception
@@ -64,7 +55,6 @@ describe "Acceptance Testing" do
 
       it "should be able to provision using Beaker" do
         expect {
-          binding.pry
           $nwm.provision
           $nwm.proxy_package_manager
           $nwm.validate
@@ -77,7 +67,6 @@ describe "Acceptance Testing" do
     describe "copying code to <%= node.name %>" do
       it "should copy the code successfully" do
         expect {
-          binding.pry
           scp_to $hosts, 'etc', '/'
         }.not_to raise_exception
       end
@@ -86,7 +75,6 @@ describe "Acceptance Testing" do
     describe "running puppet" do
       it "should run with no errors" do
         expect {
-          binding.pry
           apply_manifest_on($hosts,"include <%= cls.name %>",{:catch_failures => true})
         }.not_to raise_exception
       end
