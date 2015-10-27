@@ -43,6 +43,15 @@ describe "Acceptance Testing" do
             current_opts[opt] = val
           end
         end
+
+        # I copied this code off the internet, basically it allows us
+        # to refer to each key as either a string or an object
+        current_opts.default_proc = proc do |h, k|
+          case k
+            when String then sym = k.to_sym; h[sym] if h.key?(sym)
+            when Symbol then str = k.to_s; h[str] if h.key?(str)
+          end
+        end
         expect {
           $nwm = Beaker::NetworkManager.new(current_opts,logger)
         }.to_not raise_exception

@@ -67,9 +67,3 @@ RSpec.configure do |c|
     end
   end
 end
-
-$original_hosts = {}
-
-options[:HOSTS].each do |k,v|
-  $original_hosts[k.dup] = v.dup
-end
