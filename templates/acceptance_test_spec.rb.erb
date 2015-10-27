@@ -11,14 +11,14 @@ describe "Acceptance Testing" do
     end
     logger.line_prefix = padding
   end
-
-  after :each do
-    $nwm.cleanup
-  end
 <% tests.each do |test| -%>
 <% test.nodes.each do |node| -%>
 <% test.classes.each do |cls| -%>
   describe "<%= cls.name %> on <%= node.name %>" do
+    after :all do
+      $nwm.cleanup
+    end
+
     describe "provisioning <%= node.name %>" do
       after :all do
         # Reset the HOSTS hash to its original value
