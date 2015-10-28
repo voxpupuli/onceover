@@ -128,13 +128,27 @@ task :controlrepo_autotest_spec do
     #`bin/rake spec_standalone`
     exec("bundle install --without acceptance; bundle exec rake spec_standalone")
   end
-  # TODO: Look at how this outputs and see if it needs to be improved
+end
+
+task :controlrepo_autotest_acceptance do
+  Dir.chdir(@repo.tempdir) do
+    #`bundle install --binstubs`
+    #`bin/rake spec_standalone`
+    exec("bundle install; bundle exec rake acceptance")
+  end
 end
 
 task :controlrepo_spec => [
   :controlrepo_autotest_prep,
   :controlrepo_autotest_spec
   ]
+
+task :controlrepo_acceptance => [
+  :controlrepo_autotest_prep,
+  :controlrepo_autotest_acceptance
+  ]
+
+
 
 task :r10k_deploy_local do
   require 'controlrepo/testconfig'

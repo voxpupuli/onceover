@@ -128,6 +128,48 @@ Now to **run the spec tests** just do a:
 
 `bundler exec rake controlrepo_spec`
 
+## Acceptance testing
+
+Now that we have a lot of stuff set up, we can also run acceptance testing! This will do much the same thing as the spec testing, except on an actual box. (It will run `include role::your_role` on the server and check for errors)
+
+This does however take a little more preparation. The main thing we need is that we need to know which nodes to spin up in order to do the testing. We use Beaker to actually interact with the hypervisor of choice and therefore we use their [nodeset file syntax](https://github.com/puppetlabs/beaker/blob/master/docs/Example-Vagrant-Hosts-Files.md). The only thing we need to do is **name the nodes the same aswe do for spec tests** and **have all the nodes in the same file**.
+
+Here is an example:
+
+```yaml
+# spec/acceptance/nodesets/controlrepo.yaml
+HOSTS:
+  centos6a:
+    roles:
+      - agent
+    platform: el-6-64
+    box: puppetlabs/centos-6.6-64-puppet
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-puppet
+    hypervisor: vagrant_virtualbox
+  centos7b:
+    roles:
+      - agent
+    platform: el-7-64
+    box: puppetlabs/centos-7.0-64-puppet
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-puppet
+    hypervisor: vagrant_virtualbox
+  ubuntu1404a:
+    roles:
+      - agent
+    platform: ubuntu-14.04-64
+    box: puppetlabs/ubuntu-14.04-64-puppet
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/ubuntu-14.04-64-puppet
+    hypervisor: vagrant_virtualbox
+```
+
+Now when we run:
+
+`bundle exec rake controlrepo_acceptance`
+
+It will use the same test matrix we have already defined in `controlrepo.yaml` and spin up each node and do the testing.
+
+NOTE: The same test deduplication will be applied here as it is in spec tests, also; macines will be classified with **one** role, run, destroyed, re-created and then classified with the next role.
+
 
 ## Hard mode
 
