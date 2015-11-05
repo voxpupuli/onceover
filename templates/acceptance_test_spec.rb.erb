@@ -75,7 +75,14 @@ describe "Acceptance Testing" do
     describe "running puppet" do
       it "should run with no errors" do
         expect {
-          apply_manifest_on($hosts,"include <%= cls.name %>",{:catch_failures => true})
+          manifest = <<CODE
+$controlrepo_accpetance = true
+
+<%= pre_condition %>
+
+include <%= cls.name %>
+CODE
+          apply_manifest_on($hosts,manifest,{:catch_failures => true})
         }.not_to raise_exception
       end
     end
@@ -83,7 +90,14 @@ describe "Acceptance Testing" do
     describe "checking for idempotency" do
       it "should run with no changes" do
         expect {
-          apply_manifest_on($hosts,"include <%= cls.name %>",{:catch_changes => true})
+          manifest = <<CODE
+$controlrepo_accpetance = true
+
+<%= pre_condition %>
+
+include <%= cls.name %>
+CODE
+          apply_manifest_on($hosts,manifest,{:catch_changes => true})
         }.not_to raise_exception
       end
     end
