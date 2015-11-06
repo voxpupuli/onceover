@@ -22,6 +22,9 @@ RSpec.configure do |c|
   # Readable test descriptions
   c.formatter = :documentation
 
+  # Set the max number of lines to a higher value
+  c.max_displayed_failure_line_count = 1000
+
   # Define persistant hosts setting
   c.add_setting :hosts, :default => []
   # Define persistant options setting
