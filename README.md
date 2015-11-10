@@ -1,22 +1,58 @@
 # Controlrepo Toolset
 
+#TABLE OF CONTENTS
+
+Overview
+Installation
+Config files
+
+  - controlrepo.yaml
+  - factsets
+  - nodesets
+  - Hiera Data
+  - R10k.yaml
+
+Spec testing
+Acceptance testing
+Using Workarounds
+Extra tooling
+
+
 ## Overview
 
-This gem gives you a bunch of tools to use for testing and generally managing Puppet controlrepos. The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running both spec and acceptance tests for a controlrepo. Due to the fact that controlrepos are fairly standardise in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that test a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
+This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running both spec and acceptance tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that test a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
 
-This toolset has two distinct ways of being used, easy mode and hard mode.
+This toolset requires some config before it can be used so definitely read that section before getting started.
 
-## Easy Mode
+## Installation
 
-The object of *easy mode* is to allow people to run simple `it { should compile }` acceptance tests without needing to set up any of the extra stuff required by the rspec-puppet testing framework.
+`gem install controlrepo`
 
-`rake tasks go here once they are done`
+This gem can just be installed using `gem install` however I would recommend using [Bundler](http://bundler.io/) to manage your gems.
 
-A stretch goal is to also include acceptance testing, allowing people to spin up boxes for each role they have and test them before merging code into development environments or production. At the moment we can't do this, hold tight.
+## Config Files
 
-### Easy mode config
+This project uses one main config file to determine what classes we should be testing and how, this is [controlrepo.yaml](#controlrepo.yaml). The `controlrepo.yaml` config file provides information about what classes to test when, however it needs more information than that: 
 
-The whole idea of easy mode is that we should just be able to write down which classes we want to test on which machines and this tool should be able to do the rest. This all has to be set up somewhere, this is **spec/controlrepo.yaml** which looks something like this:
+If we are doing spec testing we need sets of facts to compile the puppet code against, these are stored in [factsets](#factsets). 
+
+If we are doing acceptance testing then we need information about how to spin up VMs to do the testing on, these are configured in [nodesets](#nodesets).
+
+### controlrepo.yaml 
+
+`spec/controlrepo.yaml`
+
+Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
+
+**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (F you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/))
+
+**nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
+
+**groups:** The groups section is just for saving us some typing. Here we can set up groups of classes *or* nodes (not a combination of the two) which we can then refer to in our test matrix. There are also two default groups automatically created which you can use, **all_classes** and **all_nodes**. If you can't guess what they are go have a coffee and come back.
+
+**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be a hash with the node/s as the key and class/es as the values. This is where we would use groups if we had them (you can see us using the `windows_roles` and `centos_servers` groups in the below example). We can also use groups to subtractively build up lists of classes by using `include` and `exclude` as per the example below.
+
+Don't be afraid if your test matrix produces duplicate tests, the controlrepo gem de-duplicates the test matrix before flattening it and generating the tests, as a result there should never be any duplicate tests. This also means that tests might not come out in the order that you expect D:
 
 ```yaml
 classes:
@@ -48,100 +84,57 @@ test_matrix:
     exclude: windows_roles
 ```
 
-It consists of the following sections:
+### factsets
 
-#### Classes:
+`spec/factsets/*.yaml`
 
-This is where we list all of the classes that we want to test, normally this will just be a list of roles. Note that these classes must *actually exist* for reasons that should be obvious.
+Factsets are used by the controlrepo gem to generate spec tests, which compile a given class against a certain set of facts. To create these factsets all we need to do is log onto a real machine that has puppet installed and run:
 
-#### Nodes:
+`puppet facts`
 
-Each node in the list refers one of two things depending on weather we are running **spec** or **acceptance** tests. If we are running **spec** tests each node refers to the name of a [fact set](#fact-sets) because this will be the set of facts that the `it { should compile }` test will be run against. If we are are running **acceptance** tests then each node will refer to a *nodeset* file which we can generate (or at least try to) using the `generate_nodesets` rake task. For acceptance testing the nodeset file will tell us how to spin up the VMs for each machine.
+Which will give raw json output of every fact which puppet knows about. Usually I would recommend running this on each of the types of machines that you run in your infrastructure so that you have a good coverage. To make life easier you might want to direct it into a file instead of copying it from the command line:
 
-#### Groups:
+`puppet facts > fact_set_name.json`
 
-Groups are used to save us a bit of time and code (if you can call yaml that). Unsurprisingly a group is a way to bundle either classes or nodes into a group that we can refer to but it's name instead of repeating ourselves a whole bunch. There are 2 **default groups:**
+Once we have our factset all we need to do is copy it into `spec/factsets/` inside out controlrepo and commit it to version control. Factsets are named based on their filename, not the ane of the server they came from (Although you can, if you want). i.e the following factset file:
 
-  - all_nodes
-  - all_classes
+`spec/factsets/server2008r2.yaml`
 
-You can guess what they are for I hope.
+Would map to a node named `server2008r2` in `controlrepo.yaml`
 
-*Note that groups CANNOT contain a mix of classes and nodes, only one or the other.*
+### nodesets
 
-#### Test Matrix:
+`spec/acceptance/nodesets/controlrepo-nodes.yml`
 
-This is the section of th config file that makes the magic happen. In the test matrix we choose on which nodes we will tests which classes. You can use groups anywhere here as you can see in the example above. We also have the option of using *include* and *exclude* which will be useful if you have a lot of groups.
+Nodesets are used when running acceptance tests. They instruct the controlrepo gem how to spin up virtual machines to run the code on. Actually, that's a lie... What's really happening with nodesets is that we are using [Beaker](https://github.com/puppetlabs/beaker) to spin up the machines and then a combination of Beaker and RSpec to test them. But you don't need to worry about that too much. Due to the fact that we are using beaker to do the heavy lifting here the nodeset files follow the same format they would for normal Beaker tests, which at the time of writing supports the following hypervisors:
 
-For example if we want to test all our non-windows roles on all of our linux boxes we can do something like this:
+  - [VMWare Fusion](https://github.com/puppetlabs/beaker/blob/master/docs/VMWare-Fusion-Support.md)
+  - [Amazon EC2](https://github.com/puppetlabs/beaker/blob/master/docs/EC2-Support.md)
+  - [vSphere](https://github.com/puppetlabs/beaker/blob/master/docs/vSphere-Support.md)
+  - [Vagrant](https://github.com/puppetlabs/beaker/blob/master/docs/Vagrant-Support.md)
+  - [Google Compute Engine](https://github.com/puppetlabs/beaker/blob/master/docs/Google-Compute-Engine-Support.md)
+  - [Docker](https://github.com/puppetlabs/beaker/blob/master/docs/Docker-Support.md)
+  - [Openstack](https://github.com/puppetlabs/beaker/blob/master/docs/Openstack-Support.md)
+  - [Solaris](https://github.com/puppetlabs/beaker/blob/master/docs/Solaris-Support.md)
 
-```yaml
-test_matrix:
-  linux_nodes:
-    include: 'all_classes'
-    exclude: 'windows_roles'
-```
-
-This is assuming that you have all of your linux nodes in the `linux_nodes` group and all of your Windows roles in the `windows_roles` group.
-
-When setting up your tests matrix don't worry too much about using groups that will cause duplicate combinations of `node -> class` pairs. The rake tasks run deduplication before running any of the tests to make sure that we are not wasting time. This happens at runtime and does not affect the file or anything.
-
-## Hiera Data
-
-If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory and you are good to go. **NOTE:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over
-
-## R10k.yaml
-
-For the Controlrepo gem to be able to clone the controlrepo (itself) from git (into a temp dir) it needs an `r10k.yaml` file under the `spec/` directory. Don't worry about any of the paths here, we dynamically generate and override them. I realise that this is kind of redundant and will be looking into changing it in the future.
-
-TODO: Look into this ^
-
-## pre_conditions
-
-If your spec tests are failing because if dependencies on the (closed source) PE modules, don't stress, there is a way around this! Let's start with an example: Somewhere in my puppet code I am managing something that needs to restart the Puppet Server i.e.
-
-```puppet
-file { '/etc/puppetlabs/puppet/puppet.conf':
-  ensure  => file,
-  content => '#nothing',
-  notify  => Service['pe-puppetserver'], # This will fail without the PE module!
-  }
-```
-
-If we try to compile a catalog against this code it will fail because we are not including the PE class that manages `Service['pe-puppetserver']`, therefore it is not in the catalog and we cannot establist dependencies upon it. 
-
-If we run into a situations like this we can use the `spec/pre_conditions` folder to get around them e.g. Putting this in the `spec/pre_conditions` folder will solve our issues:
-
-```puppet
-service { 'pe-puppetserver':
-  ensure => 'running',
-}
-```
-
-This is because anything in this folder will get add to the catalog along with the class (role) we are testing. 
-
-NOTE: [resource collector ovverides](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources_advanced.html#amending-attributes-with-a-collector) could be useful in this situation.
-
-## Lets go!
-
-Now to **run the spec tests** just do a:
-
-`bundler exec rake controlrepo_spec`
-
-## Acceptance testing
-
-Now that we have a lot of stuff set up, we can also run acceptance testing! This will do much the same thing as the spec testing, except on an actual box. (It will run `include role::your_role` on the server and check for errors)
-
-This does however take a little more preparation. The main thing we need is that we need to know which nodes to spin up in order to do the testing. We use Beaker to actually interact with the hypervisor of choice and therefore we use their [nodeset file syntax](https://github.com/puppetlabs/beaker/blob/master/docs/Example-Vagrant-Hosts-Files.md). The only thing we need to do is **name the nodes the same aswe do for spec tests** and **have all the nodes in the same file**.
-
-Here is an example:
+Before we configure a hypervisor to spin up a node however, we have to make sure that it can clone from a machine which is ready. The controlrepo gem **requires it's VMs to have puppet pre-installed.** It doesn't matter what version of puppet, as long as it is on the PATH and the `type` setting is configured correctly i.e.
 
 ```yaml
-# spec/acceptance/nodesets/controlrepo.yaml
+type: AIO # For machines that have the all-in-one agent installed (>=4.0 or >=2015.2)
+# OR
+type: pe # For puppet enterprise agents <2015.2
+# OR
+type: foss # For open source puppet <4.0
+```
+
+Here is an example of a nodeset file that you can use yourselves. It uses freely available Vagrant boxes from puppetlabs and Virtualbox as the Vagrant provider.
+
+```yaml
 HOSTS:
   centos6a:
     roles:
       - agent
+    type: aio
     platform: el-6-64
     box: puppetlabs/centos-6.6-64-puppet
     box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-puppet
@@ -149,27 +142,130 @@ HOSTS:
   centos7b:
     roles:
       - agent
+    type: aio
     platform: el-7-64
     box: puppetlabs/centos-7.0-64-puppet
     box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-puppet
     hypervisor: vagrant_virtualbox
-  ubuntu1404a:
+  ubuntu1204:
     roles:
       - agent
-    platform: ubuntu-14.04-64
-    box: puppetlabs/ubuntu-14.04-64-puppet
-    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/ubuntu-14.04-64-puppet
+    type: aio
+    platform: ubuntu-12.04-32
+    box: puppetlabs/ubuntu-12.04-32-puppet
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/ubuntu-12.04-32-puppet
+    hypervisor: vagrant_virtualbox
+  debian78:
+    roles:
+      - agent
+    type: aio
+    platform: debian-7.8-64
+    box: puppetlabs/debian-7.8-64-puppet
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/debian-7.8-64-puppet
     hypervisor: vagrant_virtualbox
 ```
 
-Now when we run:
+### Hiera Data
+
+If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory and you are good to go. **NOTE:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
+
+### R10k.yaml
+
+For the Controlrepo gem to be able to clone the controlrepo (itself) from git (into a temp dir) it needs an `r10k.yaml` file under the `spec/` directory. Don't worry about any of the paths here, we dynamically generate and override them. I realise that this is kind of redundant and will be looking into changing it in the future.
+
+## Spec testing
+
+Once you have your `controlrepo.yaml` and factsets set up you are ready to go with spec testing.
+
+To run the tests:
+
+`bundle exec rake controlrepo_spec`
+
+This will do the following things:
+
+  1. Create a temporary directory
+  2. Clone all repos in the Puppetfile into the temporary directory
+  3. Generate tests that use rspec-puppet
+  4. Install required gems into temp dir using Bundler
+  5. Run the tests
+
+## Acceptance testing
+
+Acceptance testing works in much the same way as spec testing except that it requires a nodeset file along with `controlrepo.yaml`
+
+To run the tests:
 
 `bundle exec rake controlrepo_acceptance`
 
-It will use the same test matrix we have already defined in `controlrepo.yaml` and spin up each node and do the testing.
+This will do the following things:
 
-NOTE: The same test deduplication will be applied here as it is in spec tests, also; macines will be classified with **one** role, run, destroyed, re-created and then classified with the next role.
+  1. Create a temporary directory
+  2. Clone all repos in the Puppetfile into the temporary directory
+  3. Generate tests that use RSpec and Beaker
+  4. Install required gems into temp dir using Bundler
+  5. Run the tests, each test consists of:
+    - Spin up the VM
+    - Copy over the code
+    - Run puppet and catch any errors
+    - Run puppet again to catch anything that might not be idempotent
+    - Destroy the VM
 
+## Using workarounds
+
+There may be situations where you cannot test everything that is in your puppet code, some common reasons for this include:
+  
+  - Code is destined for a Puppet Master but the VM image is not a Puppet Master which means we can't restart certain services etc.
+  - A file is being pulled from somewhere that is only accessible in production
+  - Something is trying to connect to something else that does not exist
+
+Fear not! There is a solution for this, it's also a good way to practice writing *nasty* puppet code. For this exact purpose I have added the ability for the controlrepo gem to include extra bits of code in the tests to fix things. All you need to do is put a file containing puppet code here:
+
+`spec/pre_conditions/*.pp`
+
+What this will do is it will take any puppet code from any files it finds in that directory and have it executed alongside the code that you are actually testing. For example if we are testing some code that notifies the `pe-puppetserver` service, but are not managing that service in our code because it is managed by the PE module that ships with Puppet Enterprise:
+
+```puppet
+# Somewhere in our code
+file { '/etc/puppetlabs/puppet/puppet.conf':
+  ensure  => file,
+  content => '#nothing',
+  notify  => Service['pe-puppetserver'], # This will fail without the PE module!
+  }
+```
+
+We can add the service to the pre_conditions to make sure that out catalogs can compile e.g.
+
+```puppet
+# spec/pre_conditions/services.pp
+service { 'pe-puppetserver':
+  ensure => 'running',
+}
+```
+
+However this is going to pos an issue when we get to acceptance testing. Due to the fact that acceptance tests actually run the code, not just try to compile a catalog, it will not be able to find the 'pe-pupetserver' service and will fail. One way to get around this is to use some of the optional parameters to the service resource e.g.
+
+```puppet
+# We are not going to actually have this service anywhere on our servers but
+# our code needs to refresh it. This is to trck puppet into doing nothing
+service { 'pe-puppetserver':
+  ensure     => 'running',
+  enable     => false,
+  hasrestart => false, # Force Puppet to use start and stop to restart
+  start      => 'echo "Start"', # This will always exit 0
+  stop       => 'echo "Stop"', # This will also always exit 0
+  hasstatus  => false, # Force puppet to use our command for status
+  status     => 'echo "Status"', # This will always exit 0 and therefore Puppet will think the service is running
+  provider   => 'base',
+}
+```
+
+Here we are specifying custom commands to run for starting, stopping and checking the status of a service. We know what the exit codes of these commands are going to be so we know what puppet will think the service is doing because we have [read the documentation](https://docs.puppetlabs.com/references/latest/type.html#service-attributes). If there are things other than services you need to check then I would recommend checking the documentation to see if you can mock things like we have here.
+
+[Resource collectors](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources_advanced.html#amending-attributes-with-a-collector) are likely to come in handy here too. They allow you to override values of resources that match given criteria. This way we can override things for the sake of testing without having to change the code.
+
+**NOTE:** If you need to run some pre_conditions during acceptance tests but not spec tests or vice versa you can check the status of the `$controlrepo_accpetance` variable. It will be `true` when run as an acceptance test and `undef` otherwise. If you want to limit pre_conditions to only certain nodes just use conditional logic based on facts like you normally would.
+
+## RESUME FROM HERE
 
 ## Hard mode
 
