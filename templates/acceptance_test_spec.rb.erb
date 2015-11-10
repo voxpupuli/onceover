@@ -15,7 +15,7 @@ describe "Acceptance Testing" do
 <% test.classes.each do |cls| -%>
   describe "<%= cls.name %> on <%= node.name %>" do
     after :all do
-      logger.line_prefix = "  "
+      logger.line_prefix = "    "
       $nwm.cleanup
     end
 
