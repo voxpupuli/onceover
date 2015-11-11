@@ -9,8 +9,10 @@ class Controlrepo
 
     attr_accessor :classes
     attr_accessor :nodes
-    attr_accessor :groups
-    attr_accessor :tests
+    attr_accessor :node_groups
+    attr_accessor :class_groups
+    attr_accessor :spec_tests
+    attr_accessor :acceptance_tests
     attr_accessor :environment
 
     def initialize(file, environment = 'production')
@@ -23,22 +25,50 @@ class Controlrepo
       @environment = environment
       @classes = []
       @nodes = []
-      @groups = []
-      @tests = []
+      @node_groups = []
+      @class_groups = []
+      @spec_tests = []
+      @acceptance_tests = []
 
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
-      config['groups'].each { |name, members| @groups << Controlrepo::Group.new(name, members) }
+      config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) }
+      config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) }
 
       # Add the 'all_classes' and 'all_nodes' default groups
-      @groups << Controlrepo::Group.new('all_nodes',@nodes)
-      @groups << Controlrepo::Group.new('all_classes',@classes)
+      @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
+      @class_groups << Controlrepo::Group.new('all_classes',@classes)
 
-      config['test_matrix'].each do |machines, roles|
+      config['test_matrix'].each do |machines, settings|
+        if settings['tests'] == 'spec'
+          @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+        elsif settings['tests'] == 'acceptance'
+          @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+        elsif settings['tests'] == 'all_tests'
+          test = Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+          @spec_tests << test
+          @acceptance_tests << test
+        end
         # TODO: Work out some way to set per-test options like idempotency
-        @tests << Controlrepo::Test.new(machines,roles)
+        #@spec_tests << Controlrepo::Test.new(machines,roles)
+        #@acceptance_tests
       end
     end
+
+    def self.find_list(thing)
+      # Takes a string and finds an object or list of objects to match, will
+      # take nodes, classes or groups
+      if Controlrepo::Group.find(thing)
+        return Controlrepo::Group.find(thing).members
+      elsif Controlrepo::Class.find(thing)
+        return [Controlrepo::Class.find(thing)]
+      elsif Controlrepo::Node.find(thing)
+        return [Controlrepo::Node.find(thing)]
+      else
+        raise "Could not find #{thing} in list of classes, nodes or groupss"
+      end
+    end
+        
 
     def pre_condition
       # Read all the pre_conditions and return the string
