@@ -16,7 +16,7 @@ class Controlrepo
       @name = name
       @members = []
 
-      if Controlrepo::Groups.valid_members?(members)
+      if Controlrepo::Group.valid_members?(members)
         # If it's already a valid list just chuck it in there
         @members = members
       elsif members.is_a?(Hash)
