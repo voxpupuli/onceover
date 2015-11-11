@@ -77,6 +77,8 @@ class Controlrepo
 
     def verify_spec_test(controlrepo,test)
       test.nodes.each do |node|
+        require 'pry'
+        binding.pry
         unless controlrepo.facts_files.any? { |file| file =~ /\/#{node}\.json/ }
           raise "Could not find factset for node: #{node.name}"
         end
