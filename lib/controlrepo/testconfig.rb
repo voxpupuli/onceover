@@ -78,7 +78,7 @@ class Controlrepo
     def verify_spec_test(controlrepo,test)
       test.nodes.each do |node|
         unless controlrepo.facts_files.any? { |file| file =~ /\/#{node}\.json/ }
-          raise "Could not find factset for test: #{test.to_s}"
+          raise "Could not find factset for node: #{node.name}"
         end
       end
     end
@@ -88,7 +88,7 @@ class Controlrepo
       nodeset = YAML.load_file(controlrepo.nodeset_file)
       test.nodes.each do |node|
         unless nodeset['HOSTS'].has_key?(node)
-          raise "Could not find nodeset for test: #{test.to_s}"
+          raise "Could not find nodeset for node: #{node.name}"
         end
       end
     end
