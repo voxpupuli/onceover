@@ -15,12 +15,6 @@ class Controlrepo
     attr_accessor :acceptance_tests
     attr_accessor :environment
 
-
-# TODO: Add checking for missing fact and nodesets
-
-
-
-
     def initialize(file, environment = 'production')
       begin
         config = YAML.load(File.read(file))
