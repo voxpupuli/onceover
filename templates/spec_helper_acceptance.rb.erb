@@ -62,18 +62,6 @@ RSpec.configure do |c|
   #c.provision
   #c.validate
   #c.configure
-
-  # Destroy nodes if no preserve hosts
-  c.after :suite do
-    case options[:destroy]
-    when 'no'
-      # Don't cleanup
-    when 'onpass'
-      c.cleanup if RSpec.world.filtered_examples.values.flatten.none?(&:exception)
-    else
-      c.cleanup
-    end
-  end
 end
 
 # Set the number of lines it will print
