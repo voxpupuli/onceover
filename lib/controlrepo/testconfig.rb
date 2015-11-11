@@ -30,14 +30,14 @@ class Controlrepo
       @spec_tests = []
       @acceptance_tests = []
 
+      # Add the 'all_classes' and 'all_nodes' default groups
+      @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
+      @class_groups << Controlrepo::Group.new('all_classes',@classes)
+
       config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
       config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) }
       config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) }
-
-      # Add the 'all_classes' and 'all_nodes' default groups
-      @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
-      @class_groups << Controlrepo::Group.new('all_classes',@classes)
 
       config['test_matrix'].each do |machines, settings|
         if settings['tests'] == 'spec'
@@ -65,7 +65,7 @@ class Controlrepo
       elsif Controlrepo::Node.find(thing)
         return [Controlrepo::Node.find(thing)]
       else
-        raise "Could not find #{thing} in list of classes, nodes or groupss"
+        raise "Could not find #{thing} in list of classes, nodes or groups"
       end
     end
         
