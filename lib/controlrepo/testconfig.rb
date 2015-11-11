@@ -87,7 +87,7 @@ class Controlrepo
       require 'yaml'
       nodeset = YAML.load_file(controlrepo.nodeset_file)
       test.nodes.each do |node|
-        unless nodeset['HOSTS'].has_key?(node)
+        unless nodeset['HOSTS'].has_key?(node.name)
           raise "Could not find nodeset for node: #{node.name}"
         end
       end
