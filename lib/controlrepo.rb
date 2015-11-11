@@ -17,6 +17,7 @@ class Controlrepo
   attr_accessor :tempdir
   attr_accessor :spec_dir
   attr_accessor :temp_modulepath
+  attr_accessor :nodeset_file
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -85,6 +86,7 @@ class Controlrepo
     @facts_dir = File.expand_path('./spec/factsets',@root)
     @spec_dir = File.expand_path('./spec',@root)
     @facts_files = Dir["#{@facts_dir}/*.json"]
+    @nodeset_file = File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/
     @temp_environmentpath = nil

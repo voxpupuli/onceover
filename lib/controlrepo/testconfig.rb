@@ -15,6 +15,12 @@ class Controlrepo
     attr_accessor :acceptance_tests
     attr_accessor :environment
 
+
+# TODO: Add checking for missing fact and nodesets
+
+
+
+
     def initialize(file, environment = 'production')
       begin
         config = YAML.load(File.read(file))
@@ -68,7 +74,24 @@ class Controlrepo
         raise "Could not find #{thing} in list of classes, nodes or groups"
       end
     end
-        
+
+    def verify_spec_test(controlrepo,test)
+      test.nodes.each do |node|
+        unless controlrepo.facts_files.any? { |file| file =~ /\/#{node}\.json/ }
+          raise "Could not find factset for test: #{test.to_s}"
+        end
+      end
+    end
+
+    def verify_acceptance_test(controlrepo,test)
+      require 'yaml'
+      nodeset = YAML.load_file(controlrepo.nodeset_file)
+      test.nodes.each do |node|
+        unless nodeset['HOSTS'].has_key?(node)
+          raise "Could not find nodeset for test: #{test.to_s}"
+        end
+      end
+    end
 
     def pre_condition
       # Read all the pre_conditions and return the string
