@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "controlrepo"
-  s.version     = "1.1.1"
+  s.version     = "2.0.0"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppetlabs.com"]
   s.homepage    = ""
