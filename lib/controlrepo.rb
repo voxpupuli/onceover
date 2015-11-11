@@ -82,7 +82,7 @@ class Controlrepo
     @root = search_path
     @puppetfile = File.expand_path('./Puppetfile',@root)
     @environment_conf = File.expand_path('./environment.conf',@root)
-    @facts_dir = File.expand_path('./spec/facts',@root)
+    @facts_dir = File.expand_path('./spec/factsets',@root)
     @spec_dir = File.expand_path('./spec',@root)
     @facts_files = Dir["#{@facts_dir}/*.json"]
     @role_regex = /role[s]?:{2}/
