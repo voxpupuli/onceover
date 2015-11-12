@@ -24,8 +24,8 @@ class Controlrepo
       end
 
       @default_options = {
-        :check_idempotency => true,
-        :runs_before_idempotency => 1
+        'check_idempotency' => true,
+        'runs_before_idempotency' => 1
       }
 
       # Add defaults if they do not exist
@@ -134,6 +134,7 @@ class Controlrepo
 
               # Merge the non-default options right on in there
               relevant_test.options.merge!(test.options)
+              binding.pry
             else
               combinations << combo
               new_tests << Controlrepo::Test.new(node,cls,test.options)
