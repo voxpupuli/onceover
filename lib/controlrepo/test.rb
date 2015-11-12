@@ -10,6 +10,19 @@ class Controlrepo
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
     def initialize(on_these,test_this,options = {})
+      # I copied this code off the internet, basically it allows us
+      # to refer to each key as either a string or an object
+      options.default_proc = proc do |h, k|
+        case k
+          when String then sym = k.to_sym; h[sym] if h.key?(sym)
+          when Symbol then str = k.to_s; h[str] if h.key?(str)
+        end
+      end
+  
+      # Add defaults if they do not exist
+      options = {:check_idempotency => true}.merge(options)
+      options = {:runs_before_idempotency => 1}.merge(options)
+
       @nodes = []
       @classes = []
       @options = options

@@ -55,11 +55,21 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 **nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
 
-**groups:** The groups section is just for saving us some typing. Here we can set up groups of classes *or* nodes (not a combination of the two) which we can then refer to in our test matrix. There are also two default groups automatically created which you can use, **all_classes** and **all_nodes**. If you can't guess what they are go have a coffee and come back.
+**node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax.
 
-**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be a hash with the node/s as the key and class/es as the values. This is where we would use groups if we had them (you can see us using the `windows_roles` and `centos_servers` groups in the below example). We can also use groups to subtractively build up lists of classes by using `include` and `exclude` as per the example below.
+**class_groups:** The `class_groups` section is jmuch the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax.
 
-Don't be afraid if your test matrix produces duplicate tests, the controlrepo gem de-duplicates the test matrix before flattening it and generating the tests, as a result there should never be any duplicate tests. This also means that tests might not come out in the order that you expect D:
+**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be a hash with the following format:
+
+```yaml
+  {nodes_to_test}:
+    classes: '{classes_to_test}'
+    tests: '{all_tests|acceptance|spec}' # One of the three
+    options: # Optional (haha, get it?)
+      {valid_option}: {value} # Check the doco for available options
+```
+
+Don't be afraid if your test matrix produces duplicate tests, the controlrepo gem de-duplicates the test matrix before flattening it and generating the tests, as a result there should never be any duplicate tests. This also means that tests might not come out in the order that you expect `D:`
 
 ```yaml
 classes:
@@ -75,21 +85,45 @@ nodes:
   - server2008r2a
   - ubuntu1404a
 
-groups:
+node_groups:
+  centos_severs:
+    - centos6a
+    - centos7b
+  non_windows_servers:
+    include: 'all_nodes'
+    exclude: 'server2008r2a'
+
+class_groups:
   windows_roles:
     - 'roles::windows_server'
     - 'roles::backend_dbserver'
-  centos_servers:
-    - centos6a
-    - centos7b
+  non_windows_roles:
+    include: 'all_classes'
+    exclude: 'windows_roles'
 
 test_matrix:
-  server2008r2a: windows_roles
+  server2008r2a: 
+    classes: 'windows_roles'
+    tests: 'spec'
   ubuntu1404a: 'roles::frontend_webserver'
   centos_servers:
     include: all_classes
     exclude: windows_roles
 ```
+
+**Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
+
+```yaml
+node_groups:
+  windows_nodes: # This has to be defined first
+    - sevrer2008r2
+    - server2012r2
+  non_windows:
+    include: 'all_nodes' # Start with all nodes
+    exclude: 'windows_nodes' # Then remove the winows ones from that list
+```
+
+It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it (Makes sense right?)
 
 ### factsets
 
