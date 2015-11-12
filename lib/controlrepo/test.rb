@@ -18,10 +18,14 @@ class Controlrepo
           when Symbol then str = k.to_s; h[str] if h.key?(str)
         end
       end
-  
+
+      @default_options = {
+        :check_idempotency => true,
+        :runs_before_idempotency => 1
+      }
+
       # Add defaults if they do not exist
-      options = {:check_idempotency => true}.merge(options)
-      options = {:runs_before_idempotency => 1}.merge(options)
+      options = @default_options.merge(options)
 
       @nodes = []
       @classes = []
@@ -105,13 +109,29 @@ class Controlrepo
       # This should take an array of tests and remove any duplicates from them
 
       # this will be an array of arrays, or maybe hashes
+      # TODO: Rewrite this so that it merges options hashes, or takes one, decide on the right behaviour
       combinations = []
       new_tests = []
       tests.each do |test|
         test.nodes.each do |node|
           test.classes.each do |cls|
             combo = {node => cls}
-            unless combinations.member?(combo)
+            if combinations.member?(combo)
+              require 'pry'
+              binding.pry
+              # Find the right test object:
+              relevant_test = new_tests[new_tests.index do |a| 
+                a.nodes[0] == node and a.classes[0] == cls 
+              end]
+
+              # Delete all default values in the current options hash
+              test.options.delete_if do |key,value|
+                @default_options[key] == value
+              end
+
+              # Merge the non-default options right on in there
+              relevant_test.options.merge!(test.options)
+            else
               combinations << combo
               new_tests << Controlrepo::Test.new(node,cls,test.options)
             end
@@ -128,6 +148,10 @@ class Controlrepo
       # will duplicated node or class objects, just test objects,
       # everything else is passed by reference
       new_tests
+    end
+
+    def self.strip_default_options(options)
+
     end
 
     def self.all
