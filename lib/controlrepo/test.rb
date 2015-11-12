@@ -121,8 +121,7 @@ class Controlrepo
           test.classes.each do |cls|
             combo = {node => cls}
             if combinations.member?(combo)
-              require 'pry'
-              binding.pry
+
               # Find the right test object:
               relevant_test = new_tests[new_tests.index do |a|
                 a.nodes[0] == node and a.classes[0] == cls

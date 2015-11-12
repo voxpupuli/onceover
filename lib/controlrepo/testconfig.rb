@@ -39,19 +39,18 @@ class Controlrepo
       config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) }
       config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) }
 
-      config['test_matrix'].each do |machines, settings|
-        if settings['tests'] == 'spec'
-          @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
-        elsif settings['tests'] == 'acceptance'
-          @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
-        elsif settings['tests'] == 'all_tests'
-          test = Controlrepo::Test.new(machines,settings['classes'],settings['options'])
-          @spec_tests << test
-          @acceptance_tests << test
+      config['test_matrix'].each do |test_hash|
+        test_hash.each do |machines, settings|
+          if settings['tests'] == 'spec'
+            @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+          elsif settings['tests'] == 'acceptance'
+            @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+          elsif settings['tests'] == 'all_tests'
+            test = Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+            @spec_tests << test
+            @acceptance_tests << test
+          end
         end
-        # TODO: Work out some way to set per-test options like idempotency
-        #@spec_tests << Controlrepo::Test.new(machines,roles)
-        #@acceptance_tests
       end
     end
 
