@@ -10,6 +10,9 @@ class Controlrepo
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
     def initialize(on_these,test_this,options = {})
+      # Turn options into an empty hash is someone passed in a nil value
+      options ||= {}
+
       # I copied this code off the internet, basically it allows us
       # to refer to each key as either a string or an object
       options.default_proc = proc do |h, k|
@@ -120,8 +123,8 @@ class Controlrepo
               require 'pry'
               binding.pry
               # Find the right test object:
-              relevant_test = new_tests[new_tests.index do |a| 
-                a.nodes[0] == node and a.classes[0] == cls 
+              relevant_test = new_tests[new_tests.index do |a|
+                a.nodes[0] == node and a.classes[0] == cls
               end]
 
               # Delete all default values in the current options hash
