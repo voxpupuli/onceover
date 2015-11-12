@@ -75,7 +75,7 @@ describe "Acceptance Testing" do
         }.not_to raise_exception
       end
     end
-<% @options[:runs_before_idempotency].times do %>
+<% test.options[:runs_before_idempotency].times do %>
     describe "running puppet" do
       it "should run with no errors" do
         expect {
@@ -91,7 +91,7 @@ CODE
       end
     end
 <% end -%>
-<% if @options[:check_idempotency] then %>
+<% if test.options[:check_idempotency] then %>
     describe "checking for idempotency" do
       it "should run with no changes" do
         expect {
