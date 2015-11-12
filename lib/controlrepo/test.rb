@@ -5,6 +5,7 @@ class Controlrepo
     attr_accessor :nodes
     attr_accessor :classes
     attr_accessor :options
+    attr_reader   :default_options
 
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
@@ -129,7 +130,7 @@ class Controlrepo
 
               # Delete all default values in the current options hash
               test.options.delete_if do |key,value|
-                @default_options[key] == value
+                test.default_options[key] == value
               end
 
               # Merge the non-default options right on in there
@@ -151,10 +152,6 @@ class Controlrepo
       # will duplicated node or class objects, just test objects,
       # everything else is passed by reference
       new_tests
-    end
-
-    def self.strip_default_options(options)
-
     end
 
     def self.all
