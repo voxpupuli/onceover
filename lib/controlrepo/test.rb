@@ -134,7 +134,6 @@ class Controlrepo
 
               # Merge the non-default options right on in there
               relevant_test.options.merge!(test.options)
-              binding.pry
             else
               combinations << combo
               new_tests << Controlrepo::Test.new(node,cls,test.options)
