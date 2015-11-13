@@ -7,7 +7,7 @@ require 'pathname'
 require 'controlrepo/beaker'
 begin 
   require 'pry' 
-rescue 
+rescue LoadError
   # We don't care if i'ts not here, this is just used for
   # debugging sometimes
 end
