@@ -45,6 +45,10 @@ If we are doing spec testing we need sets of facts to compile the puppet code ag
 
 If we are doing acceptance testing then we need information about how to spin up VMs to do the testing on, these are configured in [nodesets](#nodesets).
 
+There is one thing that is not configured using config files and that is the **environment** to test. To change the environment that tests run in simply use the `CONTROLREPO_env` environment variable e.g.
+
+`CONTROLREPO_env=development bundle exec rake controlrepo_spec`
+
 ### controlrepo.yaml 
 
 `spec/controlrepo.yaml`

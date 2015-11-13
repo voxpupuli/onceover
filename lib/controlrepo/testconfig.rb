@@ -15,14 +15,16 @@ class Controlrepo
     attr_accessor :acceptance_tests
     attr_accessor :environment
 
-    def initialize(file, environment = 'production')
+    def initialize(file, environment = ENV['CONTROLREPO_env'])
       begin
         config = YAML.load(File.read(file))
       rescue YAML::ParserError
         raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
       end
 
+
       @environment = environment
+      @environment ||= 'production'
       @classes = []
       @nodes = []
       @node_groups = []
