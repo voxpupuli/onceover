@@ -59,17 +59,19 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 **class_groups:** The `class_groups` section is jmuch the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax.
 
-**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be a hash with the following format:
+**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be an array of hashes with the following format:
 
 ```yaml
-  {nodes_to_test}:
-    classes: '{classes_to_test}'
-    tests: '{all_tests|acceptance|spec}' # One of the three
-    options: # Optional (haha, get it?)
-      {valid_option}: {value} # Check the doco for available options
+  - {nodes_to_test}:
+      classes: '{classes_to_test}'
+      tests: '{all_tests|acceptance|spec}' # One of the three
+      options: # Optional (haha, get it?)
+        {valid_option}: {value} # Check the doco for available options
 ```
 
-Don't be afraid if your test matrix produces duplicate tests, the controlrepo gem de-duplicates the test matrix before flattening it and generating the tests, as a result there should never be any duplicate tests. This also means that tests might not come out in the order that you expect `D:`
+Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do. In the example below we have not referred to the same group twice but we have referred to `centos6a` and `centos7b` in all of out tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have left the more specific references to last. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency. 
+
+A full example:
 
 ```yaml
 classes:
@@ -102,13 +104,17 @@ class_groups:
     exclude: 'windows_roles'
 
 test_matrix:
-  server2008r2a: 
-    classes: 'windows_roles'
-    tests: 'spec'
-  ubuntu1404a: 'roles::frontend_webserver'
-  centos_servers:
-    include: all_classes
-    exclude: windows_roles
+  - all_nodes:
+      classes: 'all_classes'
+      tests: 'spec'
+  - non_windows_servers:
+      classes: 'all_classes'
+      tests: 'all_tests'
+  - centos_severs:
+      classes: 'roles::frontend_webserver'
+      tests: 'acceptance'
+      options:
+        runs_before_idempotency: 2
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
@@ -120,10 +126,20 @@ node_groups:
     - server2012r2
   non_windows:
     include: 'all_nodes' # Start with all nodes
-    exclude: 'windows_nodes' # Then remove the winows ones from that list
+    exclude: 'windows_nodes' # Then remove the windows ones from that list
 ```
 
 It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it (Makes sense right?)
+
+#### Test Options
+
+**check_idempotency** *Default: true*
+
+Weather or not to check that puppet will be idempotent
+
+**runs_before_idempotency** *Default: 1*
+
+The number of runs to try before checking that it is idempotent. Required for some things that require restarts of the server or restarts of puppet.
 
 ### factsets
 
@@ -137,7 +153,7 @@ Which will give raw json output of every fact which puppet knows about. Usually 
 
 `puppet facts > fact_set_name.json`
 
-Once we have our factset all we need to do is copy it into `spec/factsets/` inside out controlrepo and commit it to version control. Factsets are named based on their filename, not the ane of the server they came from (Although you can, if you want). i.e the following factset file:
+Once we have our factset all we need to do is copy it into `spec/factsets/` inside out controlrepo and commit it to version control. Factsets are named based on their filename, not the name of the server they came from (Although you can, if you want). i.e the following factset file:
 
 `spec/factsets/server2008r2.yaml`
 
@@ -283,11 +299,11 @@ service { 'pe-puppetserver':
 }
 ```
 
-However this is going to pos an issue when we get to acceptance testing. Due to the fact that acceptance tests actually run the code, not just try to compile a catalog, it will not be able to find the 'pe-pupetserver' service and will fail. One way to get around this is to use some of the optional parameters to the service resource e.g.
+However this is going to pose an issue when we get to acceptance testing. Due to the fact that acceptance tests actually run the code, not just try to compile a catalog, it will not be able to find the 'pe-pupetserver' service and will fail. One way to get around this is to use some of the optional parameters to the service resource e.g.
 
 ```puppet
 # We are not going to actually have this service anywhere on our servers but
-# our code needs to refresh it. This is to trck puppet into doing nothing
+# our code needs to refresh it. This is to trick puppet into doing nothing
 service { 'pe-puppetserver':
   ensure     => 'running',
   enable     => false,
