@@ -1,4 +1,3 @@
-require 'pry'
 require 'r10k/puppetfile'
 require 'erb'
 require 'json'
@@ -6,6 +5,12 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'controlrepo/beaker'
+begin 
+  require 'pry' 
+rescue 
+  # We don't care if i'ts not here, this is just used for
+  # debugging sometimes
+end
 
 class Controlrepo
   attr_accessor :root
