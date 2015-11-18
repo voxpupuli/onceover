@@ -2,6 +2,7 @@ require 'controlrepo/class'
 require 'controlrepo/node'
 require 'controlrepo/group'
 require 'controlrepo/test'
+require 'git'
 
 class Controlrepo
   class TestConfig
@@ -99,26 +100,30 @@ class Controlrepo
       puppetcode.join("\n")
     end
 
+    def checkout_branch(working_dir, branch) 
+      Dir.chdir(working_dir)     
+      g = Git.open(working_dir)
+      
+      # if we are already on the right branch do nothing
+      if ! g.branch.current == @environment then
+        if g.branches.include? branch
+          g.branch(@environment).checkout
+        else
+          puts "Unable to checkout requested environment #{@environment}: branch not found"
+        end
+      end
+    end
+
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
       tempdir = Dir.mktmpdir('r10k')
       repo.tempdir = tempdir
-
-      # Read in the config and change all the directories, then create them
-      r10k_config = repo.r10k_config
-      r10k_config[:cachedir] = "#{tempdir}#{r10k_config[:cachedir]}"
-      FileUtils::mkdir_p(r10k_config[:cachedir])
-      r10k_config[:sources].map do |name,source_settings|
-        source_settings["basedir"] = "#{tempdir}#{source_settings["basedir"]}"
-        FileUtils::mkdir_p(source_settings["basedir"])
-        # Yes, I realise this is going to set it many times
-        repo.temp_environmentpath = source_settings["basedir"]
-      end
-      File.write("#{tempdir}/r10k.yaml",r10k_config.to_yaml)
+      FileUtils.cp_r("#{Dir.pwd}/.", tempdir)
+      checkout_branch(tempdir, @environment)
 
       # Pull the trigger!
       Dir.chdir(tempdir) do
-        `r10k deploy environment #{@environment} -p --color --config #{tempdir}/r10k.yaml --verbose`
+        system("r10k puppetfile install --verbose")
       end
 
       # Return tempdir for use
