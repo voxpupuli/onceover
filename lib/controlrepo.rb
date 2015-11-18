@@ -214,7 +214,12 @@ class Controlrepo
   end
 
   def hiera_config
-    YAML.load_file(hiera_config_file)
+    begin
+      YAML.load_file(hiera_config_file)
+    rescue TypeError => e
+      raise "Could not load hiera config file: #{hiera_config_file}"
+      raise e
+    end
   end
 
   def hiera_config=(data)
