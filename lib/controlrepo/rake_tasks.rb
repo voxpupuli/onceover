@@ -24,6 +24,11 @@ task :hiera_setup do
   repo.hiera_config = current_config
 end
 
+task :controlrepo_details do
+  require 'controlrepo'
+  puts Controlrepo.new.to_s
+end
+
 task :generate_nodesets do
   require 'controlrepo/beaker'
   require 'net/http'

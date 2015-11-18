@@ -99,6 +99,17 @@ class Controlrepo
     $temp_modulepath = nil
   end
 
+  def to_s
+    <<-END.gsub(/^\s{4}/,'')
+    puppetfile: #{@puppetfile}
+    environment_conf: #{@environment_conf}
+    facts_dir: #{@facts_dir}
+    spec_dir: #{@spec_dir}
+    facts_files: #{@facts_files}
+    nodeset_file: #{@nodeset_file}
+    END
+  end
+
   def roles
     classes.keep_if { |c| c =~ @role_regex }
   end
@@ -216,9 +227,8 @@ class Controlrepo
   def hiera_config
     begin
       YAML.load_file(hiera_config_file)
-    rescue TypeError => e
+    rescue TypeError
       raise "Could not load hiera config file: #{hiera_config_file}"
-      raise e
     end
   end
 
