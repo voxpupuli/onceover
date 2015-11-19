@@ -1,0 +1,38 @@
+# Classes to be tested
+classes:
+<% repo.roles.each do |role| -%>
+  - <%= role %>
+<% end -%>
+
+# Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
+# depending on weather you are running 'spec' or 'acceptance' tests
+nodes:
+<% repo.facts_files.each do |file| -%>
+  - <%= File.basename(file,'.json') %>
+<% end -%>
+
+# You can group classes here to save typing
+class_groups:
+
+# You can group nodes here to save typing
+# We have created a 'non_windows_nodes' group because we can't
+# give you Windows vagrant boxes to test with because licensing,
+# we can give you fact sets though so go crazy with spec testing!
+node_groups:
+  windows_nodes:
+<% repo.facts_files.each do |file| -%>
+<% if File.basename(file,'.json') =~ /Windows/i -%>
+    - <%= File.basename(file,'.json') %>
+<% end -%>
+<% end -%>
+  non_windows_nodes:
+    include: 'all_nodes'
+    exclude: 'windows_nodes'
+
+test_matrix:
+  - all_nodes:
+      classes: 'all_classes'
+      tests: 'spec'
+  - non_windows_nodes: 
+      classes: 'all_classes'
+      tests: 'acceptance'

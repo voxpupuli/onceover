@@ -3,6 +3,7 @@
 ## Table of Contents
 
   - [Overview](#overview)
+  - [Quick Start](#quick-start)
   - [Installation](#installation)
   - [Config files](#config-files)
     - [controlrepo.yaml](#controlrepoyaml)
@@ -24,6 +25,45 @@
     - [generate_nodesets](#generate_nodesets)
     - [hiera_setup](#hiera_setup)
 
+## Quick Start
+
+**Note:** This assumes you are inside the controlrepo directory.
+
+Add this to your `Gemfile`:
+
+```ruby
+source 'https://rubygems.org'
+
+gem 'controlrepo'
+```
+
+Install all the gems:
+
+`bundle install`
+
+Add this to your [Rakefile](#rake-tasks):
+
+```ruby
+require 'puppetlabs_spec_helper/rake_tasks'
+```
+
+Generate your [controlrepo.yaml](#controlrepoyaml):
+
+`bundle exec rake generate_controlrepo_yaml > spec/controlrepo.yaml`
+
+Generate your [nodesets](#nodesets):
+
+`bundle exec rake generate_nodesets > spec/acceptance/controlrepo-nodes.yml`
+
+*Optional:* [Get hiera working](#hiera-data)
+
+Run spec tests:
+
+`bundle exec rake controlrepo_spec `
+
+Run acceptance tests:
+
+`bundle exec rake controlrepo_acceptance`
 
 ## Overview
 

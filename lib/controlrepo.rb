@@ -90,7 +90,7 @@ class Controlrepo
     @environment_conf = File.expand_path('./environment.conf',@root)
     @facts_dir = File.expand_path('./spec/factsets',@root)
     @spec_dir = File.expand_path('./spec',@root)
-    @facts_files = Dir["#{@facts_dir}/*.json"]
+    @facts_files = [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../factsets',__FILE__)}/*.json"]].flatten
     @nodeset_file = File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/

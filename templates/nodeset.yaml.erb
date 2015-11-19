@@ -1,9 +1,9 @@
-HOSTS:
-  <%= fact_set['fqdn'] %>:
-    roles:
-      - agent
-    type: aio
-    platform: <%= platform %>
-    box: <%= boxname %>
-    box_url: <%= url %>
-    hypervisor: vagrant_virtualbox
+<% if comment_out then prefix = '#' end-%>
+<%= prefix %>  <%= node_name %>:
+<%= prefix %>    roles:
+<%= prefix %>      - agent
+<%= prefix %>    type: aio
+<%= prefix %>    platform: <%= platform %>
+<%= prefix %>    box: <%= boxname %>
+<%= prefix %>    box_url: <%= url %>
+<%= prefix %>    hypervisor: vagrant_virtualbox

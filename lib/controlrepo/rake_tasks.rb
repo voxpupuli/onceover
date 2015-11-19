@@ -29,6 +29,15 @@ task :controlrepo_details do
   puts Controlrepo.new.to_s
 end
 
+task :generate_controlrepo_yaml do
+  require 'controlrepo'
+  repo = Controlrepo.new
+  template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
+  controlrepo_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb',template_dir))
+  puts ERB.new(controlrepo_yaml_template, nil, '-').result(binding)
+end
+
+
 task :generate_nodesets do
   require 'controlrepo/beaker'
   require 'net/http'
@@ -36,47 +45,33 @@ task :generate_nodesets do
 
   repo = Controlrepo.new
 
-  begin
-    Dir.mkdir("#{repo.root}/spec/acceptance")
-    puts "Created #{repo.root}/spec/acceptance"
-  rescue Errno::EEXIST
-    # Do nothing, this is okay
-  end
+  puts "HOSTS:"
 
-  begin
-    Dir.mkdir("#{repo.root}/spec/acceptance/nodesets")
-    puts "Created #{repo.root}/spec/acceptance/nodesets"
-  rescue Errno::EEXIST
-    # Do nothing, this is okay
-  end
-
-  facts = repo.facts
-  facts.each do |fact_set|
-    boxname = Controlrepo_beaker.facts_to_vagrant_box(fact_set)
-    platform = Controlrepo_beaker.facts_to_platform(fact_set)
+  repo.facts.each do |fact_set|
+    node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
+    boxname = Controlrepo::Beaker.facts_to_vagrant_box(fact_set)
+    platform = Controlrepo::Beaker.facts_to_platform(fact_set)
     response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
     url = 'URL goes here'
 
-    unless response =~ /404 Not Found/
+    if response =~ /Not Found/i
+      comment_out = true
+    else
+      comment_out = false
       box_info = JSON.parse(response)
       box_info['current_version']['providers'].each do |provider|
-        if provider['name'] == 'virtualbox'
+        if  provider['name'] == 'virtualbox'
           url = provider['original_url']
         end
       end
     end
 
-    # Use an ERB template to write the files
+    # Use an ERB template
     template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
     fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb',template_dir))
-    output_file = File.expand_path("spec/acceptance/nodesets/#{fact_set['fqdn']}.yml",repo.root)
-    if File.exists?(output_file) == false
-      File.write(output_file,ERB.new(fixtures_template, nil, '-').result(binding))
-      puts "Created #{output_file}"
-    else
-      puts "#{output_file} already exists, not going to overwrite because scared"
-    end
+    puts ERB.new(fixtures_template, nil, '-').result(binding)
   end
+
 end
 
 task :controlrepo_autotest_prep do
