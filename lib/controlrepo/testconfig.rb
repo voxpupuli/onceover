@@ -118,11 +118,14 @@ class Controlrepo
       require 'controlrepo'
       tempdir = Dir.mktmpdir('r10k')
       repo.tempdir = tempdir
-      FileUtils.cp_r("#{Dir.pwd}/.", tempdir)
-      checkout_branch(tempdir, @environment)
+      temp_code_dir = "#{tempdir}/etc/puppetlabs/code/environments/#{@environment}"
+      repo.temp_environmentpath = temp_code_dir.chomp("/#{@environment}")
+      FileUtils.mkdir_p(temp_code_dir)
+      FileUtils.cp_r("#{Dir.pwd}/.", temp_code_dir)
+      checkout_branch(temp_code_dir, @environment)
 
       # Pull the trigger!
-      Dir.chdir(tempdir) do
+      Dir.chdir(temp_code_dir) do
         system("r10k puppetfile install --verbose")
       end
 

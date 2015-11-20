@@ -69,7 +69,7 @@ class Controlrepo
           version = facts['os']['release']['major']
         end
       rescue
-        # Do nothing, this is the easiest way to handle the hash bing in different formats
+        # Do nothing, this is the easiest way to handle the hash being in different formats
       end
 
       begin
@@ -78,13 +78,13 @@ class Controlrepo
           version = facts['os']['distro']['release']['major']
         end
       rescue
-        # Do nothing, this is the easiest way to handle the hash bing in different formats
+        # Do nothing, this is the easiest way to handle the hash being in different formats
       end
 
       begin
         if facts['os']['distro']['id'] == 'Debian'
-          platform = 'Debian'
-          version = facts['os']['distro']['release']['major']
+          platform = 'debian'
+          version = facts['os']['distro']['release']['full']
         end
       rescue
         # Do nothing

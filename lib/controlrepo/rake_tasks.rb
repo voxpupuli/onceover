@@ -121,6 +121,7 @@ task :controlrepo_autotest_prep do
       end
     end
   end
+  binding.pry
   File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
 
   @config.create_fixtures_symlinks(@repo)

@@ -34,7 +34,7 @@ describe "Acceptance Testing" do
         OPTIONS.each do |opt,val|
           if opt == :HOSTS
             val.each do |k,v|
-              if k == :<%= node.name %>
+              if k == :'<%= node.name %>'
                 current_opts[:HOSTS] = {k => v}
               end
             end
