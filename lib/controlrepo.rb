@@ -107,6 +107,8 @@ class Controlrepo
     spec_dir: #{@spec_dir}
     facts_files: #{@facts_files}
     nodeset_file: #{@nodeset_file}
+    roles: #{roles}
+    profiles #{profiles}
     END
   end
 
@@ -228,7 +230,8 @@ class Controlrepo
     begin
       YAML.load_file(hiera_config_file)
     rescue TypeError
-      raise "Could not load hiera config file: #{hiera_config_file}"
+      puts "WARNING: Could not find hiera config file, continuing"
+      nil
     end
   end
 
@@ -249,6 +252,9 @@ class Controlrepo
     # Parse the file
     env_conf = File.read(@environment_conf)
     env_conf = env_conf.split("\n")
+
+    # Delete commented out lines
+    env_conf.delete_if { |l| l =~ /^\s*#/}
 
     # Map the lines into a hash
     environment_config = {}

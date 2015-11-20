@@ -102,9 +102,6 @@ task :controlrepo_autotest_prep do
   # Create spec_helper_accpetance.rb
   @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec",@repo)
 
-  # Create Gemfile
-  @config.write_gemfile(@repo.tempdir)
-
   # Deduplicate and write the tests (Spec and Acceptance)
   Controlrepo::Test.deduplicate(@config.spec_tests).each do |test|
     @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
@@ -113,16 +110,17 @@ task :controlrepo_autotest_prep do
   @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",Controlrepo::Test.deduplicate(@config.acceptance_tests))
 
   # Parse the current hiera config, modify, and write it to the temp dir
-  hiera_config = @repo.hiera_config
-  hiera_config.each do |setting,value|
-    if value.is_a?(Hash)
-      if value.has_key?(:datadir)
-        hiera_config[setting][:datadir] = "#{@repo.temp_environmentpath}/#{@config.environment}/#{value[:datadir]}"
+  unless @repo.hiera_config ==nil
+    hiera_config = @repo.hiera_config
+    hiera_config.each do |setting,value|
+      if value.is_a?(Hash)
+        if value.has_key?(:datadir)
+          hiera_config[setting][:datadir] = "#{@repo.temp_environmentpath}/#{@config.environment}/#{value[:datadir]}"
+        end
       end
     end
+    File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
   end
-  binding.pry
-  File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
 
   @config.create_fixtures_symlinks(@repo)
 end
@@ -131,7 +129,7 @@ task :controlrepo_autotest_spec do
   Dir.chdir(@repo.tempdir) do
     #`bundle install --binstubs`
     #`bin/rake spec_standalone`
-    exec("bundle install --without acceptance; bundle exec rake spec_standalone")
+    exec("bundle exec rake spec_standalone")
   end
 end
 
@@ -139,7 +137,7 @@ task :controlrepo_autotest_acceptance do
   Dir.chdir(@repo.tempdir) do
     #`bundle install --binstubs`
     #`bin/rake spec_standalone`
-    exec("bundle install; bundle exec rake acceptance")
+    exec("bundle exec rake acceptance")
   end
 end
 

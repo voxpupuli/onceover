@@ -44,8 +44,12 @@ Install all the gems:
 Add this to your [Rakefile](#rake-tasks):
 
 ```ruby
-require 'puppetlabs_spec_helper/rake_tasks'
+require 'controlrepo/rake_tasks'
 ```
+
+Create directories:
+
+`mkdir -p spec/acceptance/nodesets`
 
 Generate your [controlrepo.yaml](#controlrepoyaml):
 
@@ -53,7 +57,7 @@ Generate your [controlrepo.yaml](#controlrepoyaml):
 
 Generate your [nodesets](#nodesets):
 
-`bundle exec rake generate_nodesets > spec/acceptance/controlrepo-nodes.yml`
+`bundle exec rake generate_nodesets > spec/acceptance/nodesets/controlrepo-nodes.yml`
 
 *Optional:* [Get hiera working](#hiera-data)
 

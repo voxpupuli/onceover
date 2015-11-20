@@ -37,10 +37,10 @@ class Controlrepo
       @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
       @class_groups << Controlrepo::Group.new('all_classes',@classes)
 
-      config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) }
-      config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) }
-      config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) }
-      config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) }
+      config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) } unless config['classes'] == nil
+      config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) } unless config['nodes'] == nil
+      config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) } unless config['node_groups'] == nil
+      config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) } unless config['class_groups'] == nil
 
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
@@ -157,12 +157,6 @@ class Controlrepo
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       rakefile_template = File.read(File.expand_path('./Rakefile.erb',template_dir))
       File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
-    end
-
-    def write_gemfile(location)
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      gemfile_template = File.read(File.expand_path('./Gemfile.erb',template_dir))
-      File.write("#{location}/Gemfile",ERB.new(gemfile_template, nil, '-').result(binding))
     end
 
     def write_spec_helper(location, repo)

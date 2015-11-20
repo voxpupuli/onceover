@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'beaker-rspec'
   s.add_runtime_dependency 'rspec-puppet'
+  s.add_runtime_dependency 'puppetlabs_spec_helper'
   s.add_runtime_dependency 'rspec'
   s.add_runtime_dependency 'bundler'
   s.add_runtime_dependency 'r10k'
