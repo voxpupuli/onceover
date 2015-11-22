@@ -186,12 +186,5 @@ class Controlrepo
         end
       end
     end
-
-    # TODO: Work out the best way to format the output
-    # TODO: Look into bundling bundler into the temp dir
-    # TODO: Write task for beaker tests *brace yourself* Dont forget about the beaker file you have
-    # TODO: Compare the outlout of the beaker helper that I wrote
-    #       with the output from the templated tests, us ethe better one
-    #       bearing in minf that beaker has logger options that could help
   end
 end

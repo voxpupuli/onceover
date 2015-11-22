@@ -164,8 +164,3 @@ task :r10k_deploy_local do
   # Deploy r10k to a temp dir
   config.r10k_deploy_local(repo)
 end
-
-# TODO: We could use rspec's tagging abilities to choose which if the acceptance tests to run.
-
-
-

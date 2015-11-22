@@ -113,7 +113,6 @@ class Controlrepo
       # This should take an array of tests and remove any duplicates from them
 
       # this will be an array of arrays, or maybe hashes
-      # TODO: Rewrite this so that it merges options hashes, or takes one, decide on the right behaviour
       combinations = []
       new_tests = []
       tests.each do |test|
