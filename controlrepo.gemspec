@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.version     = "2.0.4"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppetlabs.com"]
-  s.homepage    = ""
-  s.summary     = ""
-  s.description = ""
+  s.homepage    = "https://github.com/dylanratcliffe/controlrepo_gem"
+  s.summary     = "Testing tools for Puppet controlrepos"
+  s.description = "Testing tools for Puppet controlrepos"
   s.licenses    = 'Apache-2.0'
 
   s.files       = `git ls-files`.split("\n")
