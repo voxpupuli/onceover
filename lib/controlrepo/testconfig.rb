@@ -96,7 +96,7 @@ class Controlrepo
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         puppetcode << File.read(condition_file)
       end
-      return false if puppetcode.count == 0
+      return nil if puppetcode.count == 0
       puppetcode.join("\n")
     end
 

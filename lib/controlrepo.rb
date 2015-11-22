@@ -108,7 +108,7 @@ class Controlrepo
     facts_files: #{@facts_files}
     nodeset_file: #{@nodeset_file}
     roles: #{roles}
-    profiles #{profiles}
+    profiles: #{profiles}
     END
   end
 

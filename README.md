@@ -63,7 +63,7 @@ Generate your [nodesets](#nodesets):
 
 Run spec tests:
 
-`bundle exec rake controlrepo_spec `
+`bundle exec rake controlrepo_spec`
 
 Run acceptance tests:
 
@@ -190,6 +190,8 @@ Weather or not to check that puppet will be idempotent
 The number of runs to try before checking that it is idempotent. Required for some things that require restarts of the server or restarts of puppet.
 
 ### factsets
+
+This gem comes with a few pre-canned factsets. These are listed under `nodes` when you run `bundle exec rake generate_controlrepo_yaml`. You can also add your own factsets by putting them in:
 
 `spec/factsets/*.yaml`
 
@@ -491,7 +493,7 @@ The tasks are as follows:
 
 `bundle exec rake generate_fixtures`
 
-This task will go though your Puppetfile, grab all of the modules in there and convert them into a `.fixtures.yml` file. It will also take the `environment.conf` file into account, check to see if you have any relative pathed directories and also include them into the `.fixtures.yml` as symlinks. e.g. If your files look like this:
+This task will go though your Puppetfile, grab all of the modules in there and convert them into a `.fixtures.yml` file. (You only need this if you are writing your own custom spec tests) It will also take the `environment.conf` file into account, check to see if you have any relative pathed directories and also include them into the `.fixtures.yml` as symlinks. e.g. If your files look like this:
 
 **Puppetfile**
 ```ruby
@@ -527,11 +529,25 @@ fixtures:
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
 
+#### generate_controlrepo_yaml
+
+`bundle exec rake generate_controlrepo_yaml`
+
+This will try to generate a `controlrepo.yaml` file, it will:
+
+  - Parse your environment.conf to work out where your roles and profiles might live
+  - Find your roles classes and pre-polulate them into the "classes" section
+  - Look though all of the factsets that ship with the gem, and also the ones you have created under `spec/factsets/*.json`
+  - Populate the "nodes" section with all of the factsets it finds
+  - Create node groups of windows and non-windows nodes
+  - Create a basic test_matrix
+
+
 #### generate_nodesets
 
 `bundle exec rake generate_nodesets`
 
-This task will generate nodeset file required by beaker, based on the fact sets that exist in the repository. If you have any fact sets for which puppetlabs has a compatible vagrant box (i.e. centos, debian, ubuntu) it will detect the version specifics and set up the nodeset file, complete with box URL. If it doesn't know how to deal with a fact set it will output a boilerplate nodeset file that will need to be altered before it can be used.
+This task will generate nodeset file required by beaker, based on the factsets that exist in the repository. If you have any fact sets for which puppetlabs has a compatible vagrant box (i.e. centos, debian, ubuntu) it will detect the version specifics and set up the nodeset file, complete with box URL. If it doesn't know how to deal with a fact set it will output a boilerplate nodeset section and comment it out.
 
 #### hiera_setup
 
