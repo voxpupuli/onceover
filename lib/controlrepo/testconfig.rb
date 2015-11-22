@@ -19,7 +19,9 @@ class Controlrepo
     def initialize(file, environment = ENV['CONTROLREPO_env'])
       begin
         config = YAML.load(File.read(file))
-      rescue YAML::ParserError
+      rescue Errno::ENOENT
+        raise "Could not find spec/controlrepo.yaml"
+      rescue Psych::SyntaxError
         raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
       end
 
