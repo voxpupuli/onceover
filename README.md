@@ -21,9 +21,10 @@
     - [Using hiera data (In manual tests)](#using-hiera-data-in-manual-tests)
     - [Extra Configuration](#extra-configuration)
     - [Rake tasks](#rake-tasks)
-    - [generate_fixtures](#generate_fixtures)
-    - [generate_nodesets](#generate_nodesets)
-    - [hiera_setup](#hiera_setup)
+      - [generate_fixtures](#generate_fixtures)
+      - [generate_controlrepo_yaml](#generate_controlrepo_yaml)
+      - [generate_nodesets](#generate_nodesets)
+      - [hiera_setup](#hiera_setup)
 
 ## Quick Start
 

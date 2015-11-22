@@ -80,8 +80,11 @@ task :controlrepo_autotest_prep do
   @config = Controlrepo::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
 
   # Verify that all the files exist for the tests we have set up
-  @config.spec_tests.each { |test| @config.verify_spec_test(@repo,test) }
-  @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
+  if Rake.application.top_level_tasks[0] == "controlrepo_spec"
+    @config.spec_tests.each { |test| @config.verify_spec_test(@repo,test) }
+  elsif Rake.application.top_level_tasks[0] == "controlrepo_acceptance"
+    @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
+  end
 
   # Deploy r10k to a temp dir
   @config.r10k_deploy_local(@repo)

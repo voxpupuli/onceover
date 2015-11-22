@@ -24,7 +24,7 @@ class Controlrepo
       begin
         if facts['os']['distro']['id'] == 'Debian'
           os = 'Debian'
-          version = "#{facts['os']['distro']['release']['major']}.#{facts['os']['distro']['release']['minor']}"
+          version = facts['os']['distro']['release']['full']
         end
       rescue
         # Do nothing
