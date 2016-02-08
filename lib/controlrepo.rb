@@ -5,8 +5,8 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'controlrepo/beaker'
-begin 
-  require 'pry' 
+begin
+  require 'pry'
 rescue LoadError
   # We don't care if i'ts not here, this is just used for
   # debugging sometimes
@@ -23,6 +23,7 @@ class Controlrepo
   attr_accessor :spec_dir
   attr_accessor :temp_modulepath
   attr_accessor :nodeset_file
+  attr_accessor :manifest
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -97,6 +98,7 @@ class Controlrepo
     @temp_environmentpath = nil
     @tempdir = nil
     $temp_modulepath = nil
+    @manifest = config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
   end
 
   def to_s
@@ -283,6 +285,10 @@ class Controlrepo
 
   def r10k_config=(data)
     File.write(r10k_config_file,data.to_yaml)
+  end
+
+  def temp_manifest
+    config['manifest'] ? File.expand_path(config['manifest'],@tempdir) : nil
   end
 
   private
