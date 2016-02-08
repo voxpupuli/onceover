@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     git (1.2.9.1)
+    rake (10.5.0)
     rubygems-tasks (0.2.4)
 
 PLATFORMS
@@ -9,6 +10,7 @@ PLATFORMS
 
 DEPENDENCIES
   git
+  rake
   rubygems-tasks
 
 BUNDLED WITH
