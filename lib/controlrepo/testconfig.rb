@@ -111,9 +111,6 @@ class Controlrepo
       FileUtils.cp_r("#{Dir.pwd}/", "#{repo.tempdir}/#{repo.environmentpath}/production")
 
       # Pull the trigger! If it's not already been pulled
-      require 'pry'
-      require 'pry-byebug'
-      binding.pry
       if repo.tempdir
         if File.directory?(repo.tempdir)
           unless Dir["#{repo.tempdir}/*"].empty?
