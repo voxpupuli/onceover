@@ -92,6 +92,13 @@ task :controlrepo_autotest_prep do
     @config.r10k_deploy_local(@repo)
   end
 
+  puts "Tempdir Contents:"
+  puts Dir["#{@repo.tempdir}/*"]
+  puts "END."
+
+  # Deploy r10k to a temp dir
+  @config.r10k_deploy_local(@repo)
+
   # Create the other directories we need
   FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
   FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")

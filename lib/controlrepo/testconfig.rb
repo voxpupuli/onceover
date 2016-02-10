@@ -107,9 +107,11 @@ class Controlrepo
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
       FileUtils.cp_r("#{Dir.pwd}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
 
-      # Pull the trigger!
-      Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-        system("r10k puppetfile install --verbose")
+      # Pull the trigger! If it's not already been pulled
+      if Dir["#{@repo.tempdir}/*"].empty?
+        Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+          system("r10k puppetfile install --verbose")
+        end
       end
 
       # Return repo.tempdir for use
