@@ -12,6 +12,7 @@
     - [Hiera Data](#hiera-data)
     - [R10k.yaml](#r10kyaml)
   - [Spec testing](#spec-testing)
+    - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
@@ -84,9 +85,9 @@ This gem can just be installed using `gem install` however I would recommend usi
 
 ## Config Files
 
-This project uses one main config file to determine what classes we should be testing and how, this is [controlrepo.yaml](#controlrepo.yaml). The `controlrepo.yaml` config file provides information about what classes to test when, however it needs more information than that: 
+This project uses one main config file to determine what classes we should be testing and how, this is [controlrepo.yaml](#controlrepo.yaml). The `controlrepo.yaml` config file provides information about what classes to test when, however it needs more information than that:
 
-If we are doing spec testing we need sets of facts to compile the puppet code against, these are stored in [factsets](#factsets). 
+If we are doing spec testing we need sets of facts to compile the puppet code against, these are stored in [factsets](#factsets).
 
 If we are doing acceptance testing then we need information about how to spin up VMs to do the testing on, these are configured in [nodesets](#nodesets).
 
@@ -94,7 +95,7 @@ There is one thing that is not configured using config files and that is the **e
 
 `CONTROLREPO_env=development bundle exec rake controlrepo_spec`
 
-### controlrepo.yaml 
+### controlrepo.yaml
 
 `spec/controlrepo.yaml`
 
@@ -118,7 +119,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
         {valid_option}: {value} # Check the doco for available options
 ```
 
-Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do. In the example below we have not referred to the same group twice but we have referred to `centos6a` and `centos7b` in all of out tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have left the more specific references to last. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency. 
+Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do. In the example below we have not referred to the same group twice but we have referred to `centos6a` and `centos7b` in all of out tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have left the more specific references to last. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
 
 A full example:
 
@@ -297,6 +298,10 @@ This will do the following things:
   4. Install required gems into temp dir using Bundler
   5. Run the tests
 
+### Adding your own spec tests
+
+When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
+
 ## Acceptance testing
 
 Acceptance testing works in much the same way as spec testing except that it requires a nodeset file along with `controlrepo.yaml`
@@ -321,7 +326,7 @@ This will do the following things:
 ## Using workarounds
 
 There may be situations where you cannot test everything that is in your puppet code, some common reasons for this include:
-  
+
   - Code is destined for a Puppet Master but the VM image is not a Puppet Master which means we can't restart certain services etc.
   - A file is being pulled from somewhere that is only accessible in production
   - Something is trying to connect to something else that does not exist
@@ -557,4 +562,3 @@ This task will generate nodeset file required by beaker, based on the factsets t
 Automatically modifies your hiera.yaml to point at the hieradata relative to it's position.
 
 This rake task will look for a hiera.yaml file (Using the same method we use for [this](#using-hiera-data)). It will then look for a hieradata directory in the root for your control repo (needs to match [this](http://rubular.com/?regex=%2Fhiera%28%3F%3A.%2Adata%29%3F%2Fi)). It will then modify the datadirs of any backends it finds in `hiera.yaml` to point at these directories.
-

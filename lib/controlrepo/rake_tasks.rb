@@ -1,5 +1,6 @@
 require 'controlrepo'
 require 'pathname'
+require 'pry'
 
 @repo = nil
 @config = nil
@@ -93,8 +94,8 @@ task :controlrepo_autotest_prep do
   FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
   FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")
 
-  # Copy our nodesets over
-  FileUtils.cp_r("#{@repo.spec_dir}/acceptance/nodesets","#{@repo.tempdir}/spec/acceptance")
+  # Copy our entire spec directory over
+  FileUtils.cp_r("#{@repo.spec_dir}","#{@repo.tempdir}")
 
   # Create the Rakefile so that we can take advantage of the existing tasks
   @config.write_rakefile(@repo.tempdir, "spec/classes/**/*_spec.rb")
@@ -132,6 +133,7 @@ task :controlrepo_autotest_spec do
   Dir.chdir(@repo.tempdir) do
     #`bundle install --binstubs`
     #`bin/rake spec_standalone`
+    binding.pry
     exec("bundle exec rake spec_standalone")
   end
 end
