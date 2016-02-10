@@ -104,11 +104,29 @@ class Controlrepo
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       end
+      puts "Tempdir: #{repo.tempdir}"
+      puts "Environmentpath: #{repo.environmentpath}"
+      puts "Pwd: #{Dir.pwd}"
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
-      FileUtils.cp_r("#{Dir.pwd}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r("#{Dir.pwd}/", "#{repo.tempdir}/#{repo.environmentpath}/production")
 
       # Pull the trigger! If it's not already been pulled
-      if Dir["#{@repo.tempdir}/*"].empty?
+      require 'pry'
+      require 'pry-byebug'
+      binding.pry
+      if repo.tempdir
+        if File.directory?(repo.tempdir)
+          unless Dir["#{repo.tempdir}/*"].empty?
+            Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+              system("r10k puppetfile install --verbose")
+            end
+          end
+        else
+          raise "#{repo.tempdir} is not a directory"
+        end
+      end
+
+      if Dir["#{repo.tempdir}/*"].empty?
         Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
           system("r10k puppetfile install --verbose")
         end
