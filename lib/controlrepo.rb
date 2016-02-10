@@ -16,10 +16,9 @@ class Controlrepo
   attr_accessor :root
   attr_accessor :puppetfile
   attr_accessor :facts_files
+  attr_accessor :environmentpath
   attr_accessor :role_regex
   attr_accessor :profile_regex
-  attr_accessor :temp_environmentpath
-  attr_accessor :tempdir
   attr_accessor :spec_dir
   attr_accessor :temp_modulepath
   attr_accessor :nodeset_file
@@ -87,6 +86,7 @@ class Controlrepo
       raise e
     end
     @root = search_path
+    @environmentpath = 'etc/puppetlabs/code/environments'
     @puppetfile = File.expand_path('./Puppetfile',@root)
     @environment_conf = File.expand_path('./environment.conf',@root)
     @facts_dir = File.expand_path('./spec/factsets',@root)
@@ -95,8 +95,7 @@ class Controlrepo
     @nodeset_file = File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/
-    @temp_environmentpath = nil
-    @tempdir = nil
+    @tempdir = nil || ENV['CONTROLREPO_temp']
     $temp_modulepath = nil
     @manifest = config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
   end
@@ -112,6 +111,16 @@ class Controlrepo
     roles: #{roles}
     profiles: #{profiles}
     END
+  end
+
+  def tempdir
+    nil || ENV['CONTROLREPO_temp']
+  end
+
+  def tempdir=(dir)
+    require "pry"
+    binding.pry
+    ENV['CONTROLREPO_temp'] = dir
   end
 
   def roles
