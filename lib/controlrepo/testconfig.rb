@@ -101,7 +101,9 @@ class Controlrepo
 
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
-      repo.tempdir = Dir.mktmpdir('r10k')
+      if repo.tempdir == nil
+        repo.tempdir = Dir.mktmpdir('r10k')
+      end
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
       FileUtils.cp_r("#{Dir.pwd}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
 
