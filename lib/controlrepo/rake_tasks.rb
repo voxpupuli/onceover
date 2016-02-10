@@ -87,7 +87,7 @@ task :controlrepo_autotest_prep do
   end
 
   # Only deploy r10k of we don't already have a directory
-  unless Dir.exists?(@repo.tempdir)
+  if Dir["#{@repo.tempdir}/*"].empty?
     # Deploy r10k to a temp dir
     @config.r10k_deploy_local(@repo)
   end
