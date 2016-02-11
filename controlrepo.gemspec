@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "controlrepo"
-  s.version     = "2.0.7"
+  s.version     = "2.0.8"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppetlabs.com"]
   s.homepage    = "https://github.com/dylanratcliffe/controlrepo_gem"
@@ -26,4 +26,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'r10k'
   s.add_runtime_dependency 'puppet'
   s.add_runtime_dependency 'git'
+  s.add_runtime_dependency 'vagrant-wrapper'
 end
