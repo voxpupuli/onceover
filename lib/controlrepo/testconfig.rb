@@ -108,20 +108,6 @@ class Controlrepo
         FileUtils.mkdir_p(repo.tempdir)
       end
 
-      puts repo.tempdir
-
-      # We need to make sure that if people are using a relative path for
-      # their tempdir, that we don't get ourselves into an infinite loop
-      # trying to copy it
-      # require 'pry'
-      # unless Pathname.new(repo.tempdir).absolute?
-      #   files_to_copy = Dir["#{repo.root}/*"].reject do |f|
-      #     f == Dir["#{repo.root}/#{repo.tempdir}"][0]
-      #   end
-      # else
-      #   files_to_copy = Dir["#{repo.root}/*"]
-      # end
-
       # We need to do the copy to a tempdir then move the tempdir to the
       # destination
       temp_controlrepo = Dir.mktmpdir('controlrepo')
@@ -129,11 +115,6 @@ class Controlrepo
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.mv(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
       FileUtils.rm_rf(temp_controlrepo)
-
-      # END
-      # binding.pry
-      # FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
-      # FileUtils.cp_r(files_to_copy, "#{repo.tempdir}/#{repo.environmentpath}/production/")
 
       # Pull the trigger! If it's not already been pulled
       if repo.tempdir
@@ -145,12 +126,6 @@ class Controlrepo
           end
         else
           raise "#{repo.tempdir} is not a directory"
-        end
-      end
-
-      if Dir["#{repo.tempdir}/*"].empty?
-        Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-          system("r10k puppetfile install --verbose")
         end
       end
 
