@@ -125,10 +125,15 @@ class Controlrepo
       # We need to do the copy to a tempdir then move the tempdir to the
       # destination
       temp_controlrepo = Dir.mktmpdir('controlrepo')
+      puts "Created tempdir #{temp_controlrepo}"
       FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}/")
+      puts "Copied #{repo.root}/* to #{temp_controlrepo}/"
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      puts "Created #{repo.tempdir}/#{repo.environmentpath}/production"
       FileUtils.mv("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
+      puts "Renamed #{temp_controlrepo}/. to #{repo.tempdir}/#{repo.environmentpath}/production"
       FileUtils.rm_rf(temp_controlrepo)
+      puts "Removed #{temp_controlrepo}"
 
       # END
       # binding.pry
