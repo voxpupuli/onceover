@@ -101,15 +101,32 @@ class Controlrepo
 
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
+      require 'pathname'
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
+      else
+        FileUtils.mkdir_p(repo.tempdir)
       end
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
-      FileUtils.cp_r("#{Dir.pwd}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
 
-      # Pull the trigger!
-      Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-        system("r10k puppetfile install --verbose")
+      # We need to do the copy to a tempdir then move the tempdir to the
+      # destination
+      temp_controlrepo = Dir.mktmpdir('controlrepo')
+      FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.mv(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
+      FileUtils.rm_rf(temp_controlrepo)
+
+      # Pull the trigger! If it's not already been pulled
+      if repo.tempdir
+        if File.directory?(repo.tempdir)
+          if Dir["#{repo.tempdir}/#{repo.environmentpath}/production/modules/*"].empty?
+            Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+              system("r10k puppetfile install --verbose")
+            end
+          end
+        else
+          raise "#{repo.tempdir} is not a directory"
+        end
       end
 
       # Return repo.tempdir for use

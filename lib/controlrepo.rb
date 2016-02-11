@@ -114,12 +114,16 @@ class Controlrepo
   end
 
   def tempdir
-    nil || ENV['CONTROLREPO_temp']
+    if ENV['CONTROLREPO_temp'] == ''
+      return nil
+    elsif ENV['CONTROLREPO_temp'] == nil
+      return nil
+    else
+      return File.absolute_path(ENV['CONTROLREPO_temp'])
+    end
   end
 
   def tempdir=(dir)
-    require "pry"
-    binding.pry
     ENV['CONTROLREPO_temp'] = dir
   end
 
