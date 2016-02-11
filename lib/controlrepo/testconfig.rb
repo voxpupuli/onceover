@@ -108,6 +108,8 @@ class Controlrepo
         FileUtils.mkdir_p(repo.tempdir)
       end
 
+      puts repo.tempdir
+
       # We need to make sure that if people are using a relative path for
       # their tempdir, that we don't get ourselves into an infinite loop
       # trying to copy it
