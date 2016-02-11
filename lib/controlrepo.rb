@@ -119,7 +119,7 @@ class Controlrepo
     elsif ENV['CONTROLREPO_temp'] == nil
       return nil
     else
-      return ENV['CONTROLREPO_temp']
+      return File.absolute_path(ENV['CONTROLREPO_temp'])
     end
   end
 

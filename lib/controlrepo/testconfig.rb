@@ -101,19 +101,40 @@ class Controlrepo
 
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
+      require 'pathname'
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       end
-      puts "Tempdir: #{repo.tempdir}"
-      puts "Environmentpath: #{repo.environmentpath}"
-      puts "Pwd: #{Dir.pwd}"
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
-      FileUtils.cp_r("#{Dir.pwd}/", "#{repo.tempdir}/#{repo.environmentpath}/production")
+
+      # We need to make sure that if people are using a relative path for
+      # their tempdir, that we don't get ourselves into an infinite loop
+      # trying to copy it
+      # require 'pry'
+      # unless Pathname.new(repo.tempdir).absolute?
+      #   files_to_copy = Dir["#{repo.root}/*"].reject do |f|
+      #     f == Dir["#{repo.root}/#{repo.tempdir}"][0]
+      #   end
+      # else
+      #   files_to_copy = Dir["#{repo.root}/*"]
+      # end
+
+      # We need to do the copy to a tempdir then move the tempdir to the
+      # destination
+      temp_controlrepo = Dir.mktmpdir('controlrepo')
+      FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}/")
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.mv("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
+      FileUtils.rm_rf(temp_controlrepo)
+
+      # END
+      # binding.pry
+      # FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      # FileUtils.cp_r(files_to_copy, "#{repo.tempdir}/#{repo.environmentpath}/production/")
 
       # Pull the trigger! If it's not already been pulled
       if repo.tempdir
         if File.directory?(repo.tempdir)
-          unless Dir["#{repo.tempdir}/*"].empty?
+          if Dir["#{repo.tempdir}/#{repo.environmentpath}/production/modules/*"].empty?
             Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
               system("r10k puppetfile install --verbose")
             end
