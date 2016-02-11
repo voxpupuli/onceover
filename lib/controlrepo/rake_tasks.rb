@@ -163,13 +163,11 @@ task :controlrepo_acceptance => [
   :controlrepo_autotest_acceptance
   ]
 
-
-
-task :r10k_deploy_local do
+task :controlrepo_temp_create do
   require 'controlrepo/testconfig'
-  @repo = Controlrepo.new
-  @config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
-
+  repo = Controlrepo.new
+  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  FileUtils.rm_rf(repo.tempdir)
   # Deploy r10k to a temp dir
   config.r10k_deploy_local(repo)
 end
