@@ -104,6 +104,8 @@ class Controlrepo
       require 'pathname'
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
+      else
+        FileUtils.mkdir_p(repo.tempdir)
       end
 
       # We need to make sure that if people are using a relative path for
