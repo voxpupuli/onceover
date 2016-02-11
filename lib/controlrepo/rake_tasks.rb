@@ -86,7 +86,6 @@ task :controlrepo_autotest_prep do
     @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
   end
 
-  puts Dir["#{@repo.tempdir}/*"]
   # Only deploy r10k of we don't already have a directory
   if Dir["#{@repo.tempdir}/*"].empty?
     # Deploy r10k to a temp dir
