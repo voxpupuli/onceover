@@ -12,6 +12,7 @@
     - [Hiera Data](#hiera-data)
     - [R10k.yaml](#r10kyaml)
   - [Spec testing](#spec-testing)
+    - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
@@ -299,6 +300,10 @@ This will do the following things:
   4. Install required gems into temp dir using Bundler
   5. Run the tests
 
+### Adding your own spec tests
+
+When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
+
 ## Acceptance testing
 
 Acceptance testing works in much the same way as spec testing except that it requires a nodeset file along with `controlrepo.yaml`
@@ -375,7 +380,114 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 **NOTE:** If you need to run some pre_conditions during acceptance tests but not spec tests or vice versa you can check the status of the `$controlrepo_accpetance` variable. It will be `true` when run as an acceptance test and `undef` otherwise. If you want to limit pre_conditions to only certain nodes just use conditional logic based on facts like you normally would.
 
-### Other Rake tasks
+## Extra Tooling
+
+I have provided some extra tools to use if you would prefer to write your own tests which I will go over here.
+
+### Accessing fact sets in a traditional RSpec test
+
+We can access all of our fact sets using `Controlrepo.facts`. Normally it would be implemented something like this:
+
+```ruby
+Controlrepo.facts.each do |facts|
+  context "on #{facts['fqdn']}" do
+    let(:facts) { facts }
+    it { should compile }
+  end
+end
+```
+
+### Accessing Roles in a traditional RSpec test
+
+This gem allows us to easily and dynamically test all of the roles and profiles in our environment against fact sets from all of the nodes to which they will be applied. All we need to do is create a spec test that calls out to the `Controlrepo` ruby class:
+
+```ruby
+require 'spec_helper'
+require 'controlrepo'
+
+Controlrepo.roles.each do |role|
+  describe role do
+    Controlrepo.facts.each do |facts|
+      context "on #{facts['fqdn']}" do
+        let(:facts) { facts }
+        it { should compile }
+      end
+    end
+  end
+end
+```
+
+This will iterate over each role in the controlrepo and test that it compiles with each set of facts.
+
+The same can also be done with profiles just by using the profiles method instead:
+
+```ruby
+require 'spec_helper'
+require 'controlrepo'
+
+Controlrepo.profiles.each do |profile|
+  describe profile do
+    Controlrepo.facts.each do |facts|
+      context "on #{facts['fqdn']}" do
+        let(:facts) { facts }
+        it { should compile }
+      end
+    end
+  end
+end
+```
+
+It is not limited to just doing simple "It should compile" tests. You can put any tests you want in here.
+
+Also since the `profiles`, `roles` and `facts` methods simply return arrays, you can iterate over them however you would like i.e. you could write a different set of tests for each profile and then just use the `facts` method to run those tests on every fact set.
+
+### Filtering
+
+You can also filter your fact sets based on the value of any fact, including structured facts. (It will drill down into nested hashes and match those too, it's not just a dumb equality match)
+
+Just pass a hash to the `facts` method and it will return only the fact sets with facts that match the hash e.g. Testing a certain profile on against only your Windows fact sets:
+
+```ruby
+require 'spec_helper'
+require 'controlrepo'
+
+describe 'profile::windows_appserver' do
+  Controlrepo.facts({
+    'kernel' => 'windows'
+    }).each do |facts|
+    context "on #{facts['fqdn']}" do
+      let(:facts) { facts }
+      it { should compile }
+    end
+  end
+end
+```
+
+### Using hiera data (In manual tests)
+
+You can also point these tests at your hiera data, you do this as you [normally would](https://github.com/rodjek/rspec-puppet#enabling-hiera-lookups) with rspec tests. However we do provide one helper to make this marginally easier. `Controlrepo.hiera_config` will look for hiera.yaml in the root of your control repo and also the spec directory, you will however need to set up the file itself e.g.
+
+```ruby
+require 'controlrepo'
+
+RSpec.configure do |c|
+  c.hiera_config = Controlrepo.hiera_config_file
+end
+```
+
+### Extra Configuration
+
+You can modify the regexes that the gem uses to filter classes that it finds into roles and profiles. Just set up a Controlrepo object and pass regexes to the below settings.
+
+```ruby
+repo = Controlrepo.new()
+repo.role_regex = /.*/ # Tells the class how to find roles, will be applied to repo.classes
+repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applied to repo.classes
+```
+
+Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not `Controlrepo.roles`
+
+### Rake tasks
 
 I have included a couple of little rake tasks to help get you started with testing your control repos. Set them up by adding this to your `Rakefile`
 
@@ -384,38 +496,6 @@ require 'controlrepo/rake_tasks'
 ```
 
 The tasks are as follows:
-
-#### generate_controlrepo_yaml
-
-`bundle exec rake generate_controlrepo_yaml`
-
-This will try to generate a `controlrepo.yaml` file, it will:
-
-  - Parse your environment.conf to work out where your roles and profiles might live
-  - Find your roles classes and pre-polulate them into the "classes" section
-  - Look though all of the factsets that ship with the gem, and also the ones you have created under `spec/factsets/*.json`
-  - Populate the "nodes" section with all of the factsets it finds
-  - Create node groups of windows and non-windows nodes
-  - Create a basic test_matrix
-
-
-#### generate_nodesets
-
-`bundle exec rake generate_nodesets`
-
-This task will generate nodeset file required by beaker, based on the factsets that exist in the repository. If you have any fact sets for which puppetlabs has a compatible vagrant box (i.e. centos, debian, ubuntu) it will detect the version specifics and set up the nodeset file, complete with box URL. If it doesn't know how to deal with a fact set it will output a boilerplate nodeset section and comment it out.
-
-#### controlrepo_temp_create
-
-This will create a directory including the Controlrepo and all required modules where the environment variable `CONTROLREPO_temp` is set to. This is designed to make it easier to rebuild a cache when you are caching the modules on a build server.
-
-#### hiera_setup
-
-`bundle exec rake hiera_setup`
-
-Automatically modifies your hiera.yaml to point at the hieradata relative to it's position.
-
-This rake task will look for a hiera.yaml file (Using the same method we use for [this](#using-hiera-data)). It will then look for a hieradata directory in the root for your control repo (needs to match [this](http://rubular.com/?regex=%2Fhiera%28%3F%3A.%2Adata%29%3F%2Fi)). It will then modify the datadirs of any backends it finds in `hiera.yaml` to point at these directories.
 
 #### generate_fixtures
 
@@ -456,3 +536,31 @@ fixtures:
 ```
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
+
+#### generate_controlrepo_yaml
+
+`bundle exec rake generate_controlrepo_yaml`
+
+This will try to generate a `controlrepo.yaml` file, it will:
+
+  - Parse your environment.conf to work out where your roles and profiles might live
+  - Find your roles classes and pre-polulate them into the "classes" section
+  - Look though all of the factsets that ship with the gem, and also the ones you have created under `spec/factsets/*.json`
+  - Populate the "nodes" section with all of the factsets it finds
+  - Create node groups of windows and non-windows nodes
+  - Create a basic test_matrix
+
+
+#### generate_nodesets
+
+`bundle exec rake generate_nodesets`
+
+This task will generate nodeset file required by beaker, based on the factsets that exist in the repository. If you have any fact sets for which puppetlabs has a compatible vagrant box (i.e. centos, debian, ubuntu) it will detect the version specifics and set up the nodeset file, complete with box URL. If it doesn't know how to deal with a fact set it will output a boilerplate nodeset section and comment it out.
+
+#### hiera_setup
+
+`bundle exec rake hiera_setup`
+
+Automatically modifies your hiera.yaml to point at the hieradata relative to it's position.
+
+This rake task will look for a hiera.yaml file (Using the same method we use for [this](#using-hiera-data)). It will then look for a hieradata directory in the root for your control repo (needs to match [this](http://rubular.com/?regex=%2Fhiera%28%3F%3A.%2Adata%29%3F%2Fi)). It will then modify the datadirs of any backends it finds in `hiera.yaml` to point at these directories.
