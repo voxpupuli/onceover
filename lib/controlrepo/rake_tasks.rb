@@ -1,6 +1,5 @@
 require 'controlrepo'
 require 'pathname'
-require 'pry'
 
 @repo = nil
 @config = nil
@@ -142,7 +141,6 @@ task :controlrepo_autotest_spec do
   Dir.chdir(@repo.tempdir) do
     #`bundle install --binstubs`
     #`bin/rake spec_standalone`
-    binding.pry
     exec("bundle exec rake spec_standalone")
   end
 end
