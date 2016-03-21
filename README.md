@@ -181,6 +181,8 @@ node_groups:
 
 It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it (Makes sense right?)
 
+**NOTE:** You can change where the gem creates it's temporary directory for running the tests by exporting the `CONTROLREPO_temp` environment variable.
+
 #### Test Options
 
 **check_idempotency** *Default: true*

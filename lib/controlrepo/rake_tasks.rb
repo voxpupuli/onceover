@@ -87,6 +87,12 @@ task :controlrepo_autotest_prep do
     @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
   end
 
+  # Only deploy r10k of we don't already have a directory
+  if Dir["#{@repo.tempdir}/*"].empty?
+    # Deploy r10k to a temp dir
+    @config.r10k_deploy_local(@repo)
+  end
+
   # Deploy r10k to a temp dir
   @config.r10k_deploy_local(@repo)
 
@@ -107,10 +113,13 @@ task :controlrepo_autotest_prep do
   @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec",@repo)
 
   # Deduplicate and write the tests (Spec and Acceptance)
+  FileUtils.rm_rf("#{@repo.tempdir}/spec/classes")
+  FileUtils.mkdir("#{@repo.tempdir}/spec/classes")
   Controlrepo::Test.deduplicate(@config.spec_tests).each do |test|
     @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
   end
 
+  FileUtils.rm_rf("#{@repo.tempdir}/spec/acceptance/*")
   @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",Controlrepo::Test.deduplicate(@config.acceptance_tests))
 
   # Parse the current hiera config, modify, and write it to the temp dir
@@ -119,11 +128,11 @@ task :controlrepo_autotest_prep do
     hiera_config.each do |setting,value|
       if value.is_a?(Hash)
         if value.has_key?(:datadir)
-          hiera_config[setting][:datadir] = "#{@repo.temp_environmentpath}/#{@config.environment}/#{value[:datadir]}"
+          hiera_config[setting][:datadir] = "#{@repo.tempdir}/#{@repo.environmentpath}/production/#{value[:datadir]}"
         end
       end
     end
-    File.write("#{@repo.temp_environmentpath}/#{@config.environment}/hiera.yaml",hiera_config.to_yaml)
+    File.write("#{@repo.tempdir}/#{@repo.environmentpath}/production/hiera.yaml",hiera_config.to_yaml)
   end
 
   @config.create_fixtures_symlinks(@repo)
@@ -156,13 +165,11 @@ task :controlrepo_acceptance => [
   :controlrepo_autotest_acceptance
   ]
 
-
-
-task :r10k_deploy_local do
+task :controlrepo_temp_create do
   require 'controlrepo/testconfig'
-  @repo = Controlrepo.new
-  @config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
-
+  repo = Controlrepo.new
+  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  FileUtils.rm_rf(repo.tempdir)
   # Deploy r10k to a temp dir
   config.r10k_deploy_local(repo)
 end

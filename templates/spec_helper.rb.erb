@@ -4,6 +4,6 @@ RSpec.configure do |c|
   c.parser = 'future'
   c.environmentpath = '<%= environmentpath %>'
   c.module_path = '<%= modulepath %>'
-  c.hiera_config = '<%= environmentpath %>/<%= @environment %>/hiera.yaml'
+  c.hiera_config = '<%= environmentpath %>/production/hiera.yaml'
   c.manifest = '<%= repo.temp_manifest %>'
 end

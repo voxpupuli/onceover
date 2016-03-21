@@ -16,7 +16,7 @@ class Controlrepo
     attr_accessor :acceptance_tests
     attr_accessor :environment
 
-    def initialize(file, environment = ENV['CONTROLREPO_env'])
+    def initialize(file)
       begin
         config = YAML.load(File.read(file))
       rescue Errno::ENOENT
@@ -25,9 +25,6 @@ class Controlrepo
         raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
       end
 
-
-      @environment = environment
-      @environment ||= 'production'
       @classes = []
       @nodes = []
       @node_groups = []
@@ -102,37 +99,38 @@ class Controlrepo
       puppetcode.join("\n")
     end
 
-    def checkout_branch(working_dir, branch) 
-      Dir.chdir(working_dir)     
-      g = Git.open(working_dir)
-      
-      # if we are already on the right branch do nothing
-      if ! g.branch.current == @environment then
-        if g.branches.include? branch
-          g.branch(@environment).checkout
-        else
-          puts "Unable to checkout requested environment #{@environment}: branch not found"
-        end
-      end
-    end
-
     def r10k_deploy_local(repo = Controlrepo.new)
       require 'controlrepo'
-      tempdir = Dir.mktmpdir('r10k')
-      repo.tempdir = tempdir
-      temp_code_dir = "#{tempdir}/etc/puppetlabs/code/environments/#{@environment}"
-      repo.temp_environmentpath = temp_code_dir.chomp("/#{@environment}")
-      FileUtils.mkdir_p(temp_code_dir)
-      FileUtils.cp_r("#{Dir.pwd}/.", temp_code_dir)
-      checkout_branch(temp_code_dir, @environment)
-
-      # Pull the trigger!
-      Dir.chdir(temp_code_dir) do
-        system("r10k puppetfile install --verbose")
+      require 'pathname'
+      if repo.tempdir == nil
+        repo.tempdir = Dir.mktmpdir('r10k')
+      else
+        FileUtils.mkdir_p(repo.tempdir)
       end
 
-      # Return tempdir for use
-      tempdir
+      # We need to do the copy to a tempdir then move the tempdir to the
+      # destination
+      temp_controlrepo = Dir.mktmpdir('controlrepo')
+      FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.mv(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
+      FileUtils.rm_rf(temp_controlrepo)
+
+      # Pull the trigger! If it's not already been pulled
+      if repo.tempdir
+        if File.directory?(repo.tempdir)
+          if Dir["#{repo.tempdir}/#{repo.environmentpath}/production/modules/*"].empty?
+            Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+              system("r10k puppetfile install --verbose")
+            end
+          end
+        else
+          raise "#{repo.tempdir} is not a directory"
+        end
+      end
+
+      # Return repo.tempdir for use
+      repo.tempdir
     end
 
     def write_spec_test(location, test)
@@ -162,11 +160,11 @@ class Controlrepo
     end
 
     def write_spec_helper(location, repo)
-      environmentpath = repo.temp_environmentpath
+      environmentpath = "#{repo.tempdir}/#{repo.environmentpath}"
       modulepath = repo.config['modulepath']
       modulepath.delete("$basemodulepath")
       modulepath.map! do |path|
-        "#{environmentpath}/#{@environment}/#{path}"
+        "#{environmentpath}/production/#{path}"
       end
       modulepath = modulepath.join(":")
       repo.temp_modulepath = modulepath
@@ -178,6 +176,7 @@ class Controlrepo
     end
 
     def create_fixtures_symlinks(repo)
+      FileUtils.rm_rf("#{repo.tempdir}/spec/fixtures/modules")
       FileUtils.mkdir_p("#{repo.tempdir}/spec/fixtures/modules")
       repo.temp_modulepath.split(':').each do |path|
         Dir["#{path}/*"].each do |mod|
