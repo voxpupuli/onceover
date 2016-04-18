@@ -13,8 +13,9 @@ Gem::Specification.new do |s|
 
   s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-
+  s.bindir       = 'bin'
+  s.executables  = 'controlrepo'
+  
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake', '>= 10.0.0'
   s.add_runtime_dependency 'json', '>= 1.8.2'
@@ -26,4 +27,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'r10k', '>=2.1.0'
   s.add_runtime_dependency 'puppet'
   s.add_runtime_dependency 'git'
+  s.add_runtime_dependency 'cri', '>= 2.6'
+  s.add_runtime_dependency 'colored', '~> 1.2'
 end
