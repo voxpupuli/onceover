@@ -13,7 +13,7 @@ class Controlrepo
           exit 0
         end
 
-        flag :t, :trace, 'Display stack traces on application crash'
+        flag nil, :trace, 'Display stack traces on application crash'
         optional :p, :path, 'Path to the root of the controlrepo'
         optional nil, :environmentpath, 'Value of environmentpath from puppet.conf'
         optional nil, :puppetfile, 'Location of the Puppetfile'
@@ -24,6 +24,7 @@ class Controlrepo
         optional nil, :nodeset_file, 'YAML file containing node definitions'
         optional nil, :tempdir, 'Temp directory to use, defaults to .controlrepo'
         optional nil, :manifest, 'Path fo find manifests'
+
         run do |opts, args, cmd|
           puts cmd.help(:verbose => opts[:verbose])
           exit 0
@@ -38,3 +39,4 @@ end
 
 # Add all of the other CLI components
 require 'controlrepo/cli/show'
+require 'controlrepo/cli/run'

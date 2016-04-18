@@ -140,8 +140,7 @@ class Controlrepo
       # Use an ERB template to write a spec test
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       spec_template = File.read(File.expand_path('./test_spec.rb.erb',template_dir))
-      randomness = (0...6).map { (65 + rand(26)).chr }.join
-      File.write("#{location}/#{randomness}_#{test.to_s}_spec.rb",ERB.new(spec_template, nil, '-').result(binding))
+      File.write("#{location}/#{test.to_s}_spec.rb",ERB.new(spec_template, nil, '-').result(binding))
     end
 
     def write_acceptance_tests(location, tests)
