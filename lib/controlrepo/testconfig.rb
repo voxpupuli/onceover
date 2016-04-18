@@ -109,7 +109,8 @@ class Controlrepo
       end
 
       # We need to do the copy to a tempdir then move the tempdir to the
-      # destination
+      # destination, just in case we get a recursive copy
+      # TODO: Improve this to save I/O
       temp_controlrepo = Dir.mktmpdir('controlrepo')
       FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
@@ -120,6 +121,10 @@ class Controlrepo
       if repo.tempdir
         if File.directory?(repo.tempdir)
           if Dir["#{repo.tempdir}/#{repo.environmentpath}/production/modules/*"].empty?
+            # TODO: Change this to call out to r10k directly to do this
+            # Probably something like:
+            # R10K::Settings.global_settings.evaluate(with_overrides)
+            # R10K::Action::Deploy::Environment
             Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
               system("r10k puppetfile install --verbose")
             end

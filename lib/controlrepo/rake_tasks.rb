@@ -77,6 +77,7 @@ end
 task :controlrepo_autotest_prep do
   require 'controlrepo/testconfig'
   @repo = Controlrepo.new
+  # TODO: This should be getting the location of controlrepo.yaml from @repo
   @config = Controlrepo::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
 
   # Verify that all the files exist for the tests we have set up

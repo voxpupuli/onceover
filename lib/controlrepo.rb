@@ -23,6 +23,7 @@ class Controlrepo
   attr_accessor :temp_modulepath
   attr_accessor :nodeset_file
   attr_accessor :manifest
+  attr_accessor :tempdir
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -95,7 +96,7 @@ class Controlrepo
     @nodeset_file = File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
     @role_regex = /role[s]?:{2}/
     @profile_regex = /profile[s]?:{2}/
-    @tempdir = nil || ENV['CONTROLREPO_temp']
+    @tempdir = ENV['CONTROLREPO_temp'] || File.absolute_path('./.controlrepo')
     $temp_modulepath = nil
     @manifest = config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
   end
@@ -111,20 +112,6 @@ class Controlrepo
     roles: #{roles}
     profiles: #{profiles}
     END
-  end
-
-  def tempdir
-    if ENV['CONTROLREPO_temp'] == ''
-      return nil
-    elsif ENV['CONTROLREPO_temp'] == nil
-      return nil
-    else
-      return File.absolute_path(ENV['CONTROLREPO_temp'])
-    end
-  end
-
-  def tempdir=(dir)
-    ENV['CONTROLREPO_temp'] = dir
   end
 
   def roles
