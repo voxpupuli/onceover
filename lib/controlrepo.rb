@@ -75,42 +75,36 @@ class Controlrepo
   # End class methods
   #
 
-  def initialize(search_path = Dir.pwd)
+  def initialize(opts = {})
     # When we initialize the object it is going to set some instance vars
-    begin
-      # Find the root of the control repo by traversing up
-      until File.exist?(File.expand_path('./Puppetfile',search_path)) do
-        search_path = File.expand_path('..',search_path)
-      end
-    rescue => e
-      raise " Could not find Puppetfile"
-      raise e
-    end
-    @root = search_path
-    @environmentpath = 'etc/puppetlabs/code/environments'
-    @puppetfile = File.expand_path('./Puppetfile',@root)
-    @environment_conf = File.expand_path('./environment.conf',@root)
-    @facts_dir = File.expand_path('./spec/factsets',@root)
-    @spec_dir = File.expand_path('./spec',@root)
-    @facts_files = [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../factsets',__FILE__)}/*.json"]].flatten
-    @nodeset_file = File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
-    @role_regex = /role[s]?:{2}/
-    @profile_regex = /profile[s]?:{2}/
-    @tempdir = ENV['CONTROLREPO_temp'] || File.absolute_path('./.controlrepo')
-    $temp_modulepath = nil
-    @manifest = config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
+
+    @root             = opts[:path] || Dir.pwd
+    @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
+    @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
+    @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
+    @facts_dir        = opts[:facts_dir] || File.expand_path('./spec/factsets',@root)
+    @spec_dir         = opts[:spec_dir] || File.expand_path('./spec',@root)
+    @facts_files      = opts[:facts_files] || [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../factsets',__FILE__)}/*.json"]].flatten
+    @nodeset_file     = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/controlrepo-nodes.yml',@root)
+    @role_regex       = /role[s]?:{2}/
+    @profile_regex    = /profile[s]?:{2}/
+    @tempdir          = opts[:tempdir] || ENV['CONTROLREPO_temp'] || File.absolute_path('./.controlrepo')
+    $temp_modulepath  = nil
+    @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
   end
 
   def to_s
+    require 'colored'
+
     <<-END.gsub(/^\s{4}/,'')
-    puppetfile: #{@puppetfile}
-    environment_conf: #{@environment_conf}
-    facts_dir: #{@facts_dir}
-    spec_dir: #{@spec_dir}
-    facts_files: #{@facts_files}
-    nodeset_file: #{@nodeset_file}
-    roles: #{roles}
-    profiles: #{profiles}
+    #{'puppetfile'.green}       #{@puppetfile}
+    #{'environment_conf'.green} #{@environment_conf}
+    #{'facts_dir'.green}        #{@facts_dir}
+    #{'spec_dir'.green}         #{@spec_dir}
+    #{'facts_files'.green}      #{@facts_files}
+    #{'nodeset_file'.green}     #{@nodeset_file}
+    #{'roles'.green}            #{roles}
+    #{'profiles'.green}         #{profiles}
     END
   end
 
