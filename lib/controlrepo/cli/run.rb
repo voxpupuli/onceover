@@ -1,6 +1,8 @@
 require 'cri'
 require 'controlrepo'
 require 'controlrepo/cli'
+require 'controlrepo/runner'
+require 'controlrepo/testconfig'
 
 class Controlrepo
   class CLI
@@ -32,7 +34,10 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs spec tests'
 
             run do |opts, args, cmd|
-              # Do some shit
+              repo = Controlrepo.new(opts)
+              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:spec)
+              runner.prepare!
+              runner.run_spec!
             end
           end
         end
@@ -46,7 +51,10 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs acceptance tests'
 
             run do |opts, args, cmd|
-              # Do some shit
+              repo = Controlrepo.new(opts)
+              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:acceptance)
+              runner.prepare!
+              runner.run_spec!
             end
           end
         end

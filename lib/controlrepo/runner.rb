@@ -6,7 +6,7 @@ class Controlrepo
     def initialize(repo, config, mode = [:spec, :acceptance])
       @repo   = repo
       @config = config
-      @mode   = [mode].flatten!
+      @mode   = [mode].flatten
     end
 
     def prepare!
