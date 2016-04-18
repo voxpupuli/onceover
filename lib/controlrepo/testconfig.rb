@@ -120,14 +120,12 @@ class Controlrepo
       # Pull the trigger! If it's not already been pulled
       if repo.tempdir
         if File.directory?(repo.tempdir)
-          if Dir["#{repo.tempdir}/#{repo.environmentpath}/production/modules/*"].empty?
-            # TODO: Change this to call out to r10k directly to do this
-            # Probably something like:
-            # R10K::Settings.global_settings.evaluate(with_overrides)
-            # R10K::Action::Deploy::Environment
-            Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-              system("r10k puppetfile install --verbose")
-            end
+          # TODO: Change this to call out to r10k directly to do this
+          # Probably something like:
+          # R10K::Settings.global_settings.evaluate(with_overrides)
+          # R10K::Action::Deploy::Environment
+          Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+            system("r10k puppetfile install --verbose")
           end
         else
           raise "#{repo.tempdir} is not a directory"
