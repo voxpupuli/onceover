@@ -2,7 +2,10 @@ require 'controlrepo/class'
 require 'controlrepo/node'
 require 'controlrepo/group'
 require 'controlrepo/test'
+require 'controlrepo/logger'
+require 'controlrepo'
 require 'git'
+include Controlrepo::Logger
 
 class Controlrepo
   class TestConfig
@@ -93,6 +96,7 @@ class Controlrepo
       spec_dir = Controlrepo.new.spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
+        logger.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
       return nil if puppetcode.count == 0
@@ -105,12 +109,14 @@ class Controlrepo
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       else
+        logger.debug "Creating #{repo.tempdir}"
         FileUtils.mkdir_p(repo.tempdir)
       end
 
       # We need to do the copy to a tempdir then move the tempdir to the
       # destination, just in case we get a recursive copy
       # TODO: Improve this to save I/O
+      logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
       FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
@@ -125,6 +131,7 @@ class Controlrepo
           # R10K::Settings.global_settings.evaluate(with_overrides)
           # R10K::Action::Deploy::Environment
           Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
+            logger.debug "Runing r10k puppetfile install --verbose from #{repo.tempdir}/#{repo.environmentpath}/production"
             system("r10k puppetfile install --verbose")
           end
         else
@@ -138,27 +145,19 @@ class Controlrepo
 
     def write_spec_test(location, test)
       # Use an ERB template to write a spec test
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      spec_template = File.read(File.expand_path('./test_spec.rb.erb',template_dir))
-      File.write("#{location}/#{test.to_s}_spec.rb",ERB.new(spec_template, nil, '-').result(binding))
+      File.write("#{location}/#{test.to_s}_spec.rb",Controlrepo.evaluate_template('test_spec.rb.erb',binding))
     end
 
     def write_acceptance_tests(location, tests)
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      acc_test_template = File.read(File.expand_path('./acceptance_test_spec.rb.erb',template_dir))
-      File.write("#{location}/acceptance_spec.rb",ERB.new(acc_test_template, nil, '-').result(binding))
+      File.write("#{location}/acceptance_spec.rb",Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      spec_heler_acc_template = File.read(File.expand_path('./spec_helper_acceptance.rb.erb',template_dir))
-      File.write("#{location}/spec_helper_acceptance.rb",ERB.new(spec_heler_acc_template, nil, '-').result(binding))
+      File.write("#{location}/spec_helper_acceptance.rb",Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb',binding))
     end
 
     def write_rakefile(location, pattern)
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      rakefile_template = File.read(File.expand_path('./Rakefile.erb',template_dir))
-      File.write("#{location}/Rakefile",ERB.new(rakefile_template, nil, '-').result(binding))
+      File.write("#{location}/Rakefile",Controlrepo.evaluate_template('Rakefile.erb',binding))
     end
 
     def write_spec_helper(location, repo)
@@ -172,17 +171,17 @@ class Controlrepo
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      spec_helper_template = File.read(File.expand_path('./spec_helper.rb.erb',template_dir))
-      File.write("#{location}/spec_helper.rb",ERB.new(spec_helper_template, nil, '-').result(binding))
+      File.write("#{location}/spec_helper.rb",Controlrepo.evaluate_template('spec_helper.rb.erb',binding))
     end
 
     def create_fixtures_symlinks(repo)
+      logger.debug "Creating fixtures symlinks"
       FileUtils.rm_rf("#{repo.tempdir}/spec/fixtures/modules")
       FileUtils.mkdir_p("#{repo.tempdir}/spec/fixtures/modules")
       repo.temp_modulepath.split(':').each do |path|
         Dir["#{path}/*"].each do |mod|
           modulename = File.basename(mod)
+          logger.debug "Symlinking #{mod} to #{repo.tempdir}/spec/fixtures/modules/#{modulename}"
           FileUtils.ln_s(mod, "#{repo.tempdir}/spec/fixtures/modules/#{modulename}")
         end
       end

@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.bindir       = 'bin'
   s.executables  = 'controlrepo'
-  
+
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake', '>= 10.0.0'
   s.add_runtime_dependency 'json', '>= 1.8.2'
@@ -29,4 +29,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'git'
   s.add_runtime_dependency 'cri', '>= 2.6'
   s.add_runtime_dependency 'colored', '~> 1.2'
+  s.add_runtime_dependency 'logging', '>= 2.0.0'  
 end

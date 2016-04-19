@@ -5,6 +5,9 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'controlrepo/beaker'
+require 'controlrepo/logger'
+include Controlrepo::Logger
+
 begin
   require 'pry'
 rescue LoadError
@@ -136,6 +139,7 @@ class Controlrepo
   def facts(filter = nil)
     # Returns an array facts hashes
     all_facts = []
+    logger.debug "Reading factsets"
     @facts_files.each do |file|
       all_facts << read_facts(file)['values']
     end
@@ -168,6 +172,7 @@ class Controlrepo
     repositories = []
 
     modules.each do |mod|
+      logger.debug "Converting #{mod.to_s} to .fixtures.yml format"
       # This logic could probably be cleaned up. A lot.
       if mod.is_a? R10K::Module::Forge
         if mod.expected_version.is_a?(Hash)
@@ -246,6 +251,7 @@ class Controlrepo
 
   def config
     # Parse the file
+    logger.debug "Reading #{@environment_conf}"
     env_conf = File.read(@environment_conf)
     env_conf = env_conf.split("\n")
 
@@ -329,6 +335,8 @@ class Controlrepo
       node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
       boxname = Controlrepo::Beaker.facts_to_vagrant_box(fact_set)
       platform = Controlrepo::Beaker.facts_to_platform(fact_set)
+
+      logger.debug "Querying hashicorp API for Vagrant box that matches #{boxname}"
       response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
       url = 'URL goes here'
 
@@ -368,6 +376,7 @@ class Controlrepo
   end
 
   def self.evaluate_template(template_name,bind)
+    logger.debug "Evaluating template #{template_name}"
     template_dir = File.expand_path('../templates',File.dirname(__FILE__))
     template = File.read(File.expand_path("./#{template_name}",template_dir))
     ERB.new(template, nil, '-').result(bind)
@@ -422,6 +431,7 @@ class Controlrepo
   def get_classes(dir)
     classes = []
     # Recurse over all the pp files under the dir we are given
+    logger.debug "Searching puppet code for roles and profiles"
     Dir["#{dir}/**/*.pp"].each do |manifest|
       classname = find_classname(manifest)
       # Add it to the array as long as it is not nil
