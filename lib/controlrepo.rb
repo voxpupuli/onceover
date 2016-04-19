@@ -295,6 +295,22 @@ class Controlrepo
     Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
     Controlrepo.init_write_file(Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
     Controlrepo.init_write_file(Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
+
+    # Add .controlrepo to Gitignore
+    gitignore_path = File.expand_path('.gitignore',repo.root)
+    if File.exists? gitignore_path
+      gitignore_content = (File.open(gitignore_path,'r') {|f| f.read }).split("\n")
+      message = "#{'changed'.green}"
+    else
+      message = "#{'created'.green}"
+      gitignore_content = []
+    end
+
+    unless gitignore_content.include?(".controlrepo")
+      gitignore_content << ".controlrepo\n"
+      File.open(gitignore_path,'w') {|f| f.write(gitignore_content.join("\n")) }
+      puts "#{message} #{Pathname.new(gitignore_path).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
+    end
   end
 
   def self.generate_controlrepo_yaml(repo)
