@@ -280,6 +280,8 @@ HOSTS:
 
 If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory and you are good to go. **NOTE:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
 
+Alternatively, if you are using cool new per-environment hiera config, the toll will automatically detect this and everything should work.
+
 ### R10k.yaml
 
 For the Controlrepo gem to be able to clone the controlrepo (itself) from git (into a temp dir) it needs an `r10k.yaml` file under the `spec/` directory. Don't worry about any of the paths here, we dynamically generate and override them. I realise that this is kind of redundant and will be looking into changing it in the future.
