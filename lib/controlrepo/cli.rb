@@ -41,3 +41,4 @@ end
 # Add all of the other CLI components
 require 'controlrepo/cli/show'
 require 'controlrepo/cli/run'
+require 'controlrepo/cli/init'

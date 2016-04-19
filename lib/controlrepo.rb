@@ -212,10 +212,7 @@ class Controlrepo
     end
 
     # Use an ERB template to write the files
-    template_dir = File.expand_path('../templates',File.dirname(__FILE__))
-    fixtures_template = File.read(File.expand_path('./.fixtures.yml.erb',template_dir))
-    fixtures_yaml = ERB.new(fixtures_template, nil, '-').result(binding)
-    return fixtures_yaml
+    Controlrepo.evaluate_template('.fixtures.yml.erb',binding)
   end
 
   def hiera_config_file
@@ -286,6 +283,88 @@ class Controlrepo
 
   def temp_manifest
     config['manifest'] ? File.expand_path(config['manifest'],@tempdir) : nil
+  end
+
+  def self.init(repo)
+    # This code will initialise a controlrepo with all of the config
+    # that it needs
+    require 'pathname'
+    require 'colored'
+
+    Controlrepo.init_write_file(generate_controlrepo_yaml(repo),repo.controlrepo_yaml)
+    Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
+    Controlrepo.init_write_file(Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
+    Controlrepo.init_write_file(Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
+  end
+
+  def self.generate_controlrepo_yaml(repo)
+    # This will return a controlrepo.yaml that can be written to a file
+    Controlrepo.evaluate_template('controlrepo.yaml.erb',binding)
+  end
+
+  def self.generate_nodesets(repo)
+    require 'controlrepo/beaker'
+    require 'net/http'
+    require 'json'
+
+    hosts_hash = {}
+
+    repo.facts.each do |fact_set|
+      node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
+      boxname = Controlrepo::Beaker.facts_to_vagrant_box(fact_set)
+      platform = Controlrepo::Beaker.facts_to_platform(fact_set)
+      response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
+      url = 'URL goes here'
+
+      if response =~ /Not Found/i
+        comment_out = true
+      else
+        comment_out = false
+        box_info = JSON.parse(response)
+        box_info['current_version']['providers'].each do |provider|
+          if  provider['name'] == 'virtualbox'
+            url = provider['original_url']
+          end
+        end
+      end
+
+      # Add the resulting info to the hosts hash. This is what the
+      # template will output
+      hosts_hash[node_name] = {
+        :platform    => platform,
+        :boxname     => boxname,
+        :url         => url,
+        :comment_out => comment_out
+      }
+    end
+
+    # Use an ERB template
+    Controlrepo.evaluate_template('nodeset.yaml.erb',binding)
+  end
+
+  def self.create_dirs_and_log(dir)
+    Pathname.new(dir).descend do |folder|
+      unless folder.directory?
+        FileUtils.mkdir(folder)
+        puts "#{'created'.green} #{folder.relative_path_from(Pathname.new(Dir.pwd)).to_s}"
+      end
+    end
+  end
+
+  def self.evaluate_template(template_name,bind)
+    template_dir = File.expand_path('../templates',File.dirname(__FILE__))
+    template = File.read(File.expand_path("./#{template_name}",template_dir))
+    ERB.new(template, nil, '-').result(bind)
+  end
+
+  def self.init_write_file(contents,out_file)
+    Controlrepo.create_dirs_and_log(File.dirname(out_file))
+    if File.exists?(out_file)
+      puts "#{'skipped'.yellow} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s} #{'(exists)'.yellow}"
+    else
+      File.open(out_file,'w') {|f| f.write(contents)}
+      puts "#{'created'.green} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
+    end
   end
 
   private
