@@ -14,6 +14,7 @@ class Controlrepo
         end
 
         flag nil, :trace, 'Display stack traces on application crash'
+        flag :d, :debug, 'Enable debug loging'
         optional :p, :path, 'Path to the root of the controlrepo'
         optional nil, :environmentpath, 'Value of environmentpath from puppet.conf'
         optional nil, :puppetfile, 'Location of the Puppetfile'

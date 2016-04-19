@@ -3,6 +3,7 @@ require 'controlrepo'
 require 'controlrepo/cli'
 require 'controlrepo/runner'
 require 'controlrepo/testconfig'
+require 'controlrepo/logger'
 
 class Controlrepo
   class CLI
@@ -34,6 +35,7 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs spec tests'
 
             run do |opts, args, cmd|
+              Controlrepo::Logger.logger.level = :debug if opts[:debug]
               repo = Controlrepo.new(opts)
               runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:spec)
               runner.prepare!
@@ -51,6 +53,7 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs acceptance tests'
 
             run do |opts, args, cmd|
+              Controlrepo::Logger.logger.level = :debug if opts[:debug]
               repo = Controlrepo.new(opts)
               runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:acceptance)
               runner.prepare!
