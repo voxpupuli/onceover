@@ -35,9 +35,8 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs spec tests'
 
             run do |opts, args, cmd|
-              Controlrepo::Logger.logger.level = :debug if opts[:debug]
               repo = Controlrepo.new(opts)
-              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:spec)
+              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml,opts),:spec)
               runner.prepare!
               runner.run_spec!
             end
@@ -53,9 +52,8 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs acceptance tests'
 
             run do |opts, args, cmd|
-              Controlrepo::Logger.logger.level = :debug if opts[:debug]
               repo = Controlrepo.new(opts)
-              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml),:acceptance)
+              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml,opts),:acceptance)
               runner.prepare!
               runner.run_spec!
             end

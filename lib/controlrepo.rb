@@ -28,6 +28,7 @@ class Controlrepo
   attr_accessor :manifest
   attr_accessor :tempdir
   attr_accessor :controlrepo_yaml
+  attr_accessor :opts
 
   # Create methods on self so that we can access these basic things without
   # having to actually instantiate the class, I'm debating how much stuff
@@ -81,7 +82,6 @@ class Controlrepo
 
   def initialize(opts = {})
     # When we initialize the object it is going to set some instance vars
-
     @root             = opts[:path] || Dir.pwd
     @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
     @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
@@ -95,7 +95,10 @@ class Controlrepo
     @tempdir          = opts[:tempdir] || ENV['CONTROLREPO_temp'] || File.absolute_path('./.controlrepo')
     $temp_modulepath  = nil
     @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-    @controlrepo_yaml  = opts[:controlrepo_yaml] || "#{@spec_dir}/controlrepo.yaml"
+    @controlrepo_yaml = opts[:controlrepo_yaml] || "#{@spec_dir}/controlrepo.yaml"
+    @opts             = opts
+
+    Controlrepo::Logger.logger.level = :debug if @opts[:debug]
   end
 
   def to_s

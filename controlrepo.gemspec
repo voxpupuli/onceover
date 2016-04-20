@@ -29,5 +29,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'git'
   s.add_runtime_dependency 'cri', '>= 2.6'
   s.add_runtime_dependency 'colored', '~> 1.2'
-  s.add_runtime_dependency 'logging', '>= 2.0.0'  
+  s.add_runtime_dependency 'logging', '>= 2.0.0'
+  s.add_runtime_dependency 'deep_merge', '>= 1.0.0'
 end

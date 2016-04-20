@@ -19,7 +19,6 @@ tool to work.
           DESCRIPTION
 
           run do |opts, args, cmd|
-            Controlrepo::Logger.logger.level = :debug if opts[:debug]
             Controlrepo.init(Controlrepo.new(opts))
           end
         end

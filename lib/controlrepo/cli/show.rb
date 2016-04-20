@@ -17,7 +17,6 @@ Useful for debugging.
           DESCRIPTION
 
           run do |opts, args, cmd|
-            Controlrepo::Logger.logger.level = :debug if opts[:debug]
             # Print out the description
             puts Controlrepo.new(opts).to_s
             exit 0
