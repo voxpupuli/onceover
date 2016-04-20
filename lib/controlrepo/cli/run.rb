@@ -19,6 +19,8 @@ This includes deploying using r10k and running all custom tests.
           DESCRIPTION
 
           optional :t, :tags, 'A list of tags. Only tests with these tags will be run'
+          optional :c, :classes, 'A list of classes. Only tests with these classes will be run'
+          optional :n, :nodes, 'A list of nodes. Only tests with these nodes will be run'
 
           run do |opts, args, cmd|
             puts cmd.help(:verbose => opts[:verbose])

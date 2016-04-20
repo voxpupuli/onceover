@@ -6,6 +6,7 @@ class Controlrepo
     attr_accessor :classes
     attr_accessor :test_config
     attr_reader   :default_test_config
+    attr_reader   :tags
 
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
@@ -25,6 +26,8 @@ class Controlrepo
       @classes = []
       @test_config = test_config
       @test_config.delete('classes') # remove classes from the config
+      @tags = @test_config['tags']
+
 
       # Make sure that tags are an array
       @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']

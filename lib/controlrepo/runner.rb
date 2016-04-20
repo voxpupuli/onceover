@@ -40,7 +40,7 @@ class Controlrepo
         @config.spec_tests.each { |test| @config.verify_spec_test(@repo,test) }
 
         # Deduplicate and write the tests (Spec and Acceptance)
-        Controlrepo::Test.deduplicate(@config.spec_tests).each do |test|
+        @config.run_filters(Controlrepo::Test.deduplicate(@config.spec_tests)).each do |test|
           @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
         end
       end
@@ -50,7 +50,7 @@ class Controlrepo
         @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
 
         # Write them out
-        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",Controlrepo::Test.deduplicate(@config.acceptance_tests))
+        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",@config.run_filters(Controlrepo::Test.deduplicate(@config.acceptance_tests)))
       end
 
       # Parse the current hiera config, modify, and write it to the temp dir
