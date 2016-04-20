@@ -4,44 +4,38 @@ class Controlrepo
 
     attr_accessor :nodes
     attr_accessor :classes
-    attr_accessor :options
-    attr_reader   :default_options
+    attr_accessor :test_config
+    attr_reader   :default_test_config
 
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
-    def initialize(on_these,test_this,options = {})
-      # Turn options into an empty hash is someone passed in a nil value
-      options ||= {}
+    #def initialize(on_this,test_config['classes'],options = {})
+    def initialize(on_this,test_this,test_config)
 
-      # I copied this code off the internet, basically it allows us
-      # to refer to each key as either a string or an object
-      options.default_proc = proc do |h, k|
-        case k
-          when String then sym = k.to_sym; h[sym] if h.key?(sym)
-          when Symbol then str = k.to_s; h[str] if h.key?(str)
-        end
-      end
-
-      @default_options = {
+      @default_test_config = {
         'check_idempotency' => true,
         'runs_before_idempotency' => 1
       }
 
       # Add defaults if they do not exist
-      options = @default_options.merge(options)
+      test_config = @default_test_config.merge(test_config)
 
       @nodes = []
       @classes = []
-      @options = options
+      @test_config = test_config
+      @test_config.delete('classes') # remove classes from the config
+
+      # Make sure that tags are an array
+      @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']
 
       # Get the nodes we are working on
-      if Controlrepo::Group.find(on_these)
-        @nodes << Controlrepo::Group.find(on_these).members
-      elsif Controlrepo::Node.find(on_these)
-        @nodes << Controlrepo::Node.find(on_these)
+      if Controlrepo::Group.find(on_this)
+        @nodes << Controlrepo::Group.find(on_this).members
+      elsif Controlrepo::Node.find(on_this)
+        @nodes << Controlrepo::Node.find(on_this)
       else
-        raise "#{on_these} was not found in the list of nodes or groups!"
+        raise "#{on_this} was not found in the list of nodes or groups!"
       end
 
       @nodes.flatten!
@@ -110,6 +104,7 @@ class Controlrepo
     end
 
     def self.deduplicate(tests)
+      require 'deep_merge'
       # This should take an array of tests and remove any duplicates from them
 
       # this will be an array of arrays, or maybe hashes
@@ -127,15 +122,15 @@ class Controlrepo
               end]
 
               # Delete all default values in the current options hash
-              test.options.delete_if do |key,value|
-                test.default_options[key] == value
+              test.test_config.delete_if do |key,value|
+                test.default_test_config[key] == value
               end
 
               # Merge the non-default options right on in there
-              relevant_test.options.merge!(test.options)
+              relevant_test.test_config.deep_merge!(test.test_config)
             else
               combinations << combo
-              new_tests << Controlrepo::Test.new(node,cls,test.options)
+              new_tests << Controlrepo::Test.new(node,cls,test.test_config)
             end
           end
         end

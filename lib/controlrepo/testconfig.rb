@@ -18,22 +18,26 @@ class Controlrepo
     attr_accessor :spec_tests
     attr_accessor :acceptance_tests
     attr_accessor :environment
+    attr_accessor :opts
+    attr_accessor :tags
 
-    def initialize(file)
+    def initialize(file,opts = {})
       begin
         config = YAML.load(File.read(file))
       rescue Errno::ENOENT
-        raise "Could not find spec/controlrepo.yaml"
+        raise "Could not find #{file}"
       rescue Psych::SyntaxError
-        raise "Could not parse the YAML file, check that it is valid YAML and that the encoding is correct"
+        raise "Could not #{file}, check that it is valid YAML and that the encoding is correct"
       end
 
-      @classes = []
-      @nodes = []
-      @node_groups = []
-      @class_groups = []
-      @spec_tests = []
+      @classes          = []
+      @nodes            = []
+      @node_groups      = []
+      @class_groups     = []
+      @spec_tests       = []
       @acceptance_tests = []
+      @opts             = opts
+      @tags             = [opts[:tags].split(',')].flatten
 
       # Add the 'all_classes' and 'all_nodes' default groups
       @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
@@ -47,13 +51,36 @@ class Controlrepo
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
           if settings['tests'] == 'spec'
-            @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+            @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings)
           elsif settings['tests'] == 'acceptance'
-            @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings['options'])
+            @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings)
           elsif settings['tests'] == 'all_tests'
-            test = Controlrepo::Test.new(machines,settings['classes'],settings['options'])
-            @spec_tests << test
-            @acceptance_tests << test
+            tst = Controlrepo::Test.new(machines,settings['classes'],settings)
+            @spec_tests << tst
+            @acceptance_tests << tst
+          end
+        end
+      end
+
+      if @tags
+        # Remove tests that do not have matching tags
+        @spec_tests.keep_if do |test|
+          @tags.any? do |tag|
+            if test.test_config['tags']
+              test.test_config['tags'].include?(tag)
+            else
+              false
+            end
+          end
+        end
+
+        @acceptance_tests.keep_if do |test|
+          @tags.any? do |tag|
+            if test.test_config['tags']
+              test.test_config['tags'].include?(tag)
+            else
+              false
+            end
           end
         end
       end

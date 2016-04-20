@@ -115,8 +115,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
   - {nodes_to_test}:
       classes: '{classes_to_test}'
       tests: '{all_tests|acceptance|spec}' # One of the three
-      options: # Optional (haha, get it?)
-        {valid_option}: {value} # Check the doco for available options
+      {valid_option}: {value} # Check the doco for available options
 ```
 
 Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do. In the example below we have not referred to the same group twice but we have referred to `centos6a` and `centos7b` in all of out tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have left the more specific references to last. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
@@ -163,8 +162,9 @@ test_matrix:
   - centos_severs:
       classes: 'roles::frontend_webserver'
       tests: 'acceptance'
-      options:
-        runs_before_idempotency: 2
+      runs_before_idempotency: 2
+      tags:
+        - 'frontend'
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
@@ -181,9 +181,7 @@ node_groups:
 
 It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it (Makes sense right?)
 
-**NOTE:** You can change where the gem creates it's temporary directory for running the tests by exporting the `CONTROLREPO_temp` environment variable.
-
-#### Test Options
+#### Optional test parameters
 
 **check_idempotency** *Default: true*
 
@@ -192,6 +190,10 @@ Weather or not to check that puppet will be idempotent
 **runs_before_idempotency** *Default: 1*
 
 The number of runs to try before checking that it is idempotent. Required for some things that require restarts of the server or restarts of puppet.
+
+**tags** *Default: nil*
+
+One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter.
 
 ### factsets
 
