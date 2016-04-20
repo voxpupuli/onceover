@@ -22,6 +22,7 @@ class Controlrepo
     attr_accessor :filter_tags
     attr_accessor :filter_classes
     attr_accessor :filter_nodes
+    attr_accessor :mock_functions
 
     def initialize(file,opts = {})
       begin
@@ -39,6 +40,7 @@ class Controlrepo
       @spec_tests       = []
       @acceptance_tests = []
       @opts             = opts
+      @mock_functions   = config['functions']
 
       # Add the 'all_classes' and 'all_nodes' default groups
       @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
