@@ -193,7 +193,7 @@ The number of runs to try before checking that it is idempotent. Required for so
 
 **tags** *Default: nil*
 
-One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter.
+One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter. **NOTE:** Custom spec tests will always be run as they are not subject to tags
 
 ### factsets
 

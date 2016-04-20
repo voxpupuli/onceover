@@ -33,6 +33,7 @@ class Controlrepo
           return node
         end
       end
+      logger.warn "Node #{node_name} not found"
       nil
     end
 

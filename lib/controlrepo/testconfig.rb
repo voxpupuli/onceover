@@ -19,7 +19,9 @@ class Controlrepo
     attr_accessor :acceptance_tests
     attr_accessor :environment
     attr_accessor :opts
-    attr_accessor :tags
+    attr_accessor :filter_tags
+    attr_accessor :filter_classes
+    attr_accessor :filter_nodes
 
     def initialize(file,opts = {})
       begin
@@ -37,7 +39,6 @@ class Controlrepo
       @spec_tests       = []
       @acceptance_tests = []
       @opts             = opts
-      @tags             = [opts[:tags].split(',')].flatten
 
       # Add the 'all_classes' and 'all_nodes' default groups
       @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
@@ -47,6 +48,10 @@ class Controlrepo
       config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) } unless config['nodes'] == nil
       config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) } unless config['class_groups'] == nil
+
+      @filter_tags      = opts[:tags] ? [opts[:tags].split(',')].flatten : nil
+      @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Controlrepo::Class.find(x)} : nil
+      @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Controlrepo::Node.find(x)} : nil
 
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
@@ -61,41 +66,26 @@ class Controlrepo
           end
         end
       end
-
-      if @tags
-        # Remove tests that do not have matching tags
-        @spec_tests.keep_if do |test|
-          @tags.any? do |tag|
-            if test.test_config['tags']
-              test.test_config['tags'].include?(tag)
-            else
-              false
-            end
-          end
-        end
-
-        @acceptance_tests.keep_if do |test|
-          @tags.any? do |tag|
-            if test.test_config['tags']
-              test.test_config['tags'].include?(tag)
-            else
-              false
-            end
-          end
-        end
-      end
     end
 
     def self.find_list(thing)
       # Takes a string and finds an object or list of objects to match, will
       # take nodes, classes or groups
+
+      # We want to supress warnings for this bit
+      old_level = logger.level
+      logger.level = :error
       if Controlrepo::Group.find(thing)
+        logger.level = old_level
         return Controlrepo::Group.find(thing).members
       elsif Controlrepo::Class.find(thing)
+        logger.level = old_level
         return [Controlrepo::Class.find(thing)]
       elsif Controlrepo::Node.find(thing)
+        logger.level = old_level
         return [Controlrepo::Node.find(thing)]
       else
+        logger.level = old_level
         raise "Could not find #{thing} in list of classes, nodes or groups"
       end
     end
@@ -159,7 +149,7 @@ class Controlrepo
           # R10K::Action::Deploy::Environment
           Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
             logger.debug "Runing r10k puppetfile install --verbose from #{repo.tempdir}/#{repo.environmentpath}/production"
-            system("r10k puppetfile install --verbose")
+            system("r10k puppetfile install --verbose --color")
           end
         else
           raise "#{repo.tempdir} is not a directory"
@@ -212,6 +202,30 @@ class Controlrepo
           FileUtils.ln_s(mod, "#{repo.tempdir}/spec/fixtures/modules/#{modulename}")
         end
       end
+    end
+
+    def run_filters(tests)
+      # All of this needs to be applied AFTER deduplication but BEFORE writing
+      filters = {
+        'tags'    => @filter_tags,
+        'classes' => @filter_classes,
+        'nodes'   => @filter_nodes
+      }
+      filters.each do |method,filter_list|
+        if filter_list
+          # Remove tests that do not have matching tags
+          tests.keep_if do |test|
+            filter_list.any? do |filter|
+              if test.send(method)
+                test.send(method).include?(filter)
+              else
+                false
+              end
+            end
+          end
+        end
+      end
+      tests
     end
   end
 end

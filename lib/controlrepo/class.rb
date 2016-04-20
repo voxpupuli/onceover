@@ -18,6 +18,7 @@ class Controlrepo
           return cls
         end
       end
+      logger.warn "Class #{class_name} not found"
       nil
     end
 

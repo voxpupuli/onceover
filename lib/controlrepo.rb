@@ -97,8 +97,7 @@ class Controlrepo
     @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
     @controlrepo_yaml = opts[:controlrepo_yaml] || "#{@spec_dir}/controlrepo.yaml"
     @opts             = opts
-
-    Controlrepo::Logger.logger.level = :debug if @opts[:debug]
+    logger.level = :debug if @opts[:debug]
   end
 
   def to_s
