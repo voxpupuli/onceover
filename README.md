@@ -120,6 +120,10 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do. In the example below we have not referred to the same group twice but we have referred to `centos6a` and `centos7b` in all of out tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have left the more specific references to last. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
 
+**functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following agruments:
+  - **type** *statement or rvalue*
+  - **returns** *Optional: A value to return*
+
 A full example:
 
 ```yaml
@@ -165,6 +169,11 @@ test_matrix:
       runs_before_idempotency: 2
       tags:
         - 'frontend'
+
+functions:
+  query_resources:
+    type: rvalue
+    returns: []
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
