@@ -73,6 +73,7 @@ class Controlrepo
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
+        logger.debug "Running bundle exec rake spec_standalone from #{@repo.tempdir}"
         exec("bundle exec rake spec_standalone")
       end
     end
@@ -81,6 +82,7 @@ class Controlrepo
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
+        logger.debug "Running bundle exec rake acceptance from #{@repo.tempdir}"
         exec("bundle exec rake acceptance")
       end
     end

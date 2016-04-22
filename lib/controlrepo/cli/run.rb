@@ -57,7 +57,7 @@ This includes deploying using r10k and running all custom tests.
               repo = Controlrepo.new(opts)
               runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml,opts),:acceptance)
               runner.prepare!
-              runner.run_spec!
+              runner.run_acceptance!
             end
           end
         end
