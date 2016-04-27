@@ -180,7 +180,7 @@ class Controlrepo
       logger.line_prefix = '  ' * (test.metadata[:scoped_id].split(':').count - 1)
     end
 
-    def self.provision_node(name,nodes)
+    def self.host_create(name, nodes)
       require 'beaker/network_manager'
 
       current_opts = {}
@@ -205,12 +205,22 @@ class Controlrepo
         end
       end
 
-      nwm = ::Beaker::NetworkManager.new(current_opts,logger)
-      nwm.provision
-      nwm.proxy_package_manager
-      nwm.validate
-      nwm.configure
-      nwm.instance_variable_get(:@hosts)
+      @nwm = ::Beaker::NetworkManager.new(current_opts,logger)
+      @nwm.provision
+      @nwm.proxy_package_manager
+      @nwm.validate
+      @nwm.configure
+
+      @nwm.instance_variable_get(:@hosts).each do |host|
+        host.instance_variable_set(:@nwm,@nwm)
+        host.define_singleton_method(:down!) do
+          binding.pry
+          @nwm.cleanup
+        end
+      end
+
+      raise "The networkmanager created too many machines! Only expecting one" if hosts.count > 1
+      @nwm.instance_variable_get(:@hosts)[0]
     end
   end
 end

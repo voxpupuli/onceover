@@ -10,13 +10,13 @@ describe "Acceptance Testing" do
 <% test.classes.each do |cls| -%>
   describe "<%= cls.name %> on <%= node.name %>" do
     after :all do
-      $nwm.cleanup
+      $host.down!
     end
 
     describe "provisioning <%= node.name %>" do
       it "should be able to provision using Beaker" do
         expect {
-          $host = Controlrepo::Beaker.provision_node(:'<%= node.name %>',OPTIONS)
+          $host = Controlrepo::Beaker.host_create(:'<%= node.name %>',OPTIONS)
         }.not_to raise_exception
       end
     end
