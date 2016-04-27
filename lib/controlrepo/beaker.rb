@@ -214,7 +214,6 @@ class Controlrepo
       @nwm.instance_variable_get(:@hosts).each do |host|
         host.instance_variable_set(:@nwm,@nwm)
         host.define_singleton_method(:down!) do
-          binding.pry
           @nwm.cleanup
         end
       end
