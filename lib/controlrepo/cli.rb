@@ -43,3 +43,4 @@ end
 require 'controlrepo/cli/show'
 require 'controlrepo/cli/run'
 require 'controlrepo/cli/init'
+require 'controlrepo/cli/update'
