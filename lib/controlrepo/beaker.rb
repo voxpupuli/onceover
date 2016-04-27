@@ -176,5 +176,50 @@ class Controlrepo
       network_manager.cleanup
     end
 
+    def self.match_indentation(test,logger)
+      logger.line_prefix = '  ' * (test.metadata[:scoped_id].split(':').count - 1)
+    end
+
+    def self.host_create(name, nodes)
+      require 'beaker/network_manager'
+
+      current_opts = {}
+      nodes.each do |opt,val|
+        if opt == :HOSTS
+          val.each do |k,v|
+            if k == name
+              current_opts[:HOSTS] = {k => v}
+            end
+          end
+        else
+          current_opts[opt] = val
+        end
+      end
+
+      # I copied this code off the internet, basically it allows us
+      # to refer to each key as either a string or an object
+      current_opts.default_proc = proc do |h, k|
+        case k
+          when String then sym = k.to_sym; h[sym] if h.key?(sym)
+          when Symbol then str = k.to_s; h[str] if h.key?(str)
+        end
+      end
+
+      @nwm = ::Beaker::NetworkManager.new(current_opts,logger)
+      @nwm.provision
+      @nwm.proxy_package_manager
+      @nwm.validate
+      @nwm.configure
+
+      @nwm.instance_variable_get(:@hosts).each do |host|
+        host.instance_variable_set(:@nwm,@nwm)
+        host.define_singleton_method(:down!) do
+          @nwm.cleanup
+        end
+      end
+
+      raise "The networkmanager created too many machines! Only expecting one" if hosts.count > 1
+      @nwm.instance_variable_get(:@hosts)[0]
+    end
   end
 end
