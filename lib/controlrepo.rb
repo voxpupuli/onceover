@@ -168,6 +168,72 @@ class Controlrepo
     return all_facts
   end
 
+  def print_puppetfile_table
+    require 'table_print'
+    require 'versionomy'
+    require 'colored'
+    require 'r10k/puppetfile'
+
+    # Load up the Puppetfile using R10k
+    logger.debug "Reading puppetfile from #{@root}"
+    puppetfile = R10K::Puppetfile.new(@root)
+    logger.debug "Loading modules from Puppetfile"
+    puppetfile.load!
+
+    output_array = []
+    puppetfile.modules.each do |mod|
+      return_hash = {}
+      logger.debug "Loading data for #{mod.full_name}"
+      return_hash[:full_name] = mod.full_name
+      if mod.is_a?(R10K::Module::Forge)
+        return_hash[:current_version] = mod.expected_version
+        return_hash[:latest_version] = mod.v3_module.current_release.version
+        current = Versionomy.parse(return_hash[:current_version])
+        latest = Versionomy.parse(return_hash[:latest_version])
+        if current.major < latest.major
+          return_hash[:out_of_date] = "Major".red
+        elsif current.minor < latest.minor
+          return_hash[:out_of_date] = "Minor".yellow
+        elsif current.tiny < latest.tiny
+          return_hash[:out_of_date] = "Tiny".green
+        else
+          return_hash[:out_of_date] = "No".green
+        end
+      else
+        return_hash[:current_version] = "N/A"
+        return_hash[:latest_version] = "N/A"
+        return_hash[:out_of_date] = "N/A"
+      end
+      output_array << return_hash
+    end
+
+    tp output_array, \
+      {:full_name => {:display_name => "Full Name"}}, \
+      {:current_version => {:display_name => "Current Version"}}, \
+      {:latest_version => {:display_name => "Latest Version"}}, \
+      {:out_of_date => {:display_name => "Out of Date?"}}
+  end
+
+  def update_puppetfile
+    require 'r10k/puppetfile'
+
+    # Read in the Puppetfile as a string and as an object
+    puppetfile_string = File.read(@puppetfile).split("\n")
+    puppetfile = R10K::Puppetfile.new(@root)
+    puppetfile.load!
+
+    # TODO: Make sure we can deal with :latest
+
+    puppetfile.modules.keep_if {|m| m.is_a?(R10K::Module::Forge)}
+    puppetfile.modules.each do |mod|
+      line_index = puppetfile_string.index {|l| l =~ /^\s*[^#]*#{mod.owner}[\/-]#{mod.name}/}
+      logger.debug "Getting latest version of #{mod.full_name}"
+      puppetfile_string[line_index].gsub!(mod.expected_version,mod.v3_module.current_release.version)
+    end
+    File.open(@puppetfile, 'w') {|f| f.write(puppetfile_string.join("\n")) }
+    puts "#{'changed'.yellow} #{@puppetfile}"
+  end
+
   def fixtures
     # Load up the Puppetfile using R10k
     puppetfile = R10K::Puppetfile.new(@root)

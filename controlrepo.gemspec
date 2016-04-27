@@ -32,4 +32,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'colored', '~> 1.2'
   s.add_runtime_dependency 'logging', '>= 2.0.0'
   s.add_runtime_dependency 'deep_merge', '>= 1.0.0'
+  s.add_runtime_dependency 'table_print', '>= 1.0.0'
+  s.add_runtime_dependency 'versionomy', '>= 0.5.0'
 end
