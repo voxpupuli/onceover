@@ -127,8 +127,13 @@ class Controlrepo
   def classes
     # Get all of the possible places for puppet code and look for classes
     code_dirs = self.config['modulepath']
-    # Remove relative references
+    # Remove interpolated references
     code_dirs.delete_if { |dir| dir[0] == '$'}
+
+    # Make sure that the paths are relative to the controlrepo root
+    code_dirs.map! do |dir|
+      File.expand_path(dir,@root)
+    end
 
     # Get all the classes from all of the manifests
     classes = []

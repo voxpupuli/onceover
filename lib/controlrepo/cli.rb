@@ -25,7 +25,7 @@ class Controlrepo
         optional nil, :nodeset_file, 'YAML file containing node definitions'
         optional nil, :tempdir, 'Temp directory to use, defaults to .controlrepo'
         optional nil, :manifest, 'Path fo find manifests'
-        optional nil, :controlrepo_yaml, 'Path fo controlrepo.yaml'
+        optional nil, :controlrepo_yaml, 'Path of controlrepo.yaml'
 
         run do |opts, args, cmd|
           puts cmd.help(:verbose => opts[:verbose])
