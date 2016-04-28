@@ -7,6 +7,7 @@ class Onceover
       @repo   = repo
       @config = config
       @mode   = [mode].flatten
+      @command_prefix = ENV['BUNDLE_GEMFILE'] ? 'bundle exec ' : ''
     end
 
     def prepare!
@@ -73,8 +74,8 @@ class Onceover
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
-        logger.debug "Running bundle exec rake spec_standalone from #{@repo.tempdir}"
-        exec("bundle exec rake spec_standalone")
+        logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
+        exec("#{@command_prefix}rake spec_standalone")
       end
     end
 
@@ -82,8 +83,8 @@ class Onceover
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
-        logger.debug "Running bundle exec rake acceptance from #{@repo.tempdir}"
-        exec("bundle exec rake acceptance")
+        logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
+        exec("#{@command_prefix}rake acceptance")
       end
     end
   end
