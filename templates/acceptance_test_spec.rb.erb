@@ -2,7 +2,7 @@ require 'spec_helper_acceptance'
 
 describe "Acceptance Testing" do
   before :each do |test|
-    Controlrepo::Beaker.match_indentation(test,logger)
+    Onceover::Beaker.match_indentation(test,logger)
   end
 <% tests.each do |test| -%>
 <% test.nodes.each do |node| -%>
@@ -15,7 +15,7 @@ describe "Acceptance Testing" do
     describe "provisioning <%= node.name %>" do
       it "should be able to provision using Beaker" do
         expect {
-          $host = Controlrepo::Beaker.host_create(:'<%= node.name %>',OPTIONS)
+          $host = Onceover::Beaker.host_create(:'<%= node.name %>',OPTIONS)
         }.not_to raise_exception
       end
     end

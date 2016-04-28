@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'controlrepo/cli'
+require 'onceover/cli'
 require 'colored'
 
 begin
-  Controlrepo::CLI.command.run(ARGV)
+  Onceover::CLI.command.run(ARGV)
 rescue Interrupt
   $stderr.puts "Aborted!".red
   exit(1)

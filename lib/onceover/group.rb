@@ -1,7 +1,7 @@
-require 'controlrepo/class'
-require 'controlrepo/node'
+require 'onceover/class'
+require 'onceover/node'
 
-class Controlrepo
+class Onceover
   class Group
     @@all = []
 
@@ -16,22 +16,22 @@ class Controlrepo
       @name = name
       @members = []
 
-      if Controlrepo::Group.valid_members?(members)
+      if Onceover::Group.valid_members?(members)
         # If it's already a valid list just chuck it in there
         @members = members
       elsif members.is_a?(Hash)
         # if it's a hash then do subtractive stiff
-        @members = Controlrepo::Group.subtractive_to_list(members)
+        @members = Onceover::Group.subtractive_to_list(members)
       else
         # Turn it into a full list
         member_objects = []
 
         # This should also handle lists that include groups
-        members.each { |member| member_objects << Controlrepo::TestConfig.find_list(member) }
+        members.each { |member| member_objects << Onceover::TestConfig.find_list(member) }
         member_objects.flatten!
 
         # Check that they are all the same type
-        unless Controlrepo::Group.valid_members?(member_objects)
+        unless Onceover::Group.valid_members?(member_objects)
           raise 'Groups must contain either all nodes or all classes. Either there was a mix, or something was spelled wrong'
         end
 
@@ -60,9 +60,9 @@ class Controlrepo
       # Check that they are all the same type
       # Also catch any errors to assume it's invalid
       begin
-        if members.all? { |item| item.is_a?(Controlrepo::Class) }
+        if members.all? { |item| item.is_a?(Onceover::Class) }
           return true
-        elsif members.all? { |item| item.is_a?(Controlrepo::Node) }
+        elsif members.all? { |item| item.is_a?(Onceover::Node) }
           return true
         else
           return false
@@ -77,8 +77,8 @@ class Controlrepo
       # { 'include' => 'somegroup'
       #   'exclude' => 'other'}
       # and return a list of classes/nodes
-      include_list = Controlrepo::TestConfig.find_list(subtractive_hash['include'])
-      exclude_list = Controlrepo::TestConfig.find_list(subtractive_hash['exclude'])
+      include_list = Onceover::TestConfig.find_list(subtractive_hash['include'])
+      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude'])
       include_list - exclude_list
     end
   end

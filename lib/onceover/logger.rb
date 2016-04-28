@@ -1,6 +1,6 @@
 require 'logging'
 
-module Controlrepo::Logger
+module Onceover::Logger
   def logger
     unless $logger
       # here we setup a color scheme called 'bright'

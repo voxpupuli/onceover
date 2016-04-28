@@ -2,19 +2,19 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "controlrepo"
-  s.version     = "2.0.10"
+  s.name        = "onceover"
+  s.version     = "3.0.0"
   s.authors     = ["Dylan Ratcliffe"]
-  s.email       = ["dylan.ratcliffe@puppetlabs.com"]
-  s.homepage    = "https://github.com/dylanratcliffe/controlrepo_gem"
+  s.email       = ["dylan.ratcliffe@puppet.com"]
+  s.homepage    = "https://github.com/dylanratcliffe/onceover"
   s.summary     = "Testing tools for Puppet controlrepos"
-  s.description = "Testing tools for Puppet controlrepos"
+  s.description = "Automatically generates tests for your Puppet code"
   s.licenses    = 'Apache-2.0'
 
   s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.bindir       = 'bin'
-  s.executables  = 'controlrepo'
+  s.executables  = 'onceover'
 
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake', '>= 10.0.0'
@@ -34,5 +34,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'deep_merge', '>= 1.0.0'
   s.add_runtime_dependency 'table_print', '>= 1.0.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
-  s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'  
+  s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
 end

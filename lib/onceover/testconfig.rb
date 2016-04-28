@@ -1,13 +1,13 @@
-require 'controlrepo/class'
-require 'controlrepo/node'
-require 'controlrepo/group'
-require 'controlrepo/test'
-require 'controlrepo/logger'
-require 'controlrepo'
+require 'onceover/class'
+require 'onceover/node'
+require 'onceover/group'
+require 'onceover/test'
+require 'onceover/logger'
+require 'onceover/controlrepo'
 require 'git'
-include Controlrepo::Logger
+include Onceover::Logger
 
-class Controlrepo
+class Onceover
   class TestConfig
     require 'yaml'
 
@@ -43,26 +43,26 @@ class Controlrepo
       @mock_functions   = config['functions']
 
       # Add the 'all_classes' and 'all_nodes' default groups
-      @node_groups << Controlrepo::Group.new('all_nodes',@nodes)
-      @class_groups << Controlrepo::Group.new('all_classes',@classes)
+      @node_groups << Onceover::Group.new('all_nodes',@nodes)
+      @class_groups << Onceover::Group.new('all_classes',@classes)
 
-      config['classes'].each { |clarse| @classes << Controlrepo::Class.new(clarse) } unless config['classes'] == nil
-      config['nodes'].each { |node| @nodes << Controlrepo::Node.new(node) } unless config['nodes'] == nil
-      config['node_groups'].each { |name, members| @node_groups << Controlrepo::Group.new(name, members) } unless config['node_groups'] == nil
-      config['class_groups'].each { |name, members| @class_groups << Controlrepo::Group.new(name, members) } unless config['class_groups'] == nil
+      config['classes'].each { |clarse| @classes << Onceover::Class.new(clarse) } unless config['classes'] == nil
+      config['nodes'].each { |node| @nodes << Onceover::Node.new(node) } unless config['nodes'] == nil
+      config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
+      config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
 
       @filter_tags      = opts[:tags] ? [opts[:tags].split(',')].flatten : nil
-      @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Controlrepo::Class.find(x)} : nil
-      @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Controlrepo::Node.find(x)} : nil
+      @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
+      @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
 
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
           if settings['tests'] == 'spec'
-            @spec_tests << Controlrepo::Test.new(machines,settings['classes'],settings)
+            @spec_tests << Onceover::Test.new(machines,settings['classes'],settings)
           elsif settings['tests'] == 'acceptance'
-            @acceptance_tests << Controlrepo::Test.new(machines,settings['classes'],settings)
+            @acceptance_tests << Onceover::Test.new(machines,settings['classes'],settings)
           elsif settings['tests'] == 'all_tests'
-            tst = Controlrepo::Test.new(machines,settings['classes'],settings)
+            tst = Onceover::Test.new(machines,settings['classes'],settings)
             @spec_tests << tst
             @acceptance_tests << tst
           end
@@ -77,15 +77,15 @@ class Controlrepo
       # We want to supress warnings for this bit
       old_level = logger.level
       logger.level = :error
-      if Controlrepo::Group.find(thing)
+      if Onceover::Group.find(thing)
         logger.level = old_level
-        return Controlrepo::Group.find(thing).members
-      elsif Controlrepo::Class.find(thing)
+        return Onceover::Group.find(thing).members
+      elsif Onceover::Class.find(thing)
         logger.level = old_level
-        return [Controlrepo::Class.find(thing)]
-      elsif Controlrepo::Node.find(thing)
+        return [Onceover::Class.find(thing)]
+      elsif Onceover::Node.find(thing)
         logger.level = old_level
-        return [Controlrepo::Node.find(thing)]
+        return [Onceover::Node.find(thing)]
       else
         logger.level = old_level
         raise "Could not find #{thing} in list of classes, nodes or groups"
@@ -112,7 +112,7 @@ class Controlrepo
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new.spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
@@ -122,8 +122,8 @@ class Controlrepo
       puppetcode.join("\n")
     end
 
-    def r10k_deploy_local(repo = Controlrepo.new)
-      require 'controlrepo'
+    def r10k_deploy_local(repo = Onceover::Controlrepo.new)
+      require 'onceover/controlrepo'
       require 'pathname'
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
@@ -164,19 +164,19 @@ class Controlrepo
 
     def write_spec_test(location, test)
       # Use an ERB template to write a spec test
-      File.write("#{location}/#{test.to_s}_spec.rb",Controlrepo.evaluate_template('test_spec.rb.erb',binding))
+      File.write("#{location}/#{test.to_s}_spec.rb",Onceover::Controlrepo.evaluate_template('test_spec.rb.erb',binding))
     end
 
     def write_acceptance_tests(location, tests)
-      File.write("#{location}/acceptance_spec.rb",Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
+      File.write("#{location}/acceptance_spec.rb",Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
-      File.write("#{location}/spec_helper_acceptance.rb",Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb',binding))
+      File.write("#{location}/spec_helper_acceptance.rb",Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb',binding))
     end
 
     def write_rakefile(location, pattern)
-      File.write("#{location}/Rakefile",Controlrepo.evaluate_template('Rakefile.erb',binding))
+      File.write("#{location}/Rakefile",Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding))
     end
 
     def write_spec_helper(location, repo)
@@ -190,7 +190,7 @@ class Controlrepo
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
-      File.write("#{location}/spec_helper.rb",Controlrepo.evaluate_template('spec_helper.rb.erb',binding))
+      File.write("#{location}/spec_helper.rb",Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb',binding))
     end
 
     def create_fixtures_symlinks(repo)

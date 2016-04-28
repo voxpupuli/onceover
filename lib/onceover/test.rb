@@ -1,4 +1,4 @@
-class Controlrepo
+class Onceover
   class Test
     @@all =[]
 
@@ -33,10 +33,10 @@ class Controlrepo
       @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']
 
       # Get the nodes we are working on
-      if Controlrepo::Group.find(on_this)
-        @nodes << Controlrepo::Group.find(on_this).members
-      elsif Controlrepo::Node.find(on_this)
-        @nodes << Controlrepo::Node.find(on_this)
+      if Onceover::Group.find(on_this)
+        @nodes << Onceover::Group.find(on_this).members
+      elsif Onceover::Node.find(on_this)
+        @nodes << Onceover::Node.find(on_this)
       else
         raise "#{on_this} was not found in the list of nodes or groups!"
       end
@@ -44,14 +44,14 @@ class Controlrepo
       @nodes.flatten!
 
       # Check that our nodes list contains only nodes
-      raise "#{@nodes} contained a non-node object." unless @nodes.all? { |item| item.is_a?(Controlrepo::Node) }
+      raise "#{@nodes} contained a non-node object." unless @nodes.all? { |item| item.is_a?(Onceover::Node) }
 
       if test_this.is_a?(String)
         # If we have just given a string then grab all the classes it corresponds to
-        if Controlrepo::Group.find(test_this)
-          @classes << Controlrepo::Group.find(test_this).members
-        elsif Controlrepo::Class.find(test_this)
-          @classes << Controlrepo::Class.find(test_this)
+        if Onceover::Group.find(test_this)
+          @classes << Onceover::Group.find(test_this).members
+        elsif Onceover::Class.find(test_this)
+          @classes << Onceover::Class.find(test_this)
         else
           raise "#{test_this} was not found in the list of classes or groups!"
         end
@@ -60,26 +60,26 @@ class Controlrepo
         # If it is a hash we need to get creative
 
         # Get all of the included classes and add them
-        if Controlrepo::Group.find(test_this['include'])
-          @classes << Controlrepo::Group.find(test_this['include']).members
-        elsif Controlrepo::Class.find(test_this['include'])
-          @classes << Controlrepo::Class.find(test_this['include'])
+        if Onceover::Group.find(test_this['include'])
+          @classes << Onceover::Group.find(test_this['include']).members
+        elsif Onceover::Class.find(test_this['include'])
+          @classes << Onceover::Class.find(test_this['include'])
         else
           raise "#{test_this['include']} was not found in the list of classes or groups!"
         end
         @classes.flatten!
 
         # Then remove any excluded ones
-        if Controlrepo::Group.find(test_this['exclude'])
-          Controlrepo::Group.find(test_this['exclude']).members.each do |clarse|
+        if Onceover::Group.find(test_this['exclude'])
+          Onceover::Group.find(test_this['exclude']).members.each do |clarse|
             @classes.delete(clarse)
           end
-        elsif Controlrepo::Class.find(test_this['exclude'])
-          @classes.delete(Controlrepo::Class.find(test_this['exclude']))
+        elsif Onceover::Class.find(test_this['exclude'])
+          @classes.delete(Onceover::Class.find(test_this['exclude']))
         else
           raise "#{test_this['exclude']} was not found in the list of classes or groups!"
         end
-      elsif test_this.is_a?(Controlrepo::Class)
+      elsif test_this.is_a?(Onceover::Class)
         @classes << test_this
       end
     end
@@ -133,7 +133,7 @@ class Controlrepo
               relevant_test.test_config.deep_merge!(test.test_config)
             else
               combinations << combo
-              new_tests << Controlrepo::Test.new(node,cls,test.test_config)
+              new_tests << Onceover::Test.new(node,cls,test.test_config)
             end
           end
         end

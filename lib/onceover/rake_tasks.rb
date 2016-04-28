@@ -1,17 +1,17 @@
-require 'controlrepo'
+require 'onceover/controlrepo'
 require 'pathname'
 
 @repo = nil
 @config = nil
 
 task :generate_fixtures do
-  repo = Controlrepo.new
+  repo = Onceover::Controlrepo.new
   raise ".fixtures.yml already exits, we won't overwrite because we are scared" if File.exists?(File.expand_path('./.fixtures.yml',repo.root))
   File.write(File.expand_path('./.fixtures.yml',repo.root),repo.fixtures)
 end
 
 task :hiera_setup do
-  repo = Controlrepo.new
+  repo = Onceover::Controlrepo.new
   current_config = repo.hiera_config
   current_config.each do |key, value|
     if value.is_a?(Hash)
@@ -25,13 +25,13 @@ task :hiera_setup do
 end
 
 task :controlrepo_details do
-  require 'controlrepo'
-  puts Controlrepo.new.to_s
+  require 'onceover/controlrepo'
+  puts Onceover::Controlrepo.new.to_s
 end
 
 task :generate_controlrepo_yaml do
-  require 'controlrepo'
-  repo = Controlrepo.new
+  require 'onceover/controlrepo'
+  repo = Onceover::Controlrepo.new
   template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
   controlrepo_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb',template_dir))
   puts ERB.new(controlrepo_yaml_template, nil, '-').result(binding)
@@ -39,18 +39,18 @@ end
 
 
 task :generate_nodesets do
-  require 'controlrepo/beaker'
+  require 'onceover/beaker'
   require 'net/http'
   require 'json'
 
-  repo = Controlrepo.new
+  repo = Onceover::Controlrepo.new
 
   puts "HOSTS:"
 
   repo.facts.each do |fact_set|
     node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
-    boxname = Controlrepo::Beaker.facts_to_vagrant_box(fact_set)
-    platform = Controlrepo::Beaker.facts_to_platform(fact_set)
+    boxname = Onceover::Beaker.facts_to_vagrant_box(fact_set)
+    platform = Onceover::Beaker.facts_to_platform(fact_set)
     response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
     url = 'URL goes here'
 
@@ -75,13 +75,13 @@ task :generate_nodesets do
 end
 
 task :controlrepo_autotest_prep do
-  require 'controlrepo/testconfig'
-  require 'controlrepo/runner'
-  @repo = Controlrepo.new
+  require 'onceover/testconfig'
+  require 'onceover/runner'
+  @repo = Onceover::Controlrepo.new
   # TODO: This should be getting the location of controlrepo.yaml from @repo
-  @config = Controlrepo::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
+  @config = Onceover::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
 
-  @runner = Controlrepo::Runner.new(@repo, @config)
+  @runner = Onceover::Runner.new(@repo, @config)
   @runner.prepare!
 end
 
@@ -104,9 +104,9 @@ task :controlrepo_acceptance => [
   ]
 
 task :controlrepo_temp_create do
-  require 'controlrepo/testconfig'
-  repo = Controlrepo.new
-  config = Controlrepo::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
+  require 'onceover/testconfig'
+  repo = Onceover::Controlrepo.new
+  config = Onceover::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
   FileUtils.rm_rf(repo.tempdir)
   # Deploy r10k to a temp dir
   config.r10k_deploy_local(repo)

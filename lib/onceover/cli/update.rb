@@ -1,9 +1,9 @@
 require 'cri'
-require 'controlrepo'
-require 'controlrepo/cli'
-require 'controlrepo/logger'
+require 'onceover/controlrepo'
+require 'onceover/cli'
+require 'onceover/logger'
 
-class Controlrepo
+class Onceover
   class CLI
     class Update
       def self.command
@@ -33,7 +33,7 @@ file back onto the system over the original Puppetfile.
 
             run do |opts, args, cmd|
               # Print out the description
-              Controlrepo.new(opts).update_puppetfile
+              Onceover::Controlrepo.new(opts).update_puppetfile
               exit 0
             end
           end
@@ -44,5 +44,5 @@ file back onto the system over the original Puppetfile.
 end
 
 # Register itself
-Controlrepo::CLI.command.add_command(Controlrepo::CLI::Update.command)
-Controlrepo::CLI::Update.command.add_command(Controlrepo::CLI::Update::Puppetfile.command)
+Onceover::CLI.command.add_command(Onceover::CLI::Update.command)
+Onceover::CLI::Update.command.add_command(Onceover::CLI::Update::Puppetfile.command)
