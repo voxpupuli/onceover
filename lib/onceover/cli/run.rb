@@ -1,11 +1,11 @@
 require 'cri'
-require 'controlrepo'
-require 'controlrepo/cli'
-require 'controlrepo/runner'
-require 'controlrepo/testconfig'
-require 'controlrepo/logger'
+require 'onceover/controlrepo'
+require 'onceover/cli'
+require 'onceover/runner'
+require 'onceover/testconfig'
+require 'onceover/logger'
 
-class Controlrepo
+class Onceover
   class CLI
     class Run
       def self.command
@@ -37,8 +37,8 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs spec tests'
 
             run do |opts, args, cmd|
-              repo = Controlrepo.new(opts)
-              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml,opts),:spec)
+              repo = Onceover::Controlrepo.new(opts)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.controlrepo_yaml,opts),:spec)
               runner.prepare!
               runner.run_spec!
             end
@@ -54,8 +54,8 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs acceptance tests'
 
             run do |opts, args, cmd|
-              repo = Controlrepo.new(opts)
-              runner = Controlrepo::Runner.new(repo,Controlrepo::TestConfig.new(repo.controlrepo_yaml,opts),:acceptance)
+              repo = Onceover::Controlrepo.new(opts)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.controlrepo_yaml,opts),:acceptance)
               runner.prepare!
               runner.run_acceptance!
             end
@@ -67,6 +67,6 @@ This includes deploying using r10k and running all custom tests.
 end
 
 # Register itself
-Controlrepo::CLI.command.add_command(Controlrepo::CLI::Run.command)
-Controlrepo::CLI::Run.command.add_command(Controlrepo::CLI::Run::Spec.command)
-Controlrepo::CLI::Run.command.add_command(Controlrepo::CLI::Run::Acceptance.command)
+Onceover::CLI.command.add_command(Onceover::CLI::Run.command)
+Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Spec.command)
+Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Acceptance.command)

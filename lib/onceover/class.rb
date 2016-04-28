@@ -1,4 +1,4 @@
-class Controlrepo
+class Onceover
   class Class
     @@all = []
 
@@ -10,7 +10,7 @@ class Controlrepo
 
     def self.find(class_name)
       @@all.each do |cls|
-        if class_name.is_a?(Controlrepo::Class)
+        if class_name.is_a?(Onceover::Class)
           if cls = class_name
             return cls
           end

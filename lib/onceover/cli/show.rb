@@ -1,9 +1,9 @@
 require 'cri'
-require 'controlrepo'
-require 'controlrepo/cli'
-require 'controlrepo/logger'
+require 'onceover/controlrepo'
+require 'onceover/cli'
+require 'onceover/logger'
 
-class Controlrepo
+class Onceover
   class CLI
     class Show
       def self.command
@@ -12,8 +12,7 @@ class Controlrepo
           usage 'show [controlrepo|puppetfile]'
           summary 'Shows the current state things'
           description <<-DESCRIPTION
-Shows the state of the controlrepo as the tool sees it.
-Useful for debugging.
+Shows the state of either the controlrepo or the Puppetfile
           DESCRIPTION
 
           run do |opts, args, cmd|
@@ -31,13 +30,13 @@ Useful for debugging.
             usage 'repo [options]'
             summary 'Shows the current state of the Controlrepo'
             description <<-DESCRIPTION
-  Shows the state of the repo as the tool sees it.
-  Useful for debugging.
+Shows the state of the repo as the tool sees it.
+Useful for debugging.
             DESCRIPTION
 
             run do |opts, args, cmd|
               # Print out the description
-              puts Controlrepo.new(opts).to_s
+              puts Onceover::Controlrepo.new(opts).to_s
               exit 0
             end
           end
@@ -51,13 +50,15 @@ Useful for debugging.
             usage 'puppetfile [options]'
             summary 'Shows the current state of the puppetfile'
             description <<-DESCRIPTION
-  Shows the state of the puppetfile as the tool sees it.
-  Useful for debugging.
+Shows the state of the puppetfile including current versions and
+laetst versions of each module. Great for checking for updates.
+To update all modules run `onceover update puppetfile`. (Hint: once
+you have done the update, run the tests to make sure nothing breaks.)
             DESCRIPTION
 
             run do |opts, args, cmd|
               # Print out the description
-              Controlrepo.new(opts).print_puppetfile_table
+              Onceover::Controlrepo.new(opts).print_puppetfile_table
               exit 0
             end
           end
@@ -68,6 +69,6 @@ Useful for debugging.
 end
 
 # Register itself
-Controlrepo::CLI.command.add_command(Controlrepo::CLI::Show.command)
-Controlrepo::CLI::Show.command.add_command(Controlrepo::CLI::Show::Repo.command)
-Controlrepo::CLI::Show.command.add_command(Controlrepo::CLI::Show::Puppetfile.command)
+Onceover::CLI.command.add_command(Onceover::CLI::Show.command)
+Onceover::CLI::Show.command.add_command(Onceover::CLI::Show::Repo.command)
+Onceover::CLI::Show.command.add_command(Onceover::CLI::Show::Puppetfile.command)

@@ -1,6 +1,6 @@
-require 'controlrepo'
+require 'onceover/controlrepo'
 
-class Controlrepo
+class Onceover
   class Node
     @@all = []
 
@@ -15,7 +15,7 @@ class Controlrepo
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
-        @fact_set = Controlrepo.facts[(Controlrepo.facts_files.index{|facts_file| File.basename(facts_file,'.json') == name})]
+        @fact_set = Onceover::Controlrepo.facts[Onceover::Controlrepo.facts_files.index{|facts_file| File.basename(facts_file,'.json') == name}]
       rescue TypeError
         @fact_set = nil
       end
@@ -25,7 +25,7 @@ class Controlrepo
 
     def self.find(node_name)
       @@all.each do |node|
-        if node_name.is_a?(Controlrepo::Node)
+        if node_name.is_a?(Onceover::Node)
           if node = node_name
             return node
           end

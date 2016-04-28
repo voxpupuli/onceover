@@ -1,11 +1,11 @@
 require 'cri'
-require 'controlrepo'
-require 'controlrepo/cli'
-require 'controlrepo/runner'
-require 'controlrepo/testconfig'
-require 'controlrepo/logger'
+require 'onceover/controlrepo'
+require 'onceover/cli'
+require 'onceover/runner'
+require 'onceover/testconfig'
+require 'onceover/logger'
 
-class Controlrepo
+class Onceover
   class CLI
     class Init
       def self.command
@@ -14,12 +14,12 @@ class Controlrepo
           usage 'init'
           summary 'Sets up a controlrepo for testing from scratch'
           description <<-DESCRIPTION
-This will generate all of the config files required for the controlrepo
+This will generate all of the config files required for the onceover
 tool to work.
           DESCRIPTION
 
           run do |opts, args, cmd|
-            Controlrepo.init(Controlrepo.new(opts))
+            Onceover::Controlrepo.init(Onceover::Controlrepo.new(opts))
           end
         end
       end
@@ -28,4 +28,4 @@ tool to work.
 end
 
 # Register itself
-Controlrepo::CLI.command.add_command(Controlrepo::CLI::Init.command)
+Onceover::CLI.command.add_command(Onceover::CLI::Init.command)

@@ -1,11 +1,11 @@
 require 'cri'
 
-class Controlrepo
+class Onceover
   class CLI
     def self.command
       @cmd ||= Cri::Command.define do
-        name 'controlrepo'
-        usage 'controlrepo <subcommand> [options]'
+        name 'onceover'
+        usage 'onceover <subcommand> [options]'
         summary 'Tool for testing Puppet controlrepos'
 
         flag :h, :help, 'Show help for this command' do |value, cmd|
@@ -35,12 +35,12 @@ class Controlrepo
     end
 
     # Add the help
-    Controlrepo::CLI.command.add_command(Cri::Command.new_basic_help)
+    Onceover::CLI.command.add_command(Cri::Command.new_basic_help)
   end
 end
 
 # Add all of the other CLI components
-require 'controlrepo/cli/show'
-require 'controlrepo/cli/run'
-require 'controlrepo/cli/init'
-require 'controlrepo/cli/update'
+require 'onceover/cli/show'
+require 'onceover/cli/run'
+require 'onceover/cli/init'
+require 'onceover/cli/update'

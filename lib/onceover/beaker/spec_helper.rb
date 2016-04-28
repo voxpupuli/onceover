@@ -10,7 +10,7 @@ require 'beaker'
 require 'beaker-rspec/beaker_shim' # This overloads Rspec's methods and provides the interface between beaker and RSpec
 require "beaker-rspec/helpers/serverspec"
 include BeakerRSpec::BeakerShim
-require 'controlrepo/beaker'
+require 'onceover/beaker'
 
 #scp_to hosts, '<%= repo.tempdir %>/etc', '/'
 
@@ -35,7 +35,7 @@ RSpec.configure do |c|
 
   #default option values
   defaults = {
-    :nodeset     => 'controlrepo-nodes',
+    :nodeset     => 'onceover-nodes',
   }
   #read env vars
   env_vars = {

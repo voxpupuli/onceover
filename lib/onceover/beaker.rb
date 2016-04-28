@@ -1,4 +1,4 @@
-class Controlrepo
+class Onceover
   class Beaker
     def self.facts_to_vagrant_box(facts)
       # Gets the most similar vagrant box to the facts set provided, will accept a single fact
@@ -100,9 +100,9 @@ class Controlrepo
     end
 
     # This little method will deploy a Controlrepo object to a host, just using r10k deploy
-    def self.deploy_controlrepo_on(host, repo = Controlrepo.new())
+    def self.deploy_controlrepo_on(host, repo = Onceover::Controlrepo.new())
       require 'beaker-rspec'
-      require 'controlrepo'
+      require 'onceover/controlrepo'
 
       if host.is_a?(Array)
         hosts.each do |single_host|
@@ -136,7 +136,7 @@ class Controlrepo
     # This is not helpful for us. We want to be able to test all of our classes on
     # all of our nodes, this could be a lot of vms and having them all running at once
     # would be a real kick in the dick for whatever system was running it.
-    def self.provision_and_test(host,puppet_class,opts = {},repo = Controlrepo.new)
+    def self.provision_and_test(host,puppet_class,opts = {},repo = Onceover::Controlrepo.new)
       opts = {:runs_before_idempotency => 1}.merge(opts)
       opts = {:check_idempotency => true}.merge(opts)
       opts = {:deploy_controlrepo => true}.merge(opts)
