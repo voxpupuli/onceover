@@ -1,5 +1,7 @@
 # Onceover
 
+*The gateway drug to automated infrastructure testing with Puppet*
+
 ## Table of Contents
 
   - [Overview](#overview)
@@ -10,7 +12,6 @@
     - [factsets](#factsets)
     - [nodesets](#nodesets)
     - [Hiera Data](#hiera-data)
-    - [R10k.yaml](#r10kyaml)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Acceptance testing](#acceptance-testing)
@@ -19,13 +20,9 @@
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
     - [Filtering](#filtering)
-    - [Using hiera data (In manual tests)](#using-hiera-data-in-manual-tests)
     - [Extra Configuration](#extra-configuration)
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
-      - [generate_controlrepo_yaml](#generate_controlrepo_yaml)
-      - [generate_nodesets](#generate_nodesets)
-      - [hiera_setup](#hiera_setup)
 
 ## Quick Start
 

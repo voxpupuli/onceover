@@ -3,6 +3,7 @@ require 'spec_helper'
 <% test.classes.each do |cls| -%>
 describe "<%= cls.name %>" do
 
+<% if @mock_functions -%>
 <% @mock_functions.each do |function,params| -%>
 <% if params['type'] == 'statement' -%>
 MockFunction.new('<%= function %>', {:type => :statement})
@@ -11,6 +12,7 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
     f.stubbed.returns(<%= params['returns'] %>)
   }
 }
+<% end -%>
 
 <% end -%>
 <% end -%>
