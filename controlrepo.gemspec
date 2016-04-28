@@ -3,12 +3,12 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "onceover"
-  s.version     = "2.0.10"
+  s.version     = "3.0.0"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
   s.summary     = "Testing tools for Puppet controlrepos"
-  s.description = "Testing tools for Puppet controlrepos"
+  s.description = "Automatically generates tests for your Puppet code"
   s.licenses    = 'Apache-2.0'
 
   s.files       = `git ls-files`.split("\n")
