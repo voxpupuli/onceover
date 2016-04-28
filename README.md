@@ -2,6 +2,8 @@
 
 *The gateway drug to automated infrastructure testing with Puppet*
 
+Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing the `Puppetfile`, `environment.conf` and others in order to run both basic compilation tests and also full acceptance tests!
+
 ## Table of Contents
 
   - [Overview](#overview)
@@ -44,6 +46,9 @@ Run your spec tests!
 ```ruby
 gem 'onceover'
 ```
+
+Here is an example using Bundler:
+
 
 ## Overview
 
