@@ -139,7 +139,7 @@ class Onceover
       temp_controlrepo = Dir.mktmpdir('controlrepo')
       FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
-      FileUtils.mv(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production",:force => true)
+      FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
