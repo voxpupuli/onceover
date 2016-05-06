@@ -150,8 +150,8 @@ class Onceover
           # R10K::Settings.global_settings.evaluate(with_overrides)
           # R10K::Action::Deploy::Environment
           Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-            logger.debug "Runing r10k puppetfile install --verbose from #{repo.tempdir}/#{repo.environmentpath}/production"
-            system("r10k puppetfile install --verbose --color")
+            logger.debug "Runing r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile} from #{repo.tempdir}/#{repo.environmentpath}/production"
+            system("r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}")
           end
         else
           raise "#{repo.tempdir} is not a directory"
