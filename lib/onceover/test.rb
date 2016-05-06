@@ -58,6 +58,7 @@ class Onceover
         @classes.flatten!
       elsif test_this.is_a?(Hash)
         # If it is a hash we need to get creative
+        raise "exclude must contain a value when using include/exclude syntax in onceover config file" unless test_this['exclude']
 
         # Get all of the included classes and add them
         if Onceover::Group.find(test_this['include'])
