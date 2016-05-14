@@ -376,7 +376,7 @@ class Onceover
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
 
-      # Add .controlrepo to Gitignore
+      # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore',repo.root)
       if File.exists? gitignore_path
         gitignore_content = (File.open(gitignore_path,'r') {|f| f.read }).split("\n")
@@ -386,8 +386,8 @@ class Onceover
         gitignore_content = []
       end
 
-      unless gitignore_content.include?(".controlrepo")
-        gitignore_content << ".controlrepo\n"
+      unless gitignore_content.include?(".onceover")
+        gitignore_content << ".onceover\n"
         File.open(gitignore_path,'w') {|f| f.write(gitignore_content.join("\n")) }
         puts "#{message} #{Pathname.new(gitignore_path).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
       end
