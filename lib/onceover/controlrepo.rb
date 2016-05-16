@@ -83,7 +83,22 @@ class Onceover
 
     def initialize(opts = {})
       # When we initialize the object it is going to set some instance vars
-      @root             = opts[:path] || Dir.pwd
+
+      # We want people to be able to run this from anywhere within the repo
+      # so traverse up until we think we are in a controlrepo.
+      if opts[:path]
+        @root = opts[:path]
+      else
+        @root = Dir.pwd
+        until File.exist?(File.expand_path('./environment.conf',@root)) do
+          # Throw an exception if we can't go any further up
+          throw "Could not file root of the controlrepo anywhere above #{Dir.pwd}" if @root == File.expand_path('../',@root)
+
+          # Step up and try again
+          @root = File.expand_path('../',@root)
+        end
+      end
+
       @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
       @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
       @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
@@ -93,10 +108,10 @@ class Onceover
       @nodeset_file     = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml',@root)
       @role_regex       = /role[s]?:{2}/
       @profile_regex    = /profile[s]?:{2}/
-      @tempdir          = opts[:tempdir] || ENV['CONTROLREPO_temp'] || File.absolute_path('./.onceover')
+      @tempdir          = opts[:tempdir] || File.expand_path('./.onceover',@root)
       $temp_modulepath  = nil
       @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-      @onceover_yaml = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
+      @onceover_yaml    = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
       @opts             = opts
       logger.level = :debug if @opts[:debug]
     end
@@ -113,7 +128,7 @@ class Onceover
       #{'nodeset_file'.green}     #{@nodeset_file}
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
-      #{'controlrepo.yaml'.green} #{@onceover_yaml}
+      #{'onceover.yaml'.green} #{@onceover_yaml}
       END
     end
 
@@ -463,6 +478,22 @@ class Onceover
       else
         File.open(out_file,'w') {|f| f.write(contents)}
         puts "#{'created'.green} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
+      end
+    end
+
+    # Returns the deduplicted and verified output of testconfig.spec_tests for
+    # use in Rspec tests so that we don't have to deal with more than one object
+    def spec_tests(&block)
+      require 'onceover/testconfig'
+
+      # Load up all of the tests and deduplicate them
+      testconfig = Onceover::TestConfig.new(@onceover_yaml,@opts)
+      testconfig.spec_tests.each { |tst| testconfig.verify_spec_test(self,tst) }
+      tests = testconfig.run_filters(Onceover::Test.deduplicate(testconfig.spec_tests))
+
+      # Loop over each test, executing the user's block on each
+      tests.each do |tst|
+        block.call(tst.classes[0].name,tst.nodes[0].name,tst.nodes[0].fact_set,testconfig.pre_condition)
       end
     end
 
