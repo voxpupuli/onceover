@@ -38,7 +38,7 @@ This includes deploying using r10k and running all custom tests.
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.controlrepo_yaml,opts),:spec)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:spec)
               runner.prepare!
               runner.run_spec!
             end
@@ -55,7 +55,7 @@ This includes deploying using r10k and running all custom tests.
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.controlrepo_yaml,opts),:acceptance)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:acceptance)
               runner.prepare!
               runner.run_acceptance!
             end

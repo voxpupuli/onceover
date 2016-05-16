@@ -28,7 +28,7 @@ class Onceover
     attr_accessor :nodeset_file
     attr_accessor :manifest
     attr_accessor :tempdir
-    attr_accessor :controlrepo_yaml
+    attr_accessor :onceover_yaml
     attr_accessor :opts
 
     # Create methods on self so that we can access these basic things without
@@ -96,7 +96,7 @@ class Onceover
       @tempdir          = opts[:tempdir] || ENV['CONTROLREPO_temp'] || File.absolute_path('./.onceover')
       $temp_modulepath  = nil
       @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-      @controlrepo_yaml = opts[:controlrepo_yaml] || "#{@spec_dir}/onceover.yaml"
+      @onceover_yaml = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
       @opts             = opts
       logger.level = :debug if @opts[:debug]
     end
@@ -113,7 +113,7 @@ class Onceover
       #{'nodeset_file'.green}     #{@nodeset_file}
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
-      #{'controlrepo.yaml'.green} #{@controlrepo_yaml}
+      #{'controlrepo.yaml'.green} #{@onceover_yaml}
       END
     end
 
@@ -371,7 +371,7 @@ class Onceover
       require 'pathname'
       require 'colored'
 
-      Onceover::Controlrepo.init_write_file(generate_controlrepo_yaml(repo),repo.controlrepo_yaml)
+      Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo),repo.onceover_yaml)
       Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
@@ -393,7 +393,7 @@ class Onceover
       end
     end
 
-    def self.generate_controlrepo_yaml(repo)
+    def self.generate_onceover_yaml(repo)
       # This will return a controlrepo.yaml that can be written to a file
       Onceover::Controlrepo.evaluate_template('controlrepo.yaml.erb',binding)
     end

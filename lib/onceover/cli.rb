@@ -25,7 +25,7 @@ class Onceover
         optional nil, :nodeset_file, 'YAML file containing node definitions'
         optional nil, :tempdir, 'Temp directory to use, defaults to .controlrepo'
         optional nil, :manifest, 'Path fo find manifests'
-        optional nil, :controlrepo_yaml, 'Path of controlrepo.yaml'
+        optional nil, :onceover_yaml, 'Path of controlrepo.yaml'
 
         run do |opts, args, cmd|
           puts cmd.help(:verbose => opts[:verbose])

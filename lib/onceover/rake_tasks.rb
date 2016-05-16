@@ -29,12 +29,12 @@ task :controlrepo_details do
   puts Onceover::Controlrepo.new.to_s
 end
 
-task :generate_controlrepo_yaml do
+task :generate_onceover_yaml do
   require 'onceover/controlrepo'
   repo = Onceover::Controlrepo.new
   template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-  controlrepo_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb',template_dir))
-  puts ERB.new(controlrepo_yaml_template, nil, '-').result(binding)
+  onceover_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb',template_dir))
+  puts ERB.new(onceover_yaml_template, nil, '-').result(binding)
 end
 
 
