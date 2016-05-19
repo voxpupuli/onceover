@@ -185,7 +185,7 @@ One or many tags that tests in this group should be tagged with. This allows you
 
 This gem comes with a few pre-canned factsets. These are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`. You can also add your own factsets by putting them in:
 
-`spec/factsets/*.yaml`
+`spec/factsets/*.json`
 
 Factsets are used by the controlrepo gem to generate spec tests, which compile a given class against a certain set of facts. To create these factsets all we need to do is log onto a real machine that has puppet installed and run:
 
@@ -197,7 +197,7 @@ Which will give raw json output of every fact which puppet knows about. Usually 
 
 Once we have our factset all we need to do is copy it into `spec/factsets/` inside our controlrepo and commit it to version control. Factsets are named based on their filename, not the name of the server they came from (Although you can, if you want). i.e the following factset file:
 
-`spec/factsets/server2008r2.yaml`
+`spec/factsets/server2008r2.json`
 
 Would map to a node named `server2008r2` in `onceover.yaml`
 
