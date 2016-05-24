@@ -156,7 +156,7 @@ class Onceover
       FileUtils.mkdir_p(files_to_copy.keep_if { |path| Pathname(path).directory? })
 
       logger.debug "Copying files to #{temp_controlrepo}"
-      FileUtils.cp(files_to_copy, "#{temp_controlrepo}")
+      FileUtils.cp(files_to_copy.delete_if { |path| Pathname(path).directory? }, "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
