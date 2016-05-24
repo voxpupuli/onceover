@@ -145,8 +145,9 @@ class Onceover
       # full paths
       excluded_files = []
       if ENV['GEM_HOME']
-        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo cpoy"
+        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo copy"
         excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
+        excluded_files.flatten!
       end
 
       # Exclude the files we need to
