@@ -140,6 +140,9 @@ class Onceover
       #
       # if we are using bundler to install gems below the controlrepo
       # we don't wan two copies so exclude those
+      #
+      # If there are more situations like this we can add them to this array as
+      # full paths
       excluded_files = []
       if ENV['GEM_HOME']
         excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
@@ -147,16 +150,19 @@ class Onceover
 
       # Exclude the files we need to
       controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy = controlrepo_files - excluded_files
+      files_to_copy = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
+      folders_to_copy = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(files_to_copy.keep_if { |path| Pathname(path).directory? })
+      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
-      FileUtils.cp(files_to_copy.delete_if { |path| Pathname(path).directory? }, "#{temp_controlrepo}")
+      files_to_copy.each do |file|
+        FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+      end
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
