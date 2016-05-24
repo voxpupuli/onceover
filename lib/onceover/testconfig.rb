@@ -148,9 +148,14 @@ class Onceover
       # Exclude the files we need to
       controlrepo_files = Dir.glob("#{repo.root}/**/*")
       files_to_copy = controlrepo_files - excluded_files
-      
+
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
+
+      logger.debug "Creating directories under #{temp_controlrepo}"
+      FileUtils.mkdir_p(files_to_copy.keep_if { |path| Pathname(path).directory? })
+
+      logger.debug "Copying files to #{temp_controlrepo}"
       FileUtils.cp(files_to_copy, "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
