@@ -135,9 +135,23 @@ class Onceover
       # We need to do the copy to a tempdir then move the tempdir to the
       # destination, just in case we get a recursive copy
       # TODO: Improve this to save I/O
+
+      # We might need to exclude some files
+      #
+      # if we are using bundler to install gems below the controlrepo
+      # we don't wan two copies so exclude those
+      excluded_files = []
+      if ENV['GEM_HOME']
+        excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
+      end
+
+      # Exclude the files we need to
+      controlrepo_files = Dir.glob("#{repo.root}/**/*")
+      files_to_copy = controlrepo_files - excluded_files
+      
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
-      FileUtils.cp_r(Dir["#{repo.root}/*"], "#{temp_controlrepo}")
+      FileUtils.cp(files_to_copy, "#{temp_controlrepo}")
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
