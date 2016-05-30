@@ -22,8 +22,8 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% if pre_condition -%>
     let(:pre_condition) {
       pp = <%= '<<' %>-END
-$onceover_class = <%= cls.name %>
-$onceover_node = <%= node.name %>
+$onceover_class = '<%= cls.name %>'
+$onceover_node = '<%= node.name %>'
 <%= pre_condition.chomp %>
 END
     }
