@@ -366,6 +366,8 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 **NOTE:** If you need to run some pre_conditions during acceptance tests but not spec tests or vice versa you can check the status of the `$controlrepo_accpetance` variable. It will be `true` when run as an acceptance test and `undef` otherwise. If you want to limit pre_conditions to only certain nodes just use conditional logic based on facts like you normally would.
 
+**NOTE:** If you want to access the class or factset that onceover is running against just use the `$onceover_class` and `$onceover_node` variables respectively.
+
 ## Extra Tooling
 
 Is this all too simple for you? Great! This is supposed to be a gateway to writing your own super-awesome really complicated tests using more traditional tools. If you want to ditch this tool in favour of doing it yourself, go ahead, but take these ruby methods as a parting gift:
