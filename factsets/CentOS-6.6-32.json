@@ -17,6 +17,7 @@
     "boardproductname": "VirtualBox",
     "boardserialnumber": "0",
     "chassistype": "Other",
+    "concat_basedir": "/opt/puppetlabs/puppet/cache/concat",
     "dhcp_servers": {
       "eth0": "10.0.2.2",
       "system": "10.0.2.2"
