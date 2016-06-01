@@ -19,6 +19,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
+    - [Accessing Onceover in a traditional RSpec test](#accessing-onceover-in-a-traditional-rspec-test)
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
     - [Filtering](#filtering)
@@ -365,9 +366,37 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 **NOTE:** If you need to run some pre_conditions during acceptance tests but not spec tests or vice versa you can check the status of the `$controlrepo_accpetance` variable. It will be `true` when run as an acceptance test and `undef` otherwise. If you want to limit pre_conditions to only certain nodes just use conditional logic based on facts like you normally would.
 
+**NOTE:** If you want to access the class or factset that onceover is running against just use the `$onceover_class` and `$onceover_node` variables respectively.
+
 ## Extra Tooling
 
 Is this all too simple for you? Great! This is supposed to be a gateway to writing your own super-awesome really complicated tests using more traditional tools. If you want to ditch this tool in favour of doing it yourself, go ahead, but take these ruby methods as a parting gift:
+
+### Accessing Onceover in a traditional RSpec test
+
+If you would like to use `onceover.yaml` to manage which tests you want to run, but want more than just `it { should_compile }` tests to be run you can write you own as follows:
+
+```ruby
+# spec/classes/role_spec.rb
+require 'spec_helper'
+require 'onceover/controlrepo'
+require 'helpers/shared_examples'
+
+Onceover::Controlrepo.new.spec_tests do |class_name,node_name,facts,pre_conditions|
+  describe class_name do
+    context "on #{node_name}" do
+      let(:facts) { facts }
+      let(:pre_condition) { pre_conditions }
+
+      it_behaves_like 'soe'
+    end
+  end
+end
+```
+
+This will use the `soe` [shared example](https://www.relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples) on all of the tests that are configured in your `onceover.yaml` including any [pre_conditions](#using-workarounds) that you have set up.
+
+**Note:** Onceover will automatically run any extra Rspec tests that it finds in the normal directories `spec/{classes,defines,unit,functions,hosts,integration,types}` so you can easily use auto-generated spec tests in conjunction with your own Rspec tests.
 
 ### Accessing fact sets in a traditional RSpec test
 
@@ -382,9 +411,9 @@ Onceover::Controlrepo.facts.each do |facts|
 end
 ```
 
-### Accessing Roles in a traditional RSpec test
+### Other (possibly less useful) methods
 
-The following code will test all roles on all nodes in native rspec:
+The following code will test all roles that onceover can find (ignoring the ones configured in `onceover.yaml`) on all nodes in native rspec:
 
 ```ruby
 require 'spec_helper'

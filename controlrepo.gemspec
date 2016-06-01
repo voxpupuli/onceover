@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "onceover"
-  s.version     = "3.0.2"
+  s.version     = "3.0.7"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec', '>= 3.0.0'
   s.add_runtime_dependency 'bundler'
   s.add_runtime_dependency 'r10k', '>=2.1.0'
-  s.add_runtime_dependency 'puppet'
+  s.add_runtime_dependency 'puppet', '>=3.4.0'
   s.add_runtime_dependency 'git'
   s.add_runtime_dependency 'cri', '>= 2.6'
   s.add_runtime_dependency 'colored', '~> 1.2'
