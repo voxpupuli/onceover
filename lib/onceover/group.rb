@@ -16,12 +16,16 @@ class Onceover
       @name = name
       @members = []
 
-      if Onceover::Group.valid_members?(members)
+      case
+      when Onceover::Group.valid_members?(members)
         # If it's already a valid list just chuck it in there
         @members = members
-      elsif members.is_a?(Hash)
+      when members.is_a?(Hash)
         # if it's a hash then do subtractive stiff
         @members = Onceover::Group.subtractive_to_list(members)
+      when members.nil?
+        # Support empty groups yo
+        @members = []
       else
         # Turn it into a full list
         member_objects = []
