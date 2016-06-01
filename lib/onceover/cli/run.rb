@@ -21,6 +21,7 @@ This includes deploying using r10k and running all custom tests.
           optional :t, :tags, 'A list of tags. Only tests with these tags will be run'
           optional :c, :classes, 'A list of classes. Only tests with these classes will be run'
           optional :n, :nodes, 'A list of nodes. Only tests with these nodes will be run'
+          optional :s, :skip_r10k, 'Skip the r10k step'
 
           run do |opts, args, cmd|
             puts cmd.help(:verbose => opts[:verbose])
@@ -38,7 +39,7 @@ This includes deploying using r10k and running all custom tests.
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:spec)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :spec)
               runner.prepare!
               runner.run_spec!
             end

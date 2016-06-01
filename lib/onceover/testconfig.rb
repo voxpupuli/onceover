@@ -23,6 +23,7 @@ class Onceover
     attr_accessor :filter_classes
     attr_accessor :filter_nodes
     attr_accessor :mock_functions
+    attr_accessor :skip_r10k
 
     def initialize(file,opts = {})
       begin
@@ -54,6 +55,7 @@ class Onceover
       @filter_tags      = opts[:tags] ? [opts[:tags].split(',')].flatten : nil
       @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
       @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
+      @skip_r10k        = opts[:skip_r10k] ? true : false
 
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
