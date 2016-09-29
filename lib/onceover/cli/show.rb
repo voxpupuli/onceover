@@ -10,7 +10,7 @@ class Onceover
         @cmd ||= Cri::Command.define do
           name 'show'
           usage 'show [controlrepo|puppetfile]'
-          summary 'Shows the current state things'
+          summary 'Shows the current state of things'
           description <<-DESCRIPTION
 Shows the state of either the controlrepo or the Puppetfile
           DESCRIPTION
