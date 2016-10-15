@@ -8,13 +8,6 @@ require 'onceover/beaker'
 require 'onceover/logger'
 include Onceover::Logger
 
-begin
-  require 'pry'
-rescue LoadError
-  # We don't care if i'ts not here, this is just used for
-  # debugging sometimes
-end
-
 class Onceover
   class Controlrepo
     attr_accessor :root
