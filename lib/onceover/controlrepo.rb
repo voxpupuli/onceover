@@ -419,14 +419,19 @@ class Onceover
         platform = Onceover::Beaker.facts_to_platform(fact_set)
 
         logger.debug "Querying hashicorp API for Vagrant box that matches #{boxname}"
-        response = Net::HTTP.get(URI.parse("https://atlas.hashicorp.com/api/v1/box/#{boxname}"))
+
+        uri = URI("https://atlas.hashicorp.com:443/api/v1/box/#{boxname}")
+        request = Net::HTTP.new(uri.host, uri.port)
+        request.use_ssl = true
+        response = request.get(uri)
+
         url = 'URL goes here'
 
-        if response =~ /Not Found/i
+        if response.code == "404"
           comment_out = true
         else
           comment_out = false
-          box_info = JSON.parse(response)
+          box_info = JSON.parse(response.body)
           box_info['current_version']['providers'].each do |provider|
             if  provider['name'] == 'virtualbox'
               url = provider['original_url']
