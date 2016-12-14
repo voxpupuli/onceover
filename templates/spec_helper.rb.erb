@@ -13,4 +13,5 @@ RSpec.configure do |c|
   c.module_path = '<%= modulepath %>'
   c.hiera_config = '<%= environmentpath %>/production/hiera.yaml'
   c.manifest = '<%= repo.temp_manifest %>'
+  ENV['STRICT_VARIABLES'] = '<%= self.strict_variables %>'
 end

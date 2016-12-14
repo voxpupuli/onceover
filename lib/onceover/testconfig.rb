@@ -24,6 +24,7 @@ class Onceover
     attr_accessor :filter_nodes
     attr_accessor :mock_functions
     attr_accessor :skip_r10k
+    attr_accessor :strict_variables
 
     def initialize(file,opts = {})
       begin
@@ -42,6 +43,7 @@ class Onceover
       @acceptance_tests = []
       @opts             = opts
       @mock_functions   = config['functions']
+      @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
 
       # Add the 'all_classes' and 'all_nodes' default groups
       @node_groups << Onceover::Group.new('all_nodes',@nodes)
