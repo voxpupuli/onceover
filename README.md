@@ -436,7 +436,7 @@ The same can also be done with profiles just by using the profiles method instea
 
 ```ruby
 require 'spec_helper'
-require 'controlrepo'
+require 'onceover'
 Onceover::Controlrepo.profiles.each do |profile|
   describe profile do
     Onceover::Controlrepo.facts.each do |facts|
@@ -461,7 +461,7 @@ Just pass a hash to the `facts` method and it will return only the fact sets wit
 
 ```ruby
 require 'spec_helper'
-require 'controlrepo'
+require 'onceover'
 
 describe 'profile::windows_appserver' do
   Onceover::Controlrepo.facts({
@@ -492,7 +492,7 @@ Note that you will need to call the `roles` and `profiles` methods on the object
 I have included a couple of little rake tasks to help get you started with testing your control repos. Set them up by adding this to your `Rakefile`
 
 ```ruby
-require 'controlrepo/rake_tasks'
+require 'onceover/rake_tasks'
 ```
 
 The tasks are as follows:
