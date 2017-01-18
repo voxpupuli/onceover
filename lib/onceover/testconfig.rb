@@ -209,7 +209,7 @@ class Onceover
     end
 
     def write_rakefile(location, pattern)
-      File.write("#{location}/Rakefile",Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding))
+      File.write("#{location}/Rakefile",Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb',binding))
     end
 
     def write_spec_helper(location, repo)
