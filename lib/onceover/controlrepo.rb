@@ -246,7 +246,8 @@ class Onceover
     def fixtures
       # Load up the Puppetfile using R10k
       puppetfile = R10K::Puppetfile.new(@root)
-      modules = puppetfile.load
+      fail 'Could not load Puppetfile' unless puppetfile.load
+      modules = puppetfile.modules
 
       # Iterate over everything and seperate it out for the sake of readability
       symlinks = []
