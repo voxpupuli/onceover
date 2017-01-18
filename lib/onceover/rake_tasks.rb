@@ -4,12 +4,16 @@ require 'pathname'
 @repo = nil
 @config = nil
 
+
+desc 'Writes a `fixtures.yml` file based on the Puppetfile'
 task :generate_fixtures do
   repo = Onceover::Controlrepo.new
   raise ".fixtures.yml already exits, we won't overwrite because we are scared" if File.exists?(File.expand_path('./.fixtures.yml',repo.root))
   File.write(File.expand_path('./.fixtures.yml',repo.root),repo.fixtures)
 end
 
+
+desc "Modifies your `hiera.yaml` to point at the hieradata relative to its position."
 task :hiera_setup do
   repo = Onceover::Controlrepo.new
   current_config = repo.hiera_config

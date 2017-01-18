@@ -246,7 +246,8 @@ class Onceover
     def fixtures
       # Load up the Puppetfile using R10k
       puppetfile = R10K::Puppetfile.new(@root)
-      modules = puppetfile.load
+      fail 'Could not load Puppetfile' unless puppetfile.load
+      modules = puppetfile.modules
 
       # Iterate over everything and seperate it out for the sake of readability
       symlinks = []
@@ -383,6 +384,8 @@ class Onceover
       Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
+      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding),File.expand_path('./Rakefile',repo.root))
+      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Gemfile.erb',binding),File.expand_path('./Gemfile',repo.root))
 
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore',repo.root)
