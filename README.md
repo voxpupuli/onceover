@@ -50,6 +50,17 @@ gem 'onceover'
 
 Here is an example using Bundler:
 
+Install the Gem:
+
+`bundle install`
+
+Set up your config:
+
+`bundle exec onceover init`
+
+Run your spec tests!
+
+`bundle exec onceover run spec`
 
 ## Overview
 
@@ -269,7 +280,7 @@ HOSTS:
 
 If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory or the root of your controlrepo and you are good to go.
 
-**NOTE:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
+**WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
 
 **Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x, the tool will automatically detect this and everything should work.
 
@@ -334,13 +345,37 @@ file { '/etc/puppetlabs/puppet/puppet.conf':
 }
 ```
 
-To fox this we can add the service to the pre_conditions to make sure that our catalogs can compile e.g.
+To fix this we can add the service to the pre_conditions to make sure that our catalogs can compile e.g.
 
 ```puppet
 # spec/pre_conditions/services.pp
 service { 'pe-puppetserver':
   ensure => 'running',
 }
+```
+
+You can also mock out defined resources or types that you cannot gain access to easily, such as `puppet_enterprise::mcollective::client`:
+
+```puppet
+  define puppet_enterprise::mcollective::client (
+    $activemq_brokers,
+    $logfile     = '/var/log',
+    $create_user = true,
+  ) {
+
+  }
+```
+or
+
+```puppet
+  define pe_ini_setting (
+    $ensure  = present,
+    $path,
+    $section,
+    $setting,
+    $value,
+  ) {
+  }
 ```
 
 However this is going to pose an issue when we get to acceptance testing. Due to the fact that acceptance tests actually run the code, not just tries to compile a catalog, it will not be able to find the 'pe-pupetserver' service and will fail. One way to get around this is to use some of the optional parameters to the service resource e.g.
