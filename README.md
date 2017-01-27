@@ -98,6 +98,8 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 **class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again.
 
+**shared_examples:** This section allows you to list the shared examples to be included in every node test.  Value is an Array
+
 **test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be an array of hashes with the following format:
 
 ```yaml
@@ -177,6 +179,10 @@ class_groups:
   non_windows_roles:
     include: 'all_classes'
     exclude: 'windows_roles'
+
+shared_examples:
+  - test_security
+  _ test_soe
 
 test_matrix:
   - all_nodes:

@@ -438,6 +438,7 @@ class Onceover
       require 'pathname'
       require 'colored'
 
+<<<<<<< HEAD
       Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo), repo.onceover_yaml)
       # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
       #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
@@ -448,6 +449,14 @@ class Onceover
       init_write_file(
         evaluate_template('factsets_README.md.erb', binding),
         File.expand_path('./factsets/README.md', repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('shared_examples_README.md.erb',binding),
+        File.expand_path('./shared_examples/README.md',repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('matchers_README.md.erb',binding),
+        File.expand_path('./matchers/README.md',repo.spec_dir)
       )
       init_write_file(
         evaluate_template('Rakefile.erb', binding),
