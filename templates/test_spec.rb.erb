@@ -29,6 +29,11 @@ END
     }
 <% end -%>
     it { should compile }
+<% if @shared_examples -%>
+  <% @shared_examples.each do |shared_example| -%>
+    it_behaves_like '<%= shared_example.name %>'
+  <% end -%>
+<% end -%>
   end
 <% end -%>
 end

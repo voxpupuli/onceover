@@ -1,6 +1,16 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-utils'
 require 'rspec_junit_formatter'
+<% if @shared_example_files -%>
+  <% @shared_example_files.each do |example| -%>
+require 'shared_examples/<%= example %>'
+  <% end -%>
+<% end -%>
+<% if @matcher_files -%>
+  <% @matcher_files.each do |example| -%>
+require 'matchers/<%= example %>'
+  <% end -%>
+<% end -%>
 
 RSpec.configure do |c|
   c.parser = 'future'
