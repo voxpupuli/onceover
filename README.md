@@ -182,7 +182,7 @@ class_groups:
 
 shared_examples:
   - test_security
-  _ test_soe
+  - test_soe
 
 test_matrix:
   - all_nodes:
