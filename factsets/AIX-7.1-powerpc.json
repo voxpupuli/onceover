@@ -1,4 +1,5 @@
-me": "pe-aix-71-se.delivery.puppetlabs.net",
+{
+  "name": "pe-aix-71-se.delivery.puppetlabs.net",
   "values": {
     "aio_agent_version": "1.5.2",
     "architecture": "PowerPC_POWER7",
@@ -34,26 +35,26 @@ me": "pe-aix-71-se.delivery.puppetlabs.net",
     "macaddress_en0": "66:a4:dc:28:bf:04",
     "memory": {
       "swap": {
-        "available": "1007.13 MiB",
-        "available_bytes": 1056055296,
+        "available": "1007.14 MiB",
+        "available_bytes": 1056063488,
         "capacity": "1.65%",
         "total": "1.00 GiB",
         "total_bytes": 1073741824,
-        "used": "16.87 MiB",
-        "used_bytes": 17686528
+        "used": "16.86 MiB",
+        "used_bytes": 17678336
       },
       "system": {
-        "available": "17.07 MiB",
-        "available_bytes": 17903616,
-        "capacity": "98.33%",
+        "available": "16.84 MiB",
+        "available_bytes": 17653760,
+        "capacity": "98.36%",
         "total": "1.00 GiB",
         "total_bytes": 1073741824,
-        "used": "1006.93 MiB",
-        "used_bytes": 1055838208
+        "used": "1007.16 MiB",
+        "used_bytes": 1056088064
       }
     },
-    "memoryfree": "17.07 MiB",
-    "memoryfree_mb": 17.07421875,
+    "memoryfree": "16.84 MiB",
+    "memoryfree_mb": 16.8359375,
     "memorysize": "1.00 GiB",
     "memorysize_mb": 1024.0,
     "mtu_en0": 1500,
@@ -190,25 +191,25 @@ me": "pe-aix-71-se.delivery.puppetlabs.net",
     "sshfp_dsa": "SSHFP 2 1 1bbfbd9caff8924d4584cbb2a748f1be2690d04c\nSSHFP 2 2 73ec4c25ea880adfbb7f66c60e92fec0ff130c4988765b5799e4707a7cdde68a",
     "sshfp_rsa": "SSHFP 1 1 8957e5a6df12f351fd768ee9615b3906861ff4e5\nSSHFP 1 2 5a2dddf4df75bc8f4f352d30a8192824e01386b4720708d249edec6f05c5eb81",
     "sshrsakey": "AAAAB3NzaC1yc2EAAAADAQABAAABAQC38I+hMQxC/++t3XvgXPtpVglDV2Qp5Xqqp/ZmdJrW7gh3ylKWlOrJOlx72p9Qa2fTAU+eJpYeI8vAAKxtBqqoxVNfn9rGt8wR3eubcwm6CRLTCOqf2OoDJzyJw3RcgidhHuT2KPVYtNOpNEkFyTjtpru3RWrO08PLpT0simATc5XJrvSH9ODQCqzVi5Fhe58Kn1kyAmH9gr0vz/9zrhllBjxVhc3YFz2TKqnZD+zIYlYhoI1vm5zQSzUWA+8B9XBEGs3TUaSDKPANEwof2lt+auTHySlGRXTPL4D9mYw2BhrxRBESgLsbba23SVCMGPILDvb4JwI4vYc7E6AvrFIB",
-    "swapfree": "1007.13 MiB",
-    "swapfree_mb": 1007.1328125,
+    "swapfree": "1007.14 MiB",
+    "swapfree_mb": 1007.140625,
     "swapsize": "1.00 GiB",
     "swapsize_mb": 1024.0,
     "system_uptime": {
       "days": 160,
-      "hours": 3845,
-      "seconds": 13844700,
+      "hours": 3847,
+      "seconds": 13852500,
       "uptime": "160 days"
     },
     "timezone": "PST",
     "uptime": "160 days",
     "uptime_days": 160,
-    "uptime_hours": 3845,
-    "uptime_seconds": 13844700,
+    "uptime_hours": 3847,
+    "uptime_seconds": 13852500,
     "clientcert": "pe-aix-71-se.delivery.puppetlabs.net",
     "clientversion": "4.5.2",
     "clientnoop": false
   },
-  "timestamp": "2017-02-06T19:15:38.617995000-08:00",
-  "expiration": "2017-02-06T19:45:38.618753000-08:00"
+  "timestamp": "2017-02-06T21:25:27.081337000-08:00",
+  "expiration": "2017-02-06T21:55:27.082017000-08:00"
 }
