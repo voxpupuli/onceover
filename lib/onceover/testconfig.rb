@@ -115,6 +115,16 @@ class Onceover
       end
     end
 
+    def self.subtractive_to_list(subtractive_hash)
+      # Take a hash that looks like this:
+      # { 'include' => 'somegroup'
+      #   'exclude' => 'other'}
+      # and return a list of classes/nodes
+      include_list = Onceover::TestConfig.find_list(subtractive_hash['include']).flatten
+      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude']).flatten
+      include_list - exclude_list
+    end
+
     def verify_spec_test(controlrepo,test)
       test.nodes.each do |node|
         unless controlrepo.facts_files.any? { |file| file =~ /\/#{node.name}\.json/ }
