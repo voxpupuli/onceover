@@ -409,7 +409,23 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 ## Extra Tooling
 
-Is this all too simple for you? Great! This is supposed to be a gateway to writing your own super-awesome really complicated tests using more traditional tools. If you want to ditch this tool in favour of doing it yourself, go ahead, but take these ruby methods as a parting gift:
+### Inspecting and updating the Puppetfile
+
+Onceover comes with some extra commands for interacting with the Puppetfile in useful ways. These are:
+
+`onceover show puppetfile`
+
+This will display all the current versions of all modules that are in the Puppetfile alongside the latest versions and whether or not they are out of date. This is a useful took for making sure your modules don't get too stale.
+
+`onceover update puppetfile`
+
+This takes your Puppetfile and actually modifies all of the module versions in there to the latest versions and saves the file. This is useful for setting up automated Puppetfile updates, just get Jenkins or Bamboo to:
+
+  1. Check out the Controlrepo
+  2. Run onceover to get a passing baseline
+  3. Update the Puppetfile with the latest versions of all modules
+  4. Run Onceover agan
+  5. Create a pull request if all tests pass
 
 ### Accessing Onceover in a traditional RSpec test
 
