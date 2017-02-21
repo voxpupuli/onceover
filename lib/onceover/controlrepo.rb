@@ -10,6 +10,11 @@ include Onceover::Logger
 
 class Onceover
   class Controlrepo
+    # This exists for caching. Each time a new one of these objects is created
+    # it gets dumped in here so that it's values can be called without
+    # reference to the initial object itself
+    @@existing_controlrepo = nil
+
     attr_accessor :root
     attr_accessor :puppetfile
     attr_accessor :facts_files
@@ -36,39 +41,39 @@ class Onceover
     # times would be be calling this? If we call it over and over you can just
     # instantiate it anyway
     def self.root
-     Onceover::Controlrepo.new.root
+     @@existing_controlrepo.root
     end
 
     def self.puppetfile
-     Onceover::Controlrepo.new.puppetfile
+     @@existing_controlrepo.puppetfile
     end
 
     def self.facts_files
-     Onceover::Controlrepo.new.facts_files
+     @@existing_controlrepo.facts_files
     end
 
     def self.classes
-     Onceover::Controlrepo.new.classes
+     @@existing_controlrepo.classes
     end
 
     def self.roles
-      Onceover::Controlrepo.new.roles
+      @@existing_controlrepo.roles
     end
 
     def self.profiles
-      Onceover::Controlrepo.new.profiles
+      @@existing_controlrepo.profiles
     end
 
     def self.config
-      Onceover::Controlrepo.new.config
+      @@existing_controlrepo.config
     end
 
     def self.facts(filter = nil)
-      Onceover::Controlrepo.new.facts(filter)
+      @@existing_controlrepo.facts(filter)
     end
 
     def self.hiera_config_file
-      Onceover::Controlrepo.new.hiera_config_file
+      @@existing_controlrepo.hiera_config_file
     end
     #
     # End class methods
@@ -107,6 +112,7 @@ class Onceover
       @onceover_yaml    = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
       @opts             = opts
       logger.level = :debug if @opts[:debug]
+      @@existing_controlrepo = self
     end
 
     def to_s
@@ -121,7 +127,7 @@ class Onceover
       #{'nodeset_file'.green}     #{@nodeset_file}
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
-      #{'onceover.yaml'.green} #{@onceover_yaml}
+      #{'onceover.yaml'.green}    #{@onceover_yaml}
       END
     end
 
