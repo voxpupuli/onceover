@@ -22,7 +22,7 @@ class Onceover
         @members = members
       when members.is_a?(Hash)
         # if it's a hash then do subtractive stiff
-        @members = Onceover::Group.subtractive_to_list(members)
+        @members = Onceover::TestConfig.subtractive_to_list(members)
       when members.nil?
         # Support empty groups yo
         @members = []
@@ -74,16 +74,6 @@ class Onceover
       rescue
         return false
       end
-    end
-
-    def self.subtractive_to_list(subtractive_hash)
-      # Take a hash that looks like this:
-      # { 'include' => 'somegroup'
-      #   'exclude' => 'other'}
-      # and return a list of classes/nodes
-      include_list = Onceover::TestConfig.find_list(subtractive_hash['include'])
-      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude'])
-      include_list - exclude_list
     end
   end
 end

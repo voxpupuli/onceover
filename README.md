@@ -4,6 +4,8 @@
 
 Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing the `Puppetfile`, `environment.conf` and others in order to run both basic compilation tests and also full acceptance tests!
 
+**NEW FEATURE! REGEX SUPPORT!**
+
 ## Table of Contents
 
   - [Overview](#overview)
@@ -88,13 +90,13 @@ If we are doing acceptance testing then we need information about how to spin up
 
 Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
 
-**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/))
+**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/)). To make life easier you can also specify one or many **regular expressions** in this section. A good one to start with would be `/^role::/`. Regular expressions are just strings that start and end with a forward slash.
 
 **nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
 
 **node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax.
 
-**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax.
+**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again.
 
 **shared_examples:** This section allows you to list the shared examples to be included in every node test.  Value is an Array
 
@@ -124,6 +126,7 @@ classes:
   - 'roles::load_balancer'
   - 'roles::syd_f5_load_balancer'
   - 'roles::windows_server'
+  - '/^role/'
 
 nodes:
   - centos6a
@@ -143,6 +146,7 @@ class_groups:
   windows_roles:
     - 'roles::windows_server'
     - 'roles::backend_dbserver'
+    - '/^roles::win/'
   non_windows_roles:
     include: 'all_classes'
     exclude: 'windows_roles'

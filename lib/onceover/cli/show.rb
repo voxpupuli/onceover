@@ -35,8 +35,13 @@ Useful for debugging.
             DESCRIPTION
 
             run do |opts, args, cmd|
+              repo   = Onceover::Controlrepo.new(opts)
+              config = Onceover::TestConfig.new(repo.onceover_yaml, opts)
               # Print out the description
-              puts Onceover::Controlrepo.new(opts).to_s
+              puts "--- Controlrepo Information ---"
+              puts repo.to_s
+              puts "\n--- Test Configuration ---"
+              puts config.to_s
               exit 0
             end
           end

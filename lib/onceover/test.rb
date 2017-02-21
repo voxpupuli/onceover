@@ -57,29 +57,7 @@ class Onceover
         end
         @classes.flatten!
       elsif test_this.is_a?(Hash)
-        # If it is a hash we need to get creative
-        raise "exclude must contain a value when using include/exclude syntax in onceover config file" unless test_this['exclude']
-
-        # Get all of the included classes and add them
-        if Onceover::Group.find(test_this['include'])
-          @classes << Onceover::Group.find(test_this['include']).members
-        elsif Onceover::Class.find(test_this['include'])
-          @classes << Onceover::Class.find(test_this['include'])
-        else
-          raise "#{test_this['include']} was not found in the list of classes or groups!"
-        end
-        @classes.flatten!
-
-        # Then remove any excluded ones
-        if Onceover::Group.find(test_this['exclude'])
-          Onceover::Group.find(test_this['exclude']).members.each do |clarse|
-            @classes.delete(clarse)
-          end
-        elsif Onceover::Class.find(test_this['exclude'])
-          @classes.delete(Onceover::Class.find(test_this['exclude']))
-        else
-          raise "#{test_this['exclude']} was not found in the list of classes or groups!"
-        end
+        @classes = Onceover::TestConfig.subtractive_to_list(test_this)
       elsif test_this.is_a?(Onceover::Class)
         @classes << test_this
       end

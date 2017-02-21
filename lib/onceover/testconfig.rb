@@ -36,7 +36,7 @@ class Onceover
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
-        raise "Could not #{file}, check that it is valid YAML and that the encoding is correct"
+        raise "Could not parse #{file}, check that it is valid YAML and that the encoding is correct"
       end
 
       @classes          = []
@@ -50,12 +50,18 @@ class Onceover
       @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
       @shared_examples  = []
 
+      # Initialise all of the classes and nodes
+      config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
+      @classes = Onceover::Class.all
+
+      config['nodes'].each { |node| Onceover::Node.new(node) } unless config['nodes'] == nil
+      @nodes = Onceover::Node.all
+
       # Add the 'all_classes' and 'all_nodes' default groups
       @node_groups << Onceover::Group.new('all_nodes',@nodes)
       @class_groups << Onceover::Group.new('all_classes',@classes)
 
-      config['classes'].each { |clarse| @classes << Onceover::Class.new(clarse) } unless config['classes'] == nil
-      config['nodes'].each { |node| @nodes << Onceover::Node.new(node) } unless config['nodes'] == nil
+      # Initialise all of the groups
       config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
       config['shared_examples'].each { |shared_example| @shared_examples << Onceover::Shared_example.new(shared_example) } unless config['shared_examples'] == nil
@@ -80,6 +86,8 @@ class Onceover
         matcher_files << File.basename(matcher_file)
       end
 
+      # Loop over all of the items in the test matrix and add those as test
+      # objects to the list of tests
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
           if settings['tests'] == 'spec'
@@ -93,6 +101,17 @@ class Onceover
           end
         end
       end
+    end
+
+    def to_s
+      require 'colored'
+
+      <<-END.gsub(/^\s{4}/,'')
+      #{'classes'.green}      #{@classes.map{|c|c.name}}
+      #{'nodes'.green}        #{@nodes.map{|n|n.name}}
+      #{'class_groups'.green} #{@class_groups}
+      #{'node_groups'.green}  #{@node_groups.map{|g|g.name}}
+      END
     end
 
     def self.find_list(thing)
@@ -115,6 +134,16 @@ class Onceover
         logger.level = old_level
         raise "Could not find #{thing} in list of classes, nodes or groups"
       end
+    end
+
+    def self.subtractive_to_list(subtractive_hash)
+      # Take a hash that looks like this:
+      # { 'include' => 'somegroup'
+      #   'exclude' => 'other'}
+      # and return a list of classes/nodes
+      include_list = Onceover::TestConfig.find_list(subtractive_hash['include']).flatten
+      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude']).flatten
+      include_list - exclude_list
     end
 
     def verify_spec_test(controlrepo,test)
