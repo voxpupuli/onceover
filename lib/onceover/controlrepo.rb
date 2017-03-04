@@ -4,6 +4,7 @@ require 'json'
 require 'yaml'
 require 'find'
 require 'pathname'
+require 'thread'
 require 'onceover/beaker'
 require 'onceover/logger'
 include Onceover::Logger
@@ -196,31 +197,36 @@ class Onceover
       puppetfile.load!
 
       output_array = []
+      threads      = []
       puppetfile.modules.each do |mod|
-        return_hash = {}
-        logger.debug "Loading data for #{mod.full_name}"
-        return_hash[:full_name] = mod.full_name
-        if mod.is_a?(R10K::Module::Forge)
-          return_hash[:current_version] = mod.expected_version
-          return_hash[:latest_version] = mod.v3_module.current_release.version
-          current = Versionomy.parse(return_hash[:current_version])
-          latest = Versionomy.parse(return_hash[:latest_version])
-          if current.major < latest.major
-            return_hash[:out_of_date] = "Major".red
-          elsif current.minor < latest.minor
-            return_hash[:out_of_date] = "Minor".yellow
-          elsif current.tiny < latest.tiny
-            return_hash[:out_of_date] = "Tiny".green
+        threads << Thread.new do
+          return_hash = {}
+          logger.debug "Loading data for #{mod.full_name}"
+          return_hash[:full_name] = mod.full_name
+          if mod.is_a?(R10K::Module::Forge)
+            return_hash[:current_version] = mod.expected_version
+            return_hash[:latest_version] = mod.v3_module.current_release.version
+            current = Versionomy.parse(return_hash[:current_version])
+            latest = Versionomy.parse(return_hash[:latest_version])
+            if current.major < latest.major
+              return_hash[:out_of_date] = "Major".red
+            elsif current.minor < latest.minor
+              return_hash[:out_of_date] = "Minor".yellow
+            elsif current.tiny < latest.tiny
+              return_hash[:out_of_date] = "Tiny".green
+            else
+              return_hash[:out_of_date] = "No".green
+            end
           else
-            return_hash[:out_of_date] = "No".green
+            return_hash[:current_version] = "N/A"
+            return_hash[:latest_version] = "N/A"
+            return_hash[:out_of_date] = "N/A"
           end
-        else
-          return_hash[:current_version] = "N/A"
-          return_hash[:latest_version] = "N/A"
-          return_hash[:out_of_date] = "N/A"
+          output_array << return_hash
         end
-        output_array << return_hash
       end
+
+      threads.map(&:join)
 
       tp output_array, \
         {:full_name => {:display_name => "Full Name"}}, \
@@ -239,12 +245,30 @@ class Onceover
 
       # TODO: Make sure we can deal with :latest
 
+      # Create threading resources
+      threads = []
+      queue   = Queue.new
+      queue.push(puppetfile_string)
+
       puppetfile.modules.keep_if {|m| m.is_a?(R10K::Module::Forge)}
       puppetfile.modules.each do |mod|
-        line_index = puppetfile_string.index {|l| l =~ /^\s*[^#]*#{mod.owner}[\/-]#{mod.name}/}
-        logger.debug "Getting latest version of #{mod.full_name}"
-        puppetfile_string[line_index].gsub!(mod.expected_version,mod.v3_module.current_release.version)
+        threads << Thread.new do
+          logger.debug "Getting latest version of #{mod.full_name}"
+          latest_version = mod.v3_module.current_release.version
+
+          # Get the data off the queue, or wait if something else is using it
+          puppetfile_string_temp = queue.pop
+          line_index = puppetfile_string_temp.index {|l| l =~ /^\s*[^#]*#{mod.owner}[\/-]#{mod.name}/}
+          puppetfile_string_temp[line_index].gsub!(mod.expected_version,latest_version)
+
+          # Put the data back into the queue once we are done with it
+          queue.push(puppetfile_string_temp)
+        end
       end
+
+      threads.map(&:join)
+      puppetfile_string = queue.pop
+
       File.open(@puppetfile, 'w') {|f| f.write(puppetfile_string.join("\n")) }
       puts "#{'changed'.yellow} #{@puppetfile}"
     end

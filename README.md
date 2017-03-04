@@ -6,6 +6,8 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
 
 **NEW FEATURE! REGEX SUPPORT!**
 
+**NEW NEW FEATURE! Parallel tests, run** `onceover run spec --help` **for more info**
+
 ## Table of Contents
 
   - [Overview](#overview)
