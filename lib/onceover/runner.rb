@@ -76,8 +76,13 @@ class Onceover
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
-        logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-        exec("#{@command_prefix}rake spec_standalone")
+        if @config.opts[:parallel]
+          logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
+          exec("#{@command_prefix}rake parallel_spec")
+        else
+          logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
+          exec("#{@command_prefix}rake spec_standalone")
+        end
       end
     end
 

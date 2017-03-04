@@ -38,6 +38,8 @@ This includes deploying using r10k and running all custom tests.
             usage 'spec'
             summary 'Runs spec tests'
 
+            optional :p,  :parallel, 'Runs spec tests in parallel. This increases speed at the cost of poorly formatted logs and irrelevant junit output.'
+
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
               runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :spec)
