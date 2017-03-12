@@ -411,7 +411,8 @@ class Onceover
       require 'colored'
 
       Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo),repo.onceover_yaml)
-      Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
+      # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
+      #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
       Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding),File.expand_path('./Rakefile',repo.root))
@@ -440,6 +441,8 @@ class Onceover
     end
 
     def self.generate_nodesets(repo)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       require 'onceover/beaker'
       require 'net/http'
       require 'json'

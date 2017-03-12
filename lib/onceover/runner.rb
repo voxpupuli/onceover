@@ -87,6 +87,8 @@ class Onceover
     end
 
     def run_acceptance!
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
