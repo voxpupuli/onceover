@@ -43,6 +43,8 @@ end
 
 
 task :generate_nodesets do
+  warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
   require 'onceover/beaker'
   require 'net/http'
   require 'json'
@@ -81,42 +83,4 @@ task :generate_nodesets do
     puts ERB.new(fixtures_template, nil, '-').result(binding)
   end
 
-end
-
-task :controlrepo_autotest_prep do
-  require 'onceover/testconfig'
-  require 'onceover/runner'
-  @repo = Onceover::Controlrepo.new
-  # TODO: This should be getting the location of controlrepo.yaml from @repo
-  @config = Onceover::TestConfig.new("#{@repo.spec_dir}/controlrepo.yaml")
-
-  @runner = Onceover::Runner.new(@repo, @config)
-  @runner.prepare!
-end
-
-task :controlrepo_autotest_spec do
-  @runner.run_spec!
-end
-
-task :controlrepo_autotest_acceptance do
-  @runner.run_acceptance!
-end
-
-task :controlrepo_spec => [
-  :controlrepo_autotest_prep,
-  :controlrepo_autotest_spec
-  ]
-
-task :controlrepo_acceptance => [
-  :controlrepo_autotest_prep,
-  :controlrepo_autotest_acceptance
-  ]
-
-task :controlrepo_temp_create do
-  require 'onceover/testconfig'
-  repo = Onceover::Controlrepo.new
-  config = Onceover::TestConfig.new("#{repo.spec_dir}/controlrepo.yaml")
-  FileUtils.rm_rf(repo.tempdir)
-  # Deploy r10k to a temp dir
-  config.r10k_deploy_local(repo)
 end

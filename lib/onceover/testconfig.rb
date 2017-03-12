@@ -134,6 +134,8 @@ class Onceover
     end
 
     def verify_acceptance_test(controlrepo,test)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       require 'yaml'
       nodeset = YAML.load_file(controlrepo.nodeset_file)
       test.nodes.each do |node|
@@ -230,6 +232,8 @@ class Onceover
     end
 
     def write_acceptance_tests(location, tests)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       File.write("#{location}/acceptance_spec.rb",Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
     end
 
