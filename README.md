@@ -408,6 +408,14 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 ## Extra Tooling
 
+### Plugins
+
+Onceover now allows for plugins. The framework is extremely simple and basically relies on the plugins to monkey-patch themselves in. It will likely be improved in future. To create a plugin simply install a gem with a name that starts with `onceover-` and onceover will `require` it. Once it has been required it is up to the plugin to insert itself wherever it is required.
+
+Examples:
+
+  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff)
+
 ### Inspecting and updating the Puppetfile
 
 Onceover comes with some extra commands for interacting with the Puppetfile in useful ways. These are:
