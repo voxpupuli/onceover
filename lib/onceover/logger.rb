@@ -24,7 +24,7 @@ module Onceover::Logger
 
       $logger = Logging.logger['Colors']
       $logger.add_appenders 'stdout'
-      $logger.level = :warn
+      $logger.level = :info
     end
     $logger
   end
