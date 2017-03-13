@@ -4,10 +4,6 @@
 
 Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing the `Puppetfile`, `environment.conf` and others in order to run both basic compilation tests and also full acceptance tests!
 
-**NEW FEATURE! REGEX SUPPORT!**
-
-**NEW NEW FEATURE! Parallel tests, run** `onceover run spec --help` **for more info**
-
 ## Table of Contents
 
   - [Overview](#overview)
@@ -23,6 +19,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
+    - [Plugins](#plugins)
     - [Accessing Onceover in a traditional RSpec test](#accessing-onceover-in-a-traditional-rspec-test)
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
