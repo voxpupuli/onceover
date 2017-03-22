@@ -14,4 +14,8 @@ RSpec.configure do |c|
   c.hiera_config = '<%= environmentpath %>/production/hiera.yaml'
   c.manifest = '<%= repo.temp_manifest %>'
   ENV['STRICT_VARIABLES'] = '<%= self.strict_variables %>'
+<% if ENV['SHOW_PUPPET_OUTPUT'].downcase == 'true' %>
+  Puppet::Util::Log.level = :debug
+  Puppet::Util::Log.newdestination(:console)
+<% end -%>
 end
