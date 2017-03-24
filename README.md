@@ -598,3 +598,16 @@ fixtures:
 ```
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
+
+## Contributors
+
+Cheers to all of those who helped out:
+
+  - jessereynolds
+  - op-ct
+  - GeoffWilliams
+  - beergeek
+  - jairojunior
+  - natemccurdy
+  - aardvark
+
