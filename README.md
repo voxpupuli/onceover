@@ -198,7 +198,7 @@ One or many tags that tests in this group should be tagged with. This allows you
 
 ### factsets
 
-This gem comes with a few pre-canned factsets. These are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`. You can also add your own factsets by putting them in:
+Onceover comes with a few pre-canned factsets supplied by the [puppet_factset](https://github.com/declarativesystems/puppet_factset) Gem. These are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`. You can also add your own factsets by putting them in:
 
 `spec/factsets/*.json`
 
@@ -215,6 +215,8 @@ Once we have our factset all we need to do is copy it into `spec/factsets/` insi
 `spec/factsets/server2008r2.json`
 
 Would map to a node named `server2008r2` in `onceover.yaml`
+
+If you would like to add support for new platforms and share your work with the world, please follow the instructions at https://github.com/declarativesystems/puppet_factset#adding-new-platforms
 
 ### nodesets
 
@@ -610,4 +612,3 @@ Cheers to all of those who helped out:
   - jairojunior
   - natemccurdy
   - aardvark
-
