@@ -1,3 +1,4 @@
+require 'puppetbox/puppetbox'
 class Onceover
   class Runner
     attr_reader :repo
@@ -96,5 +97,37 @@ class Onceover
         exec("#{@command_prefix}rake acceptance")
       end
     end
+
+    def run_acceptance_alpha!
+      working_dir = File.join(Dir.pwd, '.onceover', 'puppetbox')
+      pb = PuppetBox::PuppetBox.new(logger:logger, working_dir:working_dir)
+
+
+      # Enqueue each individual class we want to test on each node inside puppetbox
+      @config.acceptance_tests.each { |test|
+        # `test` contains the test matrix info from onceover.yaml, eg it contains
+        # a packaged list of nodes and classes to run
+        # nodeset_yaml = @config.verify_acceptance_test(@repo,test)
+
+        test.nodes.each { |node|
+          # test_suite[node.name] = {}
+          test.classes.each { |puppet_class|
+            logger.info "Requesting testing on #{node.name} for #{puppet_class.name}"
+            pb.enqueue_test(node.name, "#{repo.tempdir}/etc/puppetlabs/code/environments/production", puppet_class.name)
+          }
+        }
+      }
+
+      # run the enqueued tests.  If errors are encountered they will be printed
+      # to logger we supplied above after each failing test
+      pb.run_testsuite
+
+      # Displays a summary of all tests executed
+      pb.print_results
+
+      pb.passed?
+    end
+
+
   end
 end

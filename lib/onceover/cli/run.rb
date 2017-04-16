@@ -68,6 +68,28 @@ This includes deploying using r10k and running all custom tests.
           end
         end
       end
+
+
+      class AcceptanceAlpha
+        def self.command
+          @cmd ||= Cri::Command.define do
+            name 'acceptance_alpha'
+            usage 'acceptance_alpha'
+            summary 'Runs acceptance tests (alpha version)'
+
+            run do |opts, args, cmd|
+              repo = Onceover::Controlrepo.new(opts)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:acceptance_alpha)
+              runner.prepare!
+              if ! runner.run_acceptance_alpha!
+                # cause a non-zero exit
+                abort("There are acceptance tests failures!")
+              end
+            end
+          end
+        end
+      end
+
     end
   end
 end
@@ -76,3 +98,4 @@ end
 Onceover::CLI.command.add_command(Onceover::CLI::Run.command)
 Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Spec.command)
 Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Acceptance.command)
+Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::AcceptanceAlpha.command)
