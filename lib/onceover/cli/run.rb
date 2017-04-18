@@ -77,6 +77,8 @@ This includes deploying using r10k and running all custom tests.
             usage 'acceptance_alpha'
             summary 'Runs acceptance tests (alpha version)'
 
+            optional :k,  :keep_test_system, 'keep the test system active after testing (to debug failed tests)'
+
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
               runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:acceptance_alpha)

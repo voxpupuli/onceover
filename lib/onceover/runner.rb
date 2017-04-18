@@ -100,8 +100,23 @@ class Onceover
 
     def run_acceptance_alpha!
       working_dir = File.join(Dir.pwd, '.onceover', 'puppetbox')
-      pb = PuppetBox::PuppetBox.new(logger:logger, working_dir:working_dir)
+      if @config.opts.has_key?(:keep_test_system)
+        keep_test_system = true
+      else
+        keep_test_system = false
+      end
+      pb = PuppetBox::PuppetBox.new(logger:logger, working_dir:working_dir, keep_test_system:keep_test_system)
 
+      # Support for https://github.com/dylanratcliffe/onceover#using-workarounds
+      # Load all files in spec/pre_conditions/*.pp
+      pre = ""
+      if Dir.exists?("spec/pre_conditions")
+        Dir["spec/pre_conditions/*.pp"].each { |pre_condition|
+          logger.debug("Loading pre_condition from file: #{pre_condition}")
+          pre += File.open(pre_condition, 'r') { |f| f.read }
+          pre += "\n"
+        }
+      end
 
       # Enqueue each individual class we want to test on each node inside puppetbox
       @config.acceptance_tests.each { |test|
@@ -113,7 +128,11 @@ class Onceover
           # test_suite[node.name] = {}
           test.classes.each { |puppet_class|
             logger.info "Requesting testing on #{node.name} for #{puppet_class.name}"
-            pb.enqueue_test(node.name, "#{repo.tempdir}/etc/puppetlabs/code/environments/production", puppet_class.name)
+            pb.enqueue_test_class(
+              node.name,
+              "#{repo.tempdir}/etc/puppetlabs/code/environments/production",
+              puppet_class.name,
+              pre: pre)
           }
         }
       }
