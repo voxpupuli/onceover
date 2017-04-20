@@ -127,8 +127,6 @@ class Onceover
         test.nodes.each { |node|
           # test_suite[node.name] = {}
           test.classes.each { |puppet_class|
-            puts "only node #{only_node} vs #{node.name}"
-            puts "only class #{only_class} vs #{puppet_class.name}"
             if  (! only_node or only_node == node.name) and
                 (! only_class or only_class == puppet_class.name)
               logger.info "Requesting testing on #{node.name} for #{puppet_class.name}"
