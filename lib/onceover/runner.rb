@@ -100,11 +100,11 @@ class Onceover
 
     def run_acceptance_alpha!
       working_dir = File.join(Dir.pwd, '.onceover', 'puppetbox')
-      if @config.opts.has_key?(:keep_test_system)
-        keep_test_system = true
-      else
-        keep_test_system = false
-      end
+
+      keep_test_system  = @config.opts.has_key?(:keep_test_system) ? true : false
+      only_node         = @config.opts.has_key?(:only_node) ? @config.opts[:only_node] : false
+      only_class        = @config.opts.has_key?(:only_class) ? @config.opts[:only_class] : false
+
       pb = PuppetBox::PuppetBox.new(logger:logger, working_dir:working_dir, keep_test_system:keep_test_system)
 
       # Support for https://github.com/dylanratcliffe/onceover#using-workarounds
@@ -127,12 +127,20 @@ class Onceover
         test.nodes.each { |node|
           # test_suite[node.name] = {}
           test.classes.each { |puppet_class|
-            logger.info "Requesting testing on #{node.name} for #{puppet_class.name}"
-            pb.enqueue_test_class(
-              node.name,
-              "#{repo.tempdir}/etc/puppetlabs/code/environments/production",
-              puppet_class.name,
-              pre: pre)
+            puts "only node #{only_node} vs #{node.name}"
+            puts "only class #{only_class} vs #{puppet_class.name}"
+            if  (! only_node or only_node == node.name) and
+                (! only_class or only_class == puppet_class.name)
+              logger.info "Requesting testing on #{node.name} for #{puppet_class.name}"
+              pb.enqueue_test_class(
+                node.name,
+                "#{repo.tempdir}/etc/puppetlabs/code/environments/production",
+                puppet_class.name,
+                pre: pre
+              )
+            else
+              logger.debug "Skipping #{node.name} #{puppet_class.name} at user request"
+            end
           }
         }
       }

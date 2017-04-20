@@ -77,7 +77,9 @@ This includes deploying using r10k and running all custom tests.
             usage 'acceptance_alpha'
             summary 'Runs acceptance tests (alpha version)'
 
-            optional :k,  :keep_test_system, 'keep the test system active after testing (to debug failed tests)'
+            optional :k,  :keep_test_system, 'Keep the test system active after testing (to debug failed tests)'
+            optional :n,  :only_node, 'Only run tests on this node'
+            optional :c,  :only_class, 'Only run this one class'
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
