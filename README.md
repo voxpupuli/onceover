@@ -306,6 +306,12 @@ This will do the following things:
 
 When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
 
+### Exposing Puppet output
+
+If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environment variable to `true`, eg:
+
+`SHOW_PUPPET_OUTPUT=true onceover run spec`
+
 ## Acceptance testing
 
 Acceptance testing works in much the same way as spec testing except that it requires a nodeset file along with `onceover.yaml`
