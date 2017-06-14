@@ -227,6 +227,9 @@ class Onceover
     end
 
     def write_spec_test(location, test)
+      require 'onceover/plugins/hooks'
+      Onceover::Plugins::Hooks.execute(:pre_write_spec_test, test)
+
       # Use an ERB template to write a spec test
       File.write("#{location}/#{test.to_s}_spec.rb",Onceover::Controlrepo.evaluate_template('test_spec.rb.erb',binding))
     end
