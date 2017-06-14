@@ -73,6 +73,9 @@ class Onceover
     end
 
     def run_spec!
+      # Run the pre-spec hooks
+      Onceover::Plugins::Hooks.execute_pre_spec
+
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
@@ -87,6 +90,9 @@ class Onceover
     end
 
     def run_acceptance!
+      # Run the pre-accpetance hooks
+      Onceover::Plugins::Hooks.execute_pre_spec
+
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       Dir.chdir(@repo.tempdir) do
