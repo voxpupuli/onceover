@@ -75,7 +75,7 @@ class Onceover
     def run_spec!
       require 'onceover/plugins/hooks'
       # Run the pre-spec hooks
-      Onceover::Plugins::Hooks.execute_pre_spec
+      Onceover::Plugins::Hooks.execute(:pre_spec)
 
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
