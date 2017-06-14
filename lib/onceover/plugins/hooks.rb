@@ -8,7 +8,11 @@ class Onceover
 
         plugins.each do |plugin|
           class_name = plugin.split('-').map { |s| s.capitalize }.join('::')
-          Object.const_get(class_name).send(name)
+          class_object = Object.const_get(class_name)
+
+          if class_object.respond_to?(name)
+            Object.const_get(class_name).send(name)
+          end
         end
       end
     end
