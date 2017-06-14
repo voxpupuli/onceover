@@ -11,6 +11,9 @@ class Onceover
     end
 
     def prepare!
+      require 'onceover/plugins/hooks'
+      Onceover::Plugins::Hooks.execute(:pre_prepare, self)
+
       unless @config.skip_r10k
         # Deploy the puppetfile
         @config.r10k_deploy_local(@repo)
