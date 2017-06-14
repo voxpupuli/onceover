@@ -21,13 +21,13 @@ class Onceover
       def self.execute_pre_spec
         # Firstly run the pre_run hooks
         self.execute_pre_run
-
+        self.execute_hook(:pre_spec)
       end
 
       def self.execute_pre_acceptance
         # Firstly run the pre_run hooks
         self.execute_pre_run
-
+        self.execute_hook(:pre_acceptance)
       end
 
       def self.execute_hook(name)
