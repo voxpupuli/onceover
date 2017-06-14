@@ -73,6 +73,7 @@ class Onceover
     end
 
     def run_spec!
+      require 'onceover/plugins/hooks'
       # Run the pre-spec hooks
       Onceover::Plugins::Hooks.execute_pre_spec
 
@@ -90,6 +91,7 @@ class Onceover
     end
 
     def run_acceptance!
+      require 'onceover/plugins/hooks'
       # Run the pre-accpetance hooks
       Onceover::Plugins::Hooks.execute_pre_spec
 
