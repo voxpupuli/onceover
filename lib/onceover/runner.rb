@@ -70,6 +70,9 @@ class Onceover
       end
 
       @config.create_fixtures_symlinks(@repo)
+
+      require 'onceover/plugins/hooks'
+      Onceover::Plugins::Hooks.execute(:post_prepare, self)
     end
 
     def run_spec!
