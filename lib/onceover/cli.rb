@@ -45,3 +45,4 @@ require 'onceover/cli/run'
 require 'onceover/cli/init'
 require 'onceover/cli/update'
 require 'onceover/plugins'
+Onceover::Plugins.new.load!
