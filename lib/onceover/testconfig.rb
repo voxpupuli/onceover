@@ -80,7 +80,6 @@ class Onceover
           end
         end
       end
-      @@existing_testconfigs << self
     end
 
     def to_s
