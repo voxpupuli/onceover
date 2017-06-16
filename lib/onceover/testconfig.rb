@@ -9,8 +9,6 @@ include Onceover::Logger
 
 class Onceover
   class TestConfig
-    @@existing_testconfigs = []
-
     require 'yaml'
 
     attr_accessor :classes
@@ -94,10 +92,6 @@ class Onceover
       #{'class_groups'.green} #{@class_groups}
       #{'node_groups'.green}  #{@node_groups.map{|g|g.name}}
       END
-    end
-
-    def self.get_active_configs
-      @@existing_testconfigs
     end
 
     def self.find_list(thing)
