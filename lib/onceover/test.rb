@@ -16,7 +16,8 @@ class Onceover
 
       @default_test_config = {
         'check_idempotency' => true,
-        'runs_before_idempotency' => 1
+        'runs_before_idempotency' => 1,
+        'in_context_additions' => [],
       }
 
       # Add defaults if they do not exist
