@@ -1,6 +1,8 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-utils'
 require 'rspec_junit_formatter'
+# Load shared examples if they exist
+Dir["./spec/shared_examples/*.rb"].sort.each { |f| require f }
 
 RSpec.configure do |c|
   c.parser = 'future'
