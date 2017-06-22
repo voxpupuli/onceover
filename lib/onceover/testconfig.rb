@@ -69,15 +69,17 @@ class Onceover
       # objects to the list of tests
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
+          tst = Onceover::Test.new(machines,settings['classes'],settings)
           if settings['tests'] == 'spec'
-            @spec_tests << Onceover::Test.new(machines,settings['classes'],settings)
+            @spec_tests << tst
           elsif settings['tests'] == 'acceptance'
-            @acceptance_tests << Onceover::Test.new(machines,settings['classes'],settings)
+            @acceptance_tests << tst
           elsif settings['tests'] == 'all_tests'
-            tst = Onceover::Test.new(machines,settings['classes'],settings)
             @spec_tests << tst
             @acceptance_tests << tst
           end
+          require 'onceover/plugins/hooks'
+          Onceover::Plugins::Hooks.execute(:post_create_test, tst)
         end
       end
     end

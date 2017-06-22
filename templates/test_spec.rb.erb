@@ -29,6 +29,11 @@ END
     }
 <% end -%>
     it { should compile }
+<% if in_context_additions -%>
+<% test.test_config.in_context_additions.each do |addition| -%>
+    <%= addition %>
+<% end %>
+<% end %>
   end
 <% end -%>
 end
