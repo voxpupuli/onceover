@@ -21,11 +21,11 @@ class Onceover
       }
 
       # Add defaults if they do not exist
-      test_config = @default_test_config.merge(test_config).clone
+      test_config = @default_test_config.merge(test_config)
 
       @nodes = []
       @classes = []
-      @test_config = test_config
+      @test_config = test_config.clone
       @test_config.delete('classes') # remove classes from the config
       @tags = @test_config['tags']
 
