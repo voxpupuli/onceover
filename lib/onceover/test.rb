@@ -21,7 +21,7 @@ class Onceover
       }
 
       # Add defaults if they do not exist
-      test_config = @default_test_config.merge(test_config)
+      test_config = @default_test_config.merge(test_config).clone
 
       @nodes = []
       @classes = []
