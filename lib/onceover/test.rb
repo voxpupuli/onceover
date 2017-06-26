@@ -113,7 +113,12 @@ class Onceover
               relevant_test.test_config.deep_merge!(test.test_config)
             else
               combinations << combo
-              new_tests << Onceover::Test.new(node,cls,test.test_config)
+              # This uses the Marshal class to basicall serialize and then
+              # deserialize the test config. This gives us a distinct config
+              # per test. If we were to just pass the test.test_config object
+              # modifying the config of one test would affect others because
+              # they have the same config object. OO is hard sometimes.
+              new_tests << Onceover::Test.new(node,cls,Marshal.load(Marshal.dump(test.test_config)))
             end
           end
         end
