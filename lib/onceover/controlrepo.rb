@@ -340,6 +340,10 @@ class Onceover
       hiera_config_file
     end
 
+    def hiera_config_file_relative_path
+      Pathname.new(hiera_config_file).relative_path_from(Pathname.new(root)).to_s
+    end
+
     def hiera_config
       begin
         YAML.load_file(hiera_config_file)
