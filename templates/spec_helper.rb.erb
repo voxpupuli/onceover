@@ -11,7 +11,7 @@ RSpec.configure do |c|
 
   c.environmentpath = '<%= environmentpath %>'
   c.module_path = '<%= modulepath %>'
-  c.hiera_config = '<%= environmentpath %>/production/hiera.yaml'
+  c.hiera_config = '<%= environmentpath %>/production/<%= repo.hiera_config_file_relative_path %>'
   c.manifest = '<%= repo.temp_manifest %>'
   ENV['STRICT_VARIABLES'] = '<%= self.strict_variables %>'
 <% if ENV['SHOW_PUPPET_OUTPUT'] and ENV['SHOW_PUPPET_OUTPUT'].downcase == 'true' %>
