@@ -335,8 +335,8 @@ class Onceover
 
     def hiera_config_file
       # try to find the hiera.iyaml file
-      hiera_config_file = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
       hiera_config_file = File.expand_path('./hiera.yaml',@root) if File.exist?(File.expand_path('./hiera.yaml',@root))
+      hiera_config_file = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
       hiera_config_file
     end
 
