@@ -285,7 +285,7 @@ If you have hiera data inside your controlrepo (or somewhere else) the Controlre
 
 **WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
 
-**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x, the tool will automatically detect this and everything should work.
+**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x (Now called Hiera 5), the tool will automatically detect this and everything should work. If you want to use a different v5 `hiera.yaml` for testing, pleace it under the spec directory. Note that the datadir must be relative to the location of the hiera.yaml file in this instance. i.e. `../data`
 
 ## Spec testing
 
@@ -610,4 +610,3 @@ Cheers to all of those who helped out:
   - jairojunior
   - natemccurdy
   - aardvark
-
