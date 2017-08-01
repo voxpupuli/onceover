@@ -85,7 +85,7 @@ If we are doing acceptance testing then we need information about how to spin up
 
 ### onceover.yaml
 
-`spec/onceover.yaml`
+`spec/onceover.yaml` _(override with environment variable: `ONCEOVER_YAML`)_
 
 Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
 
@@ -113,6 +113,25 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
 **functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following agruments:
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
+
+**opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
+
+```yaml
+opts:
+  :facts_dirs:        # Remember: `opts` keys are symbols!
+    - 'spec/factsets' # Limit factsets to files in this repository
+  :debug: true        # set the `logger.level` to debug
+```
+
+```yaml
+opts:
+  # profiles include a legacy module named `site::`
+  :profile_regex: '^(profile|site)::'
+
+  # factset filenames use the extension`.facts` instead of `.json`
+  :facts_files:
+    - 'spec/factsets/*.facts'
+```
 
 A full example:
 
@@ -166,6 +185,10 @@ functions:
   query_resources:
     type: rvalue
     returns: []
+
+opts:
+  :facts_dirs:
+    - spec/factsets
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
