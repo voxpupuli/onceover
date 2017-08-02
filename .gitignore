@@ -1,3 +1,8 @@
 .DS_Store
 *.gem
 Gemfile.lock
+# Bundler / Rbenv
+/.bundle
+/.bin
+/.ruby-version
+
