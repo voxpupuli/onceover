@@ -341,7 +341,7 @@ class Onceover
     end
 
     def hiera_config_file_relative_path
-      Pathname.new(hiera_config_file).relative_path_from(Pathname.new(root)).to_s
+      Pathname.new(hiera_config_file).relative_path_from(Pathname.new(root)).to_s if hiera_config_file
     end
 
     def hiera_config
@@ -506,6 +506,7 @@ class Onceover
       logger.debug "Evaluating template #{template_name}"
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       template = File.read(File.expand_path("./#{template_name}",template_dir))
+      logger.debug "Binding variables #{bind.local_variables}"
       ERB.new(template, nil, '-').result(bind)
     end
 

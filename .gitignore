@@ -1,8 +1,12 @@
 .DS_Store
 *.gem
 Gemfile.lock
+
 # Bundler / Rbenv
 /.bundle
 /.bin
 /.ruby-version
+
+#Vim
+/.projections.json
 
