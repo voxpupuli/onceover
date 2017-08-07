@@ -98,23 +98,34 @@ class Onceover
         end
       end
 
+      @onceover_yaml    = ENV['ONCEOVER_YAML'] || opts[:onceover_yaml] || File.expand_path("#{@root}/spec/onceover.yaml")
+
+      if File.exists?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
+        opts.merge!(_data.fetch('opts',{})||{})
+      end
+      opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path,@root)}
+      opts.fetch(:facts_files,[]).map!{|path| path =~ %r{^[/.]} ? path : File.expand_path(path, @root)}
+
       @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
       @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
       @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
-      @facts_dir        = opts[:facts_dir] || File.expand_path('./spec/factsets',@root)
       @spec_dir         = opts[:spec_dir] || File.expand_path('./spec',@root)
-      @facts_files      = opts[:facts_files] || [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../../factsets',__FILE__)}/*.json"]].flatten
+      @facts_dir        = opts[:facts_dir] || File.expand_path('factsets',@spec_dir)
+      _facts_dirs       = [@facts_dir, File.expand_path('../../../factsets',__FILE__)]
+      _facts_files      = opts[:facts_files] || _facts_dirs.map{|d| File.join(d,'*.json')}
+      @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
+
       @nodeset_file     = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml',@root)
-      @role_regex       = /role[s]?:{2}/
-      @profile_regex    = /profile[s]?:{2}/
+      @role_regex       = opts[:role_regex] ?  Regexp.new(opts[:role_regex]) : /role[s]?:{2}/
+      @profile_regex    = opts[:profile_regex] ? Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
       @tempdir          = opts[:tempdir] || File.expand_path('./.onceover',@root)
       $temp_modulepath  = nil
       @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-      @onceover_yaml    = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
     end
+
 
     def to_s
       require 'colored'
