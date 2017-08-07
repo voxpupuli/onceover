@@ -34,4 +34,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'table_print', '>= 1.0.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
+  # Development dependencies
+  s.add_development_dependency 'rubygems-tasks'
 end

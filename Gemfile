@@ -1,6 +1,4 @@
 source 'https://rubygems.org'
 
+gemspec
 
-gem 'rubygems-tasks'
-gem 'git'
-gem 'rake'
