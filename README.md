@@ -636,7 +636,7 @@ Install gem dependencies:
 
 Execute tests
 
-`bundle exec rake test`
+`bundle exec rake`
 
 ## Contributors
 
