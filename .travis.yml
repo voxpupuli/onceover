@@ -4,7 +4,7 @@ cache:
   bundler: true
 
 script: bundler exec rake test
-bundler_args: --without development --path vendor/bundle
+bundler_args: --path vendor/bundle
 
 rvm:
   - 2.1.6
