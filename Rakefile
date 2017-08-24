@@ -1,9 +1,12 @@
 require 'rubygems/tasks'
+require 'rspec/core/rake_task'
 Gem::Tasks.new
+
+RSpec::Core::RakeTask.new(:spec)
 
 task default: :test
 
-task test: [:syntax, :rubocop, ]
+task test: [:syntax, :rubocop, :spec]
 
 task :syntax do
   paths = ['lib',]
@@ -20,4 +23,3 @@ task :rubocop do
   exit_code = cli.run(%w(--display-cop-names --format simple))
   raise "RuboCop detected offenses" if exit_code != 0
 end
-
