@@ -649,3 +649,4 @@ Cheers to all of those who helped out:
   - jairojunior
   - natemccurdy
   - aardvark
+  - Mandos

@@ -36,7 +36,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
 
   # Development
-  s.add_development_dependency 'rake', '>= 11.0.0'
   s.add_development_dependency 'rubocop', '~> 0.39.0'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
 
