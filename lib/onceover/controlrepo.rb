@@ -517,7 +517,6 @@ class Onceover
       logger.debug "Evaluating template #{template_name}"
       template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
       template = File.read(File.expand_path("./#{template_name}",template_dir))
-      logger.debug "Binding variables #{bind.local_variables}"
       ERB.new(template, nil, '-').result(bind)
     end
 
