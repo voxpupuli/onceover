@@ -157,9 +157,12 @@ class Onceover
       puppetcode.join("\n")
     end
 
-    def r10k_deploy_local(repo = Onceover::Controlrepo.new)
+    def deploy_local(repo = Onceover::Controlrepo.new, opts = {})
       require 'onceover/controlrepo'
       require 'pathname'
+
+      skip_r10k = opts[:skip_r10k] || false
+
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       else
@@ -207,7 +210,7 @@ class Onceover
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
-      if repo.tempdir
+      if repo.tempdir and not skip_r10k
         if File.directory?(repo.tempdir)
           # TODO: Change this to call out to r10k directly to do this
           # Probably something like:
