@@ -2,7 +2,9 @@ require 'rubygems/tasks'
 require 'rspec/core/rake_task'
 Gem::Tasks.new
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.rspec_opts = '--pattern spec/\*/\*_spec.rb'
+end
 
 task default: :test
 
