@@ -15,7 +15,10 @@ class Onceover
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
-        @fact_set = Onceover::Controlrepo.facts[Onceover::Controlrepo.facts_files.index{|facts_file| File.basename(facts_file,'.json') == name}]
+        facts_file_index = Onceover::Controlrepo.facts_files.index {|facts_file|
+          File.basename(facts_file, '.json') == name
+        }
+        @fact_set = Onceover::Controlrepo.facts[facts_file_index]
       rescue TypeError
         @fact_set = nil
       end

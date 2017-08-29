@@ -26,7 +26,7 @@ class Onceover
     attr_accessor :skip_r10k
     attr_accessor :strict_variables
 
-    def initialize(file,opts = {})
+    def initialize(file, opts = {})
       begin
         config = YAML.load(File.read(file))
       rescue Errno::ENOENT
@@ -53,26 +53,26 @@ class Onceover
       @nodes = Onceover::Node.all
 
       # Add the 'all_classes' and 'all_nodes' default groups
-      @node_groups << Onceover::Group.new('all_nodes',@nodes)
-      @class_groups << Onceover::Group.new('all_classes',@classes)
+      @node_groups  << Onceover::Group.new('all_nodes', @nodes)
+      @class_groups << Onceover::Group.new('all_classes', @classes)
 
       # Initialise all of the groups
       config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
 
-      @filter_tags      = opts[:tags] ? [opts[:tags].split(',')].flatten : nil
-      @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
-      @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
-      @skip_r10k        = opts[:skip_r10k] ? true : false
+      @filter_tags    = opts[:tags]      ? [opts[:tags].split(',')].flatten : nil
+      @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
+      @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
+      @skip_r10k      = opts[:skip_r10k] ? true : false
 
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
           if settings['tests'] == 'spec'
-            @spec_tests << Onceover::Test.new(machines,settings['classes'],settings)
+            @spec_tests << Onceover::Test.new(machines, settings['classes'], settings)
           elsif settings['tests'] == 'acceptance'
-            @acceptance_tests << Onceover::Test.new(machines,settings['classes'],settings)
+            @acceptance_tests << Onceover::Test.new(machines, settings['classes'], settings)
           elsif settings['tests'] == 'all_tests'
             tst = Onceover::Test.new(machines,settings['classes'],settings)
             @spec_tests << tst
@@ -125,7 +125,7 @@ class Onceover
       include_list - exclude_list
     end
 
-    def verify_spec_test(controlrepo,test)
+    def verify_spec_test(controlrepo, test)
       test.nodes.each do |node|
         unless controlrepo.facts_files.any? { |file| file =~ /\/#{node.name}\.json/ }
           raise "Could not find factset for node: #{node.name}"
@@ -133,7 +133,7 @@ class Onceover
       end
     end
 
-    def verify_acceptance_test(controlrepo,test)
+    def verify_acceptance_test(controlrepo, test)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       require 'yaml'
@@ -174,7 +174,7 @@ class Onceover
       # We might need to exclude some files
       #
       # if we are using bundler to install gems below the controlrepo
-      # we don't wan two copies so exclude those
+      # we don't want two copies so exclude those
       #
       # If there are more situations like this we can add them to this array as
       # full paths
@@ -187,8 +187,8 @@ class Onceover
 
       # Exclude the files we need to
       controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
-      folders_to_copy = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
+      files_to_copy     = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
+      folders_to_copy   = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
@@ -228,21 +228,25 @@ class Onceover
 
     def write_spec_test(location, test)
       # Use an ERB template to write a spec test
-      File.write("#{location}/#{test.to_s}_spec.rb",Onceover::Controlrepo.evaluate_template('test_spec.rb.erb',binding))
+      File.write("#{location}/#{test.to_s}_spec.rb",
+        Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding))
     end
 
     def write_acceptance_tests(location, tests)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
-      File.write("#{location}/acceptance_spec.rb",Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
+      File.write("#{location}/acceptance_spec.rb",
+        Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb', binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
-      File.write("#{location}/spec_helper_acceptance.rb",Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb',binding))
+      File.write("#{location}/spec_helper_acceptance.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb', binding))
     end
 
     def write_rakefile(location, pattern)
-      File.write("#{location}/Rakefile",Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb',binding))
+      File.write("#{location}/Rakefile",
+        Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb', binding))
     end
 
     def write_spec_helper(location, repo)
@@ -256,7 +260,8 @@ class Onceover
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
-      File.write("#{location}/spec_helper.rb",Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb',binding))
+      File.write("#{location}/spec_helper.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb', binding))
     end
 
     def create_fixtures_symlinks(repo)
@@ -279,7 +284,7 @@ class Onceover
         'classes' => @filter_classes,
         'nodes'   => @filter_nodes
       }
-      filters.each do |method,filter_list|
+      filters.each do |method, filter_list|
         if filter_list
           # Remove tests that do not have matching tags
           tests.keep_if do |test|
@@ -295,5 +300,6 @@ class Onceover
       end
       tests
     end
+
   end
 end

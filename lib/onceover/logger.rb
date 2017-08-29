@@ -17,7 +17,7 @@ module Onceover::Logger
       Logging.appenders.stdout(
         'stdout',
         :layout => Logging.layouts.pattern(
-          :pattern => '%l\t -> %m\n',
+          :pattern      => '%l\t -> %m\n',
           :color_scheme => 'bright'
         )
       )
