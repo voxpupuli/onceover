@@ -8,6 +8,7 @@ Gemfile.lock
 /.ruby-version
 tmp
 
-#Vim
+# Vim
 /.projections.json
+/tags
 
