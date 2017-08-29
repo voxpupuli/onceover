@@ -2,6 +2,8 @@ language: ruby
 
 cache:
   bundler: true
+  directories:
+    - 'spec/fixtures/puppet_controlrepo/.onceover' # Onceover cache
 
 script: bundler exec rake test
 bundler_args: --path vendor/bundle
