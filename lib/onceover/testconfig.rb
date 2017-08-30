@@ -157,9 +157,12 @@ class Onceover
       puppetcode.join("\n")
     end
 
-    def r10k_deploy_local(repo = Onceover::Controlrepo.new)
+    def deploy_local(repo = Onceover::Controlrepo.new, opts = {})
       require 'onceover/controlrepo'
       require 'pathname'
+
+      skip_r10k = opts[:skip_r10k] || false
+
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       else
@@ -207,15 +210,17 @@ class Onceover
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
-      if repo.tempdir
+      if repo.tempdir and not skip_r10k
         if File.directory?(repo.tempdir)
           # TODO: Change this to call out to r10k directly to do this
           # Probably something like:
           # R10K::Settings.global_settings.evaluate(with_overrides)
           # R10K::Action::Deploy::Environment
-          Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-            logger.debug "Runing r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile} from #{repo.tempdir}/#{repo.environmentpath}/production"
-            system("r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}")
+          prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
+          Dir.chdir(prod_dir) do
+            install_cmd = "r10k puppetfile install --verbose --color"
+            logger.debug "Running #{install_cmd} from #{prod_dir}"
+            system(install_cmd)
           end
         else
           raise "#{repo.tempdir} is not a directory"

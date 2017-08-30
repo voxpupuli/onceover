@@ -11,10 +11,8 @@ class Onceover
     end
 
     def prepare!
-      unless @config.skip_r10k
-        # Deploy the puppetfile
-        @config.r10k_deploy_local(@repo)
-      end
+      # Deploy the control repo
+      @config.deploy_local(@repo, {:skip_r10k => @config.skip_r10k})
 
       # Remove the entire spec directory to make sure we have
       # all the latest tests
