@@ -634,10 +634,6 @@ Install gem dependencies:
 
 `bundle install`
 
-Clone the submodules
-
-`git submodule init && git submodule update --recursive`
-
 Execute tests
 
 `bundle exec rake`

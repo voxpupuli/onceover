@@ -8,7 +8,7 @@ end
 
 task default: :test
 
-task test: [:syntax, :rubocop, :spec]
+task test: [:syntax, :rubocop, :fixtures, :spec]
 
 task :syntax do
   paths = ['lib',]
@@ -25,3 +25,12 @@ task :rubocop do
   exit_code = cli.run(%w(--display-cop-names --format simple))
   raise "RuboCop detected offenses" if exit_code != 0
 end
+
+task :fixtures do
+   clone_controlrepo_cmd = 'git clone https://github.com/dylanratcliffe/puppet_controlrepo.git spec/fixtures/puppet_controlrepo'
+  unless File.directory?('spec/fixtures/puppet_controlrepo')
+    system clone_controlrepo_cmd
+    raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
+  end
+end
+
