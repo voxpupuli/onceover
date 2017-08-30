@@ -6,6 +6,7 @@ Gemfile.lock
 /.bundle
 /.bin
 /.ruby-version
+tmp
 
 #Vim
 /.projections.json

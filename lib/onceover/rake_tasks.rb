@@ -1,15 +1,17 @@
 require 'onceover/controlrepo'
 require 'pathname'
 
-@repo = nil
+@repo   = nil
 @config = nil
 
 
 desc 'Writes a `fixtures.yml` file based on the Puppetfile'
 task :generate_fixtures do
   repo = Onceover::Controlrepo.new
-  raise ".fixtures.yml already exits, we won't overwrite because we are scared" if File.exists?(File.expand_path('./.fixtures.yml',repo.root))
-  File.write(File.expand_path('./.fixtures.yml',repo.root),repo.fixtures)
+  if File.exists?(File.expand_path('./.fixtures.yml', repo.root))
+    raise ".fixtures.yml already exits, we won't overwrite because we are scared"
+  end
+  File.write(File.expand_path('./.fixtures.yml', repo.root), repo.fixtures)
 end
 
 
@@ -20,7 +22,8 @@ task :hiera_setup do
   current_config.each do |key, value|
     if value.is_a?(Hash)
       if value.has_key?(:datadir)
-        current_config[key][:datadir] = Pathname.new(repo.hiera_data).relative_path_from(Pathname.new(File.expand_path('..',repo.hiera_config_file))).to_s
+        hiera_config_path = Pathname.new(File.expand_path('..', repo.hiera_config_file))
+        current_config[key][:datadir] = Pathname.new(repo.hiera_data).relative_path_from(hiera_config_path).to_s
       end
     end
   end
@@ -36,8 +39,8 @@ end
 task :generate_onceover_yaml do
   require 'onceover/controlrepo'
   repo = Onceover::Controlrepo.new
-  template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-  onceover_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb',template_dir))
+  template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
+  onceover_yaml_template = File.read(File.expand_path('./controlrepo.yaml.erb', template_dir))
   puts ERB.new(onceover_yaml_template, nil, '-').result(binding)
 end
 
@@ -54,9 +57,9 @@ task :generate_nodesets do
   puts "HOSTS:"
 
   repo.facts.each do |fact_set|
-    node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
-    boxname = Onceover::Beaker.facts_to_vagrant_box(fact_set)
-    platform = Onceover::Beaker.facts_to_platform(fact_set)
+    node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)], '.json')
+    boxname   = Onceover::Beaker.facts_to_vagrant_box(fact_set)
+    platform  = Onceover::Beaker.facts_to_platform(fact_set)
 
     uri = URI("https://atlas.hashicorp.com:443/api/v1/box/#{boxname}")
     request = Net::HTTP.new(uri.host, uri.port)
@@ -78,8 +81,8 @@ task :generate_nodesets do
     end
 
     # Use an ERB template
-    template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-    fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb',template_dir))
+    template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
+    fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb', template_dir))
     puts ERB.new(fixtures_template, nil, '-').result(binding)
   end
 
