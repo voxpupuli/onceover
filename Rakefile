@@ -27,12 +27,10 @@ task :rubocop do
 end
 
 task :fixtures do
-  clone_controlrepo_cmd = 'git clone https://github.com/dylanratcliffe/puppet_controlrepo.git spec/fixtures/puppet_controlrepo'
-  system 'ls -al spec/fixtures'
-  system 'ls -al spec/fixtures/puppet_controlrepo'
-  unless File.directory?('spec/fixtures/puppet_controlrepo')
-    system clone_controlrepo_cmd
-    raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
-  end
+  controlrepo_dir = 'spec/fixtures/puppet_controlrepo'
+  controlrepo_git_url = 'https://github.com/dylanratcliffe/puppet_controlrepo.git'
+  FileUtils.remove_dir(controlrepo_dir)
+  system "git clone #{controlrepo_git_url} #{controlrepo_dir}"
+  raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
 end
 
