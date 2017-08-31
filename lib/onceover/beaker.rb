@@ -124,10 +124,10 @@ class Onceover
       host.install_package('git')
 
       # copy the file over to the host (Maybe I should be changing the directory here??)
-      scp_to(host,repo.r10k_config_file,'/tmp/r10k.yaml')
+      scp_to(host, repo.r10k_config_file, '/tmp/r10k.yaml')
 
       # Do an r10k deploy
-      r10k_deploy(host,{
+      r10k_deploy(host, {
         :puppetfile => true,
         :configfile => '/tmp/r10k.yaml',
         })
@@ -143,7 +143,7 @@ class Onceover
     # This is not helpful for us. We want to be able to test all of our classes on
     # all of our nodes, this could be a lot of vms and having them all running at once
     # would be a real kick in the dick for whatever system was running it.
-    def self.provision_and_test(host,puppet_class,opts = {},repo = Onceover::Controlrepo.new)
+    def self.provision_and_test(host,puppet_class,opts = {}, repo = Onceover::Controlrepo.new)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       opts = {:runs_before_idempotency => 1}.merge(opts)
@@ -175,11 +175,11 @@ class Onceover
       manifest = "include #{puppet_class}"
 
       opts[:runs_before_idempotency].times do
-        apply_manifest_on(host,manifest,{:catch_failures => true})
+        apply_manifest_on(host, manifest, {:catch_failures => true})
       end
 
       if opts[:check_idempotency]
-        apply_manifest_on(host,manifest,{:catch_changes => true})
+        apply_manifest_on(host, manifest, {:catch_changes => true})
       end
 
       network_manager.cleanup
@@ -193,7 +193,7 @@ class Onceover
 
     def self.host_create(name, nodes)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
-      
+
       require 'beaker/network_manager'
 
       current_opts = {}

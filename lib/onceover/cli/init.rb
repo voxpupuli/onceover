@@ -20,6 +20,9 @@ tool to work.
 
           run do |opts, args, cmd|
             Onceover::Controlrepo.init(Onceover::Controlrepo.new(opts))
+            # Would it make sense for #init to be a class instance method of Controlrepo ? Then you could:
+            # cp = Onceover::Controlrepo.new(opts)
+            # cp.init
           end
         end
       end
