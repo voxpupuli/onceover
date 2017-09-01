@@ -19,6 +19,7 @@ class Onceover
     attr_accessor :root
     attr_accessor :puppetfile
     attr_accessor :facts_files
+    attr_accessor :trusted_facts_files
     attr_accessor :environmentpath
     attr_accessor :role_regex
     attr_accessor :profile_regex
@@ -51,6 +52,10 @@ class Onceover
 
     def self.facts_files
      @@existing_controlrepo.facts_files
+    end
+
+    def self.trusted_facts_files
+      @@existing_controlrepo.trusted_facts_files
     end
 
     def self.classes
@@ -98,21 +103,23 @@ class Onceover
         end
       end
 
-      @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
-      @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
-      @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
-      @facts_dir        = opts[:facts_dir] || File.expand_path('./spec/factsets',@root)
-      @spec_dir         = opts[:spec_dir] || File.expand_path('./spec',@root)
-      @facts_files      = opts[:facts_files] || [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../../factsets',__FILE__)}/*.json"]].flatten
-      @nodeset_file     = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml',@root)
-      @role_regex       = /role[s]?:{2}/
-      @profile_regex    = /profile[s]?:{2}/
-      @tempdir          = opts[:tempdir] || File.expand_path('./.onceover',@root)
-      $temp_modulepath  = nil
-      @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-      @onceover_yaml    = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
-      @opts             = opts
-      logger.level = :debug if @opts[:debug]
+      @environmentpath      = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
+      @puppetfile           = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
+      @environment_conf     = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
+      @facts_dir            = opts[:facts_dir] || File.expand_path('./spec/factsets',@root)
+      @trusted_facts_dir    = opts[:trusted_facts_dir] || File.expand_path('./spec/trustedfactssets',@root)
+      @spec_dir             = opts[:spec_dir] || File.expand_path('./spec',@root)
+      @facts_files          = opts[:facts_files] || [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../../factsets',__FILE__)}/*.json"]].flatten
+      @trusted_facts_files  = opts[:trusted_facts_files] || [Dir["#{@trusted_facts_dir}/*.json"],Dir["#{File.expand_path('../../../trustedfactsets',__FILE__)}/*.json"]].flatten
+      @nodeset_file         = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml',@root)
+      @role_regex           = /role[s]?:{2}/
+      @profile_regex        = /profile[s]?:{2}/
+      @tempdir              = opts[:tempdir] || File.expand_path('./.onceover',@root)
+      $temp_modulepath      = nil
+      @manifest             = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
+      @onceover_yaml        = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
+      @opts                 = opts
+      logger.level          = :debug if @opts[:debug]
       @@existing_controlrepo = self
     end
 
@@ -120,15 +127,16 @@ class Onceover
       require 'colored'
 
       <<-END.gsub(/^\s{4}/,'')
-      #{'puppetfile'.green}       #{@puppetfile}
-      #{'environment_conf'.green} #{@environment_conf}
-      #{'facts_dir'.green}        #{@facts_dir}
-      #{'spec_dir'.green}         #{@spec_dir}
-      #{'facts_files'.green}      #{@facts_files}
-      #{'nodeset_file'.green}     #{@nodeset_file}
-      #{'roles'.green}            #{roles}
-      #{'profiles'.green}         #{profiles}
-      #{'onceover.yaml'.green}    #{@onceover_yaml}
+      #{'puppetfile'.green}        #{@puppetfile}
+      #{'environment_conf'.green}  #{@environment_conf}
+      #{'facts_dir'.green}         #{@facts_dir}
+      #{'trusted_facts_dir.green'} #{@trusted_facts_dir} 
+      #{'spec_dir'.green}          #{@spec_dir}
+      #{'facts_files'.green}       #{@facts_files}
+      #{'nodeset_file'.green}      #{@nodeset_file}
+      #{'roles'.green}             #{roles}
+      #{'profiles'.green}          #{profiles}
+      #{'onceover.yaml'.green}     #{@onceover_yaml}
       END
     end
 

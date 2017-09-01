@@ -8,6 +8,7 @@ class Onceover
     attr_accessor :name
     attr_accessor :beaker_node
     attr_accessor :fact_set
+    attr_accessor :trusted_fact_set
 
     def initialize(name)
       @name = name
@@ -18,6 +19,12 @@ class Onceover
         @fact_set = Onceover::Controlrepo.facts[Onceover::Controlrepo.facts_files.index{|facts_file| File.basename(facts_file,'.json') == name}]
       rescue TypeError
         @fact_set = nil
+      end
+      # same as above but for trusted facts
+      begin
+        @trusted_fact_set = Onceover::Controlrepo.facts[Onceover::Controlrepo.trusted_facts_files.index{|trusted_facts_file| File.basename(trusted_facts_file,'.json') == name}]
+      rescue TypeError
+        @trusted_fact_set = nil
       end
       @@all << self
 
