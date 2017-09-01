@@ -347,11 +347,12 @@ class Onceover
     def hiera_config_file
       case
       when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
-        return File.expand_path('./hiera.yaml', @spec_dir)
+        File.expand_path('./hiera.yaml', @spec_dir)
       when File.exist?(File.expand_path('./hiera.yaml', @root))
-        return File.expand_path('./hiera.yaml', @root)
+        File.expand_path('./hiera.yaml', @root)
+      else
+        nil
       end
-      nil
     end
 
     def hiera_config_file_relative_path
@@ -407,9 +408,11 @@ class Onceover
     def r10k_config_file
       case
       when File.exist?(File.expand_path('./r10k.yaml', @spec_dir))
-        return File.expand_path('./r10k.yaml', @spec_dir)
+        File.expand_path('./r10k.yaml', @spec_dir)
       when File.exist?(File.expand_path('./r10k.yaml', @root))
-        return File.expand_path('./r10k.yaml', @root)
+        File.expand_path('./r10k.yaml', @root)
+      else
+        nil
       end
     end
 
