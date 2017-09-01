@@ -1,6 +1,9 @@
 class Onceover
   class Beaker
+    # WARNING: All of this functionality is deprecated. It will be left around
+    # until there is something to replace it, but don't rely on it
     def self.facts_to_vagrant_box(facts)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
       # Gets the most similar vagrant box to the facts set provided, will accept a single fact
       # se or an array
 
@@ -55,6 +58,8 @@ class Onceover
     # commands to run when we do stuff. Personally I would prefer beaker to detect the
     # platform as it would not be that hard, especially once puppet is installed, oh well.
     def self.facts_to_platform(facts)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       if facts.is_a?(Array)
         returnval = []
         facts.each do |fact|
@@ -101,6 +106,8 @@ class Onceover
 
     # This little method will deploy a Controlrepo object to a host, just using r10k deploy
     def self.deploy_controlrepo_on(host, repo = Onceover::Controlrepo.new())
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       require 'beaker-rspec'
       require 'onceover/controlrepo'
 
@@ -117,10 +124,10 @@ class Onceover
       host.install_package('git')
 
       # copy the file over to the host (Maybe I should be changing the directory here??)
-      scp_to(host,repo.r10k_config_file,'/tmp/r10k.yaml')
+      scp_to(host, repo.r10k_config_file, '/tmp/r10k.yaml')
 
       # Do an r10k deploy
-      r10k_deploy(host,{
+      r10k_deploy(host, {
         :puppetfile => true,
         :configfile => '/tmp/r10k.yaml',
         })
@@ -136,7 +143,9 @@ class Onceover
     # This is not helpful for us. We want to be able to test all of our classes on
     # all of our nodes, this could be a lot of vms and having them all running at once
     # would be a real kick in the dick for whatever system was running it.
-    def self.provision_and_test(host,puppet_class,opts = {},repo = Onceover::Controlrepo.new)
+    def self.provision_and_test(host,puppet_class,opts = {}, repo = Onceover::Controlrepo.new)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       opts = {:runs_before_idempotency => 1}.merge(opts)
       opts = {:check_idempotency => true}.merge(opts)
       opts = {:deploy_controlrepo => true}.merge(opts)
@@ -166,21 +175,25 @@ class Onceover
       manifest = "include #{puppet_class}"
 
       opts[:runs_before_idempotency].times do
-        apply_manifest_on(host,manifest,{:catch_failures => true})
+        apply_manifest_on(host, manifest, {:catch_failures => true})
       end
 
       if opts[:check_idempotency]
-        apply_manifest_on(host,manifest,{:catch_changes => true})
+        apply_manifest_on(host, manifest, {:catch_changes => true})
       end
 
       network_manager.cleanup
     end
 
     def self.match_indentation(test,logger)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       logger.line_prefix = '  ' * (test.metadata[:scoped_id].split(':').count - 1)
     end
 
     def self.host_create(name, nodes)
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       require 'beaker/network_manager'
 
       current_opts = {}

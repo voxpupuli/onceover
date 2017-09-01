@@ -19,6 +19,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
+    - [Plugins](#plugins)
     - [Accessing Onceover in a traditional RSpec test](#accessing-onceover-in-a-traditional-rspec-test)
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
@@ -84,17 +85,17 @@ If we are doing acceptance testing then we need information about how to spin up
 
 ### onceover.yaml
 
-`spec/onceover.yaml`
+`spec/onceover.yaml` _(override with environment variable: `ONCEOVER_YAML`)_
 
 Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
 
-**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/))
+**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/)). To make life easier you can also specify one or many **regular expressions** in this section. A good one to start with would be `/^role::/`. Regular expressions are just strings that start and end with a forward slash.
 
 **nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
 
 **node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax.
 
-**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax.
+**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again.
 
 **shared_examples:** This section allows you to list the shared examples to be included in every node test.  Value is an Array
 
@@ -115,6 +116,25 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
 
+**opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
+
+```yaml
+opts:
+  :facts_dirs:        # Remember: `opts` keys are symbols!
+    - 'spec/factsets' # Limit factsets to files in this repository
+  :debug: true        # set the `logger.level` to debug
+```
+
+```yaml
+opts:
+  # profiles include a legacy module named `site::`
+  :profile_regex: '^(profile|site)::'
+
+  # factset filenames use the extension`.facts` instead of `.json`
+  :facts_files:
+    - 'spec/factsets/*.facts'
+```
+
 A full example:
 
 ```yaml
@@ -124,6 +144,7 @@ classes:
   - 'roles::load_balancer'
   - 'roles::syd_f5_load_balancer'
   - 'roles::windows_server'
+  - '/^role/'
 
 nodes:
   - centos6a
@@ -143,6 +164,7 @@ class_groups:
   windows_roles:
     - 'roles::windows_server'
     - 'roles::backend_dbserver'
+    - '/^roles::win/'
   non_windows_roles:
     include: 'all_classes'
     exclude: 'windows_roles'
@@ -169,6 +191,10 @@ functions:
   query_resources:
     type: rvalue
     returns: []
+
+opts:
+  :facts_dirs:
+    - spec/factsets
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
@@ -288,7 +314,7 @@ If you have hiera data inside your controlrepo (or somewhere else) the Controlre
 
 **WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
 
-**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x, the tool will automatically detect this and everything should work.
+**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x (Now called Hiera 5), the tool will automatically detect this and everything should work. If you want to use a different v5 `hiera.yaml` for testing, pleace it under the spec directory. Note that the datadir must be relative to the location of the hiera.yaml file in this instance. i.e. `../data`
 
 ## Spec testing
 
@@ -308,6 +334,12 @@ This will do the following things:
 ### Adding your own spec tests
 
 When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
+
+### Exposing Puppet output
+
+If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environment variable to `true`, eg:
+
+`SHOW_PUPPET_OUTPUT=true onceover run spec`
 
 ## Acceptance testing
 
@@ -411,7 +443,31 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 ## Extra Tooling
 
-Is this all too simple for you? Great! This is supposed to be a gateway to writing your own super-awesome really complicated tests using more traditional tools. If you want to ditch this tool in favour of doing it yourself, go ahead, but take these ruby methods as a parting gift:
+### Plugins
+
+Onceover now allows for plugins. The framework is extremely simple and basically relies on the plugins to monkey-patch themselves in. It will likely be improved in future. To create a plugin simply install a gem with a name that starts with `onceover-` and onceover will `require` it. Once it has been required it is up to the plugin to insert itself wherever it is required.
+
+Examples:
+
+  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff)
+
+### Inspecting and updating the Puppetfile
+
+Onceover comes with some extra commands for interacting with the Puppetfile in useful ways. These are:
+
+`onceover show puppetfile`
+
+This will display all the current versions of all modules that are in the Puppetfile alongside the latest versions and whether or not they are out of date. This is a useful took for making sure your modules don't get too stale.
+
+`onceover update puppetfile`
+
+This takes your Puppetfile and actually modifies all of the module versions in there to the latest versions and saves the file. This is useful for setting up automated Puppetfile updates, just get Jenkins or Bamboo to:
+
+  1. Check out the Controlrepo
+  2. Run onceover to get a passing baseline
+  3. Update the Puppetfile with the latest versions of all modules
+  4. Run Onceover agan
+  5. Create a pull request if all tests pass
 
 ### Accessing Onceover in a traditional RSpec test
 
@@ -577,3 +633,31 @@ fixtures:
 ```
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
+
+## Developing Onceover
+
+Install gem dependencies:
+
+`bundle install`
+
+Clone the submodules
+
+`git submodule init && git submodule update --recursive`
+
+Execute tests
+
+`bundle exec rake`
+
+## Contributors
+
+Cheers to all of those who helped out:
+
+  - jessereynolds
+  - op-ct
+  - GeoffWilliams
+  - beergeek
+  - jairojunior
+  - natemccurdy
+  - aardvark
+  - Mandos
+

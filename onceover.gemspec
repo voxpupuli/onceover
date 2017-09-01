@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "onceover"
-  s.version     = "3.0.11"
+  s.version     = "3.2.5"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
@@ -19,12 +19,11 @@ Gem::Specification.new do |s|
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake', '>= 10.0.0'
   s.add_runtime_dependency 'json', '>= 1.8.2'
-  s.add_runtime_dependency 'beaker-rspec'
   s.add_runtime_dependency 'rspec-puppet', ">= 2.4.0"
+  s.add_runtime_dependency 'parallel_tests', ">= 2.0.0"
   s.add_runtime_dependency 'puppetlabs_spec_helper', ">= 0.4.0"
   s.add_runtime_dependency 'rspec-puppet-utils', '>= 2.0.0'
   s.add_runtime_dependency 'rspec', '>= 3.0.0'
-  s.add_runtime_dependency 'bundler'
   s.add_runtime_dependency 'r10k', '>=2.1.0'
   s.add_runtime_dependency 'puppet', '>=3.4.0'
   s.add_runtime_dependency 'git'
@@ -35,4 +34,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'table_print', '>= 1.0.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
+
+  # Development
+  s.add_development_dependency 'rubocop', '~> 0.39.0'
+  s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
+
 end

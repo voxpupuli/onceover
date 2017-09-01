@@ -11,23 +11,21 @@ class Onceover
     # This can accept a bunch of stuff. It can accept nodes, classes or groups anywhere
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
-    #def initialize(on_this,test_config['classes'],options = {})
-    def initialize(on_this,test_this,test_config)
+    def initialize(on_this, test_this, test_config)
 
       @default_test_config = {
-        'check_idempotency' => true,
+        'check_idempotency'       => true,
         'runs_before_idempotency' => 1
       }
 
       # Add defaults if they do not exist
       test_config = @default_test_config.merge(test_config)
 
-      @nodes = []
+      @nodes   = []
       @classes = []
       @test_config = test_config
       @test_config.delete('classes') # remove classes from the config
       @tags = @test_config['tags']
-
 
       # Make sure that tags are an array
       @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']
@@ -57,41 +55,19 @@ class Onceover
         end
         @classes.flatten!
       elsif test_this.is_a?(Hash)
-        # If it is a hash we need to get creative
-        raise "exclude must contain a value when using include/exclude syntax in onceover config file" unless test_this['exclude']
-
-        # Get all of the included classes and add them
-        if Onceover::Group.find(test_this['include'])
-          @classes << Onceover::Group.find(test_this['include']).members
-        elsif Onceover::Class.find(test_this['include'])
-          @classes << Onceover::Class.find(test_this['include'])
-        else
-          raise "#{test_this['include']} was not found in the list of classes or groups!"
-        end
-        @classes.flatten!
-
-        # Then remove any excluded ones
-        if Onceover::Group.find(test_this['exclude'])
-          Onceover::Group.find(test_this['exclude']).members.each do |clarse|
-            @classes.delete(clarse)
-          end
-        elsif Onceover::Class.find(test_this['exclude'])
-          @classes.delete(Onceover::Class.find(test_this['exclude']))
-        else
-          raise "#{test_this['exclude']} was not found in the list of classes or groups!"
-        end
+        @classes = Onceover::TestConfig.subtractive_to_list(test_this)
       elsif test_this.is_a?(Onceover::Class)
         @classes << test_this
       end
     end
 
     def eql?(other)
-      (@nodes.sort.eql?(other.nodes.sort)) and (@classes.sort.eql?(other.classes.sort))
+      @nodes.sort.eql?(other.nodes.sort) and @classes.sort.eql?(other.classes.sort)
     end
 
     def to_s
       class_msg = ""
-      node_msg = ""
+      node_msg  = ""
       if classes.count > 1
         class_msg = "#{classes.count}_classes"
       else
@@ -113,7 +89,8 @@ class Onceover
 
       # this will be an array of arrays, or maybe hashes
       combinations = []
-      new_tests = []
+      new_tests    = []
+
       tests.each do |test|
         test.nodes.each do |node|
           test.classes.each do |cls|
@@ -126,7 +103,7 @@ class Onceover
               end]
 
               # Delete all default values in the current options hash
-              test.test_config.delete_if do |key,value|
+              test.test_config.delete_if do |key, value|
                 test.default_test_config[key] == value
               end
 
@@ -134,7 +111,7 @@ class Onceover
               relevant_test.test_config.deep_merge!(test.test_config)
             else
               combinations << combo
-              new_tests << Onceover::Test.new(node,cls,test.test_config)
+              new_tests << Onceover::Test.new(node, cls, test.test_config)
             end
           end
         end
@@ -146,7 +123,7 @@ class Onceover
       # we don't want too many copies of the same shit going around
       #
       # Actually based on the way things are written I don't think this
-      # will duplicated node or class objects, just test objects,
+      # will deduplicate node or class objects, just test objects,
       # everything else is passed by reference
       new_tests
     end

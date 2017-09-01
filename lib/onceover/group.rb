@@ -5,7 +5,7 @@ class Onceover
   class Group
     @@all = []
 
-    # Work out how to do class veriables so that I can keep track of all the groups easily
+    # Work out how to do class variables so that I can keep track of all the groups easily
     attr_accessor :name
     attr_accessor :members
 
@@ -13,7 +13,7 @@ class Onceover
     # by itself, and yes it will reference them, not just create additional ones, woo!
 
     def initialize(name = nil, members = [])
-      @name = name
+      @name    = name
       @members = []
 
       case
@@ -21,8 +21,8 @@ class Onceover
         # If it's already a valid list just chuck it in there
         @members = members
       when members.is_a?(Hash)
-        # if it's a hash then do subtractive stiff
-        @members = Onceover::Group.subtractive_to_list(members)
+        # if it's a hash then do subtractive stuff
+        @members = Onceover::TestConfig.subtractive_to_list(members)
       when members.nil?
         # Support empty groups yo
         @members = []
@@ -74,16 +74,6 @@ class Onceover
       rescue
         return false
       end
-    end
-
-    def self.subtractive_to_list(subtractive_hash)
-      # Take a hash that looks like this:
-      # { 'include' => 'somegroup'
-      #   'exclude' => 'other'}
-      # and return a list of classes/nodes
-      include_list = Onceover::TestConfig.find_list(subtractive_hash['include'])
-      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude'])
-      include_list - exclude_list
     end
   end
 end

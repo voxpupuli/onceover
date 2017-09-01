@@ -38,6 +38,8 @@ This includes deploying using r10k and running all custom tests.
             usage 'spec'
             summary 'Runs spec tests'
 
+            optional :p, :parallel, 'Runs spec tests in parallel. This increases speed at the cost of poorly formatted logs and irrelevant junit output.'
+
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
               runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :spec)
@@ -56,8 +58,10 @@ This includes deploying using r10k and running all custom tests.
             summary 'Runs acceptance tests'
 
             run do |opts, args, cmd|
+              warn "[DEPRECATION] Acceptance testing is deprecated due to the removal of Beaker dependencies"
+              warn "[DEPRECATION] Appeptance testing will be replaced by a more pluggable framework in the future, if you have ideas as to how this should be done please submit a ticket."
               repo = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts),:acceptance)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts), :acceptance)
               runner.prepare!
               runner.run_acceptance!
             end

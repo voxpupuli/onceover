@@ -11,10 +11,8 @@ class Onceover
     end
 
     def prepare!
-      unless @config.skip_r10k
-        # Deploy the puppetfile
-        @config.r10k_deploy_local(@repo)
-      end
+      # Deploy the control repo
+      @config.deploy_local(@repo, {:skip_r10k => @config.skip_r10k})
 
       # Remove the entire spec directory to make sure we have
       # all the latest tests
@@ -25,48 +23,49 @@ class Onceover
       FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")
 
       # Copy our entire spec directory over
-      FileUtils.cp_r("#{@repo.spec_dir}","#{@repo.tempdir}")
+      FileUtils.cp_r("#{@repo.spec_dir}", "#{@repo.tempdir}")
 
       # Create the Rakefile so that we can take advantage of the existing tasks
       @config.write_rakefile(@repo.tempdir, "spec/classes/**/*_spec.rb")
 
       # Create spec_helper.rb
-      @config.write_spec_helper("#{@repo.tempdir}/spec",@repo)
+      @config.write_spec_helper("#{@repo.tempdir}/spec", @repo)
 
       # Create spec_helper_accpetance.rb
-      @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec",@repo)
+      @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec", @repo)
 
       # TODO: Remove all tests that do not match set tags
 
       if @mode.include?(:spec)
         # Verify all of the spec tests
-        @config.spec_tests.each { |test| @config.verify_spec_test(@repo,test) }
+        @config.spec_tests.each { |test| @config.verify_spec_test(@repo, test) }
 
         # Deduplicate and write the tests (Spec and Acceptance)
         @config.run_filters(Onceover::Test.deduplicate(@config.spec_tests)).each do |test|
-          @config.write_spec_test("#{@repo.tempdir}/spec/classes",test)
+          @config.write_spec_test("#{@repo.tempdir}/spec/classes", test)
         end
       end
 
       if @mode.include?(:acceptance)
         # Verify all of the acceptance tests
-        @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo,test) }
+        @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo, test) }
 
         # Write them out
-        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",@config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests)))
+        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",
+          @config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests)))
       end
 
       # Parse the current hiera config, modify, and write it to the temp dir
-      unless @repo.hiera_config ==nil
+      unless @repo.hiera_config == nil
         hiera_config = @repo.hiera_config
-        hiera_config.each do |setting,value|
+        hiera_config.each do |setting, value|
           if value.is_a?(Hash)
             if value.has_key?(:datadir)
               hiera_config[setting][:datadir] = "#{@repo.tempdir}/#{@repo.environmentpath}/production/#{value[:datadir]}"
             end
           end
         end
-        File.write("#{@repo.tempdir}/#{@repo.environmentpath}/production/hiera.yaml",hiera_config.to_yaml)
+        File.write("#{@repo.tempdir}/#{@repo.environmentpath}/production/hiera.yaml", hiera_config.to_yaml)
       end
 
       @config.create_fixtures_symlinks(@repo)
@@ -76,12 +75,19 @@ class Onceover
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
-        logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-        exec("#{@command_prefix}rake spec_standalone")
+        if @config.opts[:parallel]
+          logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
+          exec("#{@command_prefix}rake parallel_spec")
+        else
+          logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
+          exec("#{@command_prefix}rake spec_standalone")
+        end
       end
     end
 
     def run_acceptance!
+      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
+
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
