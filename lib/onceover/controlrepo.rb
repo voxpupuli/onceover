@@ -346,9 +346,18 @@ class Onceover
 
     def hiera_config_file
       # try to find the hiera.yaml file
-      hiera_config_file = File.expand_path('./hiera.yaml', @root)     if File.exist?(File.expand_path('./hiera.yaml', @root))
-      hiera_config_file = File.expand_path('./hiera.yaml', @spec_dir) if File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
-      hiera_config_file
+      possible_locations = [
+        './spec/hiera.yaml',
+        './hiera.yaml'
+      ]
+
+      # Keep all the ones that exist
+      possible_locations.keep_if do |location|
+        File.exist?(File.expand_path(location, @root))
+      end
+
+      # Return the location, or nil
+      possible_locations.first ? File.expand_path(possible_locations.first) : nil
     end
 
     def hiera_config_file_relative_path
