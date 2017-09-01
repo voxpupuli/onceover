@@ -407,9 +407,9 @@ class Onceover
     def r10k_config_file
       case
       when File.exist?(File.expand_path('./r10k.yaml', @spec_dir))
-        File.expand_path('./r10k.yaml', @spec_dir)
+        return File.expand_path('./r10k.yaml', @spec_dir)
       when File.exist?(File.expand_path('./r10k.yaml', @root))
-        File.expand_path('./r10k.yaml', @root)
+        return File.expand_path('./r10k.yaml', @root)
       end
     end
 
