@@ -345,19 +345,13 @@ class Onceover
     end
 
     def hiera_config_file
-      # try to find the hiera.yaml file
-      possible_locations = [
-        './spec/hiera.yaml',
-        './hiera.yaml'
-      ]
-
-      # Keep all the ones that exist
-      possible_locations.keep_if do |location|
-        File.exist?(File.expand_path(location, @root))
+      case
+      when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
+        return File.expand_path('./hiera.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./hiera.yaml', @root))
+        return File.expand_path('./hiera.yaml', @root)
       end
-
-      # Return the location, or nil
-      possible_locations.first ? File.expand_path(possible_locations.first) : nil
+      nil
     end
 
     def hiera_config_file_relative_path
