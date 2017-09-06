@@ -38,5 +38,6 @@ Gem::Specification.new do |s|
   # Development
   s.add_development_dependency 'rubocop', '~> 0.39.0'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
+  s.add_development_dependency 'cucumber', '~> 2.0'
 
 end
