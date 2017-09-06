@@ -23,7 +23,7 @@ desc "Run acceptance cucumber tests"
 task cucumber_acceptance_tests: [:syntax, :rubocop, :cucumber]
 
 desc "Run acceptance rspec tests"
-task rspec_acceptance_tests: [:syntax, :rubocop, :acceptance]
+task rspec_acceptance_tests: [:syntax, :rubocop, :fixtures, :acceptance]
 
 desc "Run full set of tests"
 task full_tests: [:rspec_unit_tests, :rspec_acceptance_tests, :cucumber_acceptance_tests]
@@ -43,3 +43,9 @@ task :rubocop do
   exit_code = cli.run(%w(--display-cop-names --format simple))
   raise "RuboCop detected offenses" if exit_code != 0
 end
+
+task :fixtures do
+  system 'git submodule init && git submodule update --recursive'
+  raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
+end
+
