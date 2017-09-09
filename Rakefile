@@ -1,14 +1,24 @@
 require 'rubygems/tasks'
 require 'rspec/core/rake_task'
+require 'cucumber/rake/task'
 Gem::Tasks.new
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.rspec_opts = '--pattern spec/\*/\*_spec.rb'
 end
 
-task default: :test
+Cucumber::Rake::Task.new
 
-task test: [:syntax, :rubocop, :spec]
+task default: :full_tests
+
+desc "Run full set of tests"
+task full_tests: [:unit_tests, :acceptance_tests]
+
+desc "Run unit tests"
+task unit_tests: [:syntax, :rubocop, :spec]
+
+desc "Run acceptance tests"
+task acceptance_tests: [:syntax, :rubocop, :cucumber]
 
 task :syntax do
   paths = ['lib',]
