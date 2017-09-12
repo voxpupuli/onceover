@@ -345,10 +345,14 @@ class Onceover
     end
 
     def hiera_config_file
-      # try to find the hiera.yaml file
-      hiera_config_file = File.expand_path('./hiera.yaml', @spec_dir) if File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
-      hiera_config_file = File.expand_path('./hiera.yaml', @root)     if File.exist?(File.expand_path('./hiera.yaml', @root))
-      hiera_config_file
+      case
+      when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
+        File.expand_path('./hiera.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./hiera.yaml', @root))
+        File.expand_path('./hiera.yaml', @root)
+      else
+        nil
+      end
     end
 
     def hiera_config_file_relative_path
@@ -407,6 +411,8 @@ class Onceover
         File.expand_path('./r10k.yaml', @spec_dir)
       when File.exist?(File.expand_path('./r10k.yaml', @root))
         File.expand_path('./r10k.yaml', @root)
+      else
+        nil
       end
     end
 
