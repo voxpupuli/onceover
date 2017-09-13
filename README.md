@@ -579,7 +579,7 @@ repo.role_regex = /.*/ # Tells the class how to find roles, will be applied to r
 repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applied to repo.classes
 ```
 
-Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles`
+Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles
 
 ### Rake tasks
 

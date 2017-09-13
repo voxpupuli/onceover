@@ -147,7 +147,7 @@ class Onceover
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Onceover::Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
