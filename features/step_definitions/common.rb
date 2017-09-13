@@ -9,11 +9,17 @@ Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
   FileUtils.cp_r "spec/fixtures/#{controlrepo_name}", 'tmp/tests'
 end
 
+Given(/^initialized control repo "([^"]*)"$/) do |controlrepo_name|
+  step %Q(control repo "#{controlrepo_name}")
+  step %Q(I run onceover command "init")
+end
+
 Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filename|
   step %Q(control repo "#{controlrepo_name}")
   controlrepo_path = "tmp/tests/#{controlrepo_name}"
   FileUtils.rm_rf( controlrepo_path + "/#{filename}" )
 end
+
 
 Then(/^I should see all tests pass$/) do
   pending # Write code here that turns the phrase above into concrete actions
