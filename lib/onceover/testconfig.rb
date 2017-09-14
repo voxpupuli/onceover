@@ -221,6 +221,7 @@ class Onceover
             install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
+            raise 'r10k could not install all required modules' unless $?.success?
           end
         else
           raise "#{repo.tempdir} is not a directory"

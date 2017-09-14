@@ -15,5 +15,5 @@ Feature: Run rspec and acceptance test suits
     Given initialized control repo "controlrepo_basic"
     And in Puppetfile is misspelled module's name
     When I run onceover command "run spec"
-    Then I should see error with message pattern "The module acma-not_exists does not exists"
+    Then I should see error with message pattern "The module acme-not_exists does not exist"
 

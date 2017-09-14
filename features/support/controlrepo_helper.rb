@@ -9,4 +9,8 @@ class ControlRepo_Helper
     return @tmp_folder + @name + '/'
   end
 
+  def add_line_to_puppetfile( line )
+    open(root_folder + 'Puppetfile', 'a') { |f| f.puts line }
+  end
+
 end

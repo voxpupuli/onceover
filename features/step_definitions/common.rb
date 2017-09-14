@@ -46,5 +46,5 @@ Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
 end
 
 Given(/^in Puppetfile is misspelled module's name$/) do
-
+  @repo.add_line_to_puppetfile %Q(mod "acme/not_exists", "7.7.7")
 end
