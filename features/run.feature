@@ -6,8 +6,14 @@ Feature: Run rspec and acceptance test suits
   Background:
     Given onceover executable
 
- Scenario: Run full set of rspec tests
+ Scenario: Run correct spec tests
     Given initialized control repo "controlrepo_basic"
     When I run onceover command "run spec"
     Then I should not see any errors
+
+ Scenario: Run spec tests with misspelled module in Puppetfile
+    Given initialized control repo "controlrepo_basic"
+    And in Puppetfile is misspelled module's name
+    When I run onceover command "run spec"
+    Then I should see error with message pattern "The module acma-not_exists does not exists"
 

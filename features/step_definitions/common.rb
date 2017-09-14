@@ -1,12 +1,13 @@
 Given /^onceover executable$/ do
-  @cmd = Command.new
+  @cmd = Command_Helper.new
 end
 
 Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
-  @cmd.controlrepo = controlrepo_name
-  FileUtils.rm_rf "tmp/tests/#{controlrepo_name}"
-  FileUtils.mkdir_p 'tmp/tests'
-  FileUtils.cp_r "spec/fixtures/#{controlrepo_name}", 'tmp/tests'
+  @repo = ControlRepo_Helper.new( controlrepo_name )
+  @cmd.controlrepo = @repo
+  FileUtils.rm_rf @repo.root_folder
+  FileUtils.mkdir_p 'tmp'
+  FileUtils.cp_r "spec/fixtures/#{controlrepo_name}", 'tmp'
 end
 
 Given(/^initialized control repo "([^"]*)"$/) do |controlrepo_name|
@@ -16,13 +17,7 @@ end
 
 Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filename|
   step %Q(control repo "#{controlrepo_name}")
-  controlrepo_path = "tmp/tests/#{controlrepo_name}"
-  FileUtils.rm_rf( controlrepo_path + "/#{filename}" )
-end
-
-
-Then(/^I should see all tests pass$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+  FileUtils.rm_rf "#{@repo.root_folder}/#{filename}"
 end
 
 When /^I run onceover command "([^"]*)"$/  do |command|
@@ -50,17 +45,6 @@ Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.output.match err_msg_regexp).to_not be nil
 end
 
-Then(/^I should see generated all necessary files and folders$/) do
-  controlrepo_path = "tmp/tests/controlrepo_basic/"
-  files = [ 'spec/onceover.yaml', 'Rakefile', 'Gemfile' ].map { |x| controlrepo_path + x }
-  folders = [ 'spec/factsets', 'spec/pre_conditions'].map! { |x| controlrepo_path + x}
+Given(/^in Puppetfile is misspelled module's name$/) do
 
-  files.each do |file|
-    puts file
-    expect( File.exist? file ).to be true
-  end
-  folders.each do |folder|
-    puts folder
-    expect( Dir.exist? folder ).to be true
-  end
 end
