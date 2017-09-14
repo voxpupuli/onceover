@@ -4,21 +4,29 @@ require 'cucumber/rake/task'
 Gem::Tasks.new
 
 RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = '--pattern spec/\*/\*_spec.rb'
+  t.rspec_opts = '--pattern spec/onceover/**/*_spec.rb'
+end
+
+RSpec::Core::RakeTask.new(:acceptance) do |t|
+  t.rspec_opts = '--pattern spec/acceptance/**/*_spec.rb'
 end
 
 Cucumber::Rake::Task.new
 
 task default: :full_tests
 
-desc "Run full set of tests"
-task full_tests: [:unit_tests, :acceptance_tests]
 
 desc "Run unit tests"
-task unit_tests: [:syntax, :rubocop, :spec]
+task rspec_unit_tests: [:syntax, :rubocop, :spec]
 
-desc "Run acceptance tests"
-task acceptance_tests: [:syntax, :rubocop, :cucumber]
+desc "Run acceptance cucumber tests"
+task cucumber_acceptance_tests: [:syntax, :rubocop, :cucumber]
+
+desc "Run acceptance rspec tests"
+task rspec_acceptance_tests: [:syntax, :rubocop, :fixtures, :acceptance]
+
+desc "Run full set of tests"
+task full_tests: [:rspec_unit_tests, :rspec_acceptance_tests, :cucumber_acceptance_tests]
 
 task :syntax do
   paths = ['lib',]
@@ -35,3 +43,9 @@ task :rubocop do
   exit_code = cli.run(%w(--display-cop-names --format simple))
   raise "RuboCop detected offenses" if exit_code != 0
 end
+
+task :fixtures do
+  system 'git submodule init && git submodule update --recursive'
+  raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
+end
+
