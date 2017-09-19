@@ -218,7 +218,7 @@ class Onceover
           # R10K::Action::Deploy::Environment
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
-            install_cmd = "r10k puppetfile install --verbose --color"
+            install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
           end
