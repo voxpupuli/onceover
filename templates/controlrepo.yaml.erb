@@ -1,3 +1,4 @@
+facter: '<%= repo.facter.version %>'
 # Classes to be tested
 classes:
 <% repo.roles.each do |role| -%>
@@ -7,8 +8,8 @@ classes:
 # Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
 # depending on weather you are running 'spec' or 'acceptance' tests
 nodes:
-<% repo.facts_files.each do |file| -%>
-  - <%= File.basename(file,'.json') %>
+<% repo.facter.os_names.each do |name| -%>
+    - "<%=name %>"
 <% end -%>
 
 # You can group classes here to save typing
@@ -20,10 +21,8 @@ class_groups:
 # we can give you fact sets though so go crazy with spec testing!
 node_groups:
   windows_nodes:
-<% repo.facts_files.each do |file| -%>
-<% if File.basename(file,'.json') =~ /Windows/i -%>
-    - <%= File.basename(file,'.json') %>
-<% end -%>
+<% repo.facter.windows_os_names.each do |name| -%>
+    - '<%=name %>'
 <% end -%>
   non_windows_nodes:
     include: 'all_nodes'
@@ -33,6 +32,6 @@ test_matrix:
   - all_nodes:
       classes: 'all_classes'
       tests: 'spec'
-  - non_windows_nodes: 
+  - non_windows_nodes:
       classes: 'all_classes'
       tests: 'acceptance'

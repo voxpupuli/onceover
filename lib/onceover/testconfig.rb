@@ -4,6 +4,7 @@ require 'onceover/group'
 require 'onceover/test'
 require 'onceover/logger'
 require 'onceover/controlrepo'
+require 'onceover/facter'
 require 'git'
 include Onceover::Logger
 
@@ -44,12 +45,13 @@ class Onceover
       @opts             = opts
       @mock_functions   = config['functions']
       @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
+      @facter           = Onceover::Facter.new
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
       @classes = Onceover::Class.all
 
-      config['nodes'].each { |node| Onceover::Node.new(node) } unless config['nodes'] == nil
+      config['nodes'].each { |node| Onceover::Node.new(node, @facter.facts_by_os(node)) } unless config['nodes'] == nil
       @nodes = Onceover::Node.all
 
       # Add the 'all_classes' and 'all_nodes' default groups
@@ -127,9 +129,10 @@ class Onceover
 
     def verify_spec_test(controlrepo, test)
       test.nodes.each do |node|
-        unless controlrepo.facts_files.any? { |file| file =~ /\/#{node.name}\.json/ }
-          raise "Could not find factset for node: #{node.name}"
-        end
+        # TODO: ***
+        # unless controlrepo.facts_files.any? { |file| file =~ /\/#{node.name}\.json/ }
+        #   raise "Could not find factset for node: #{node.name}"
+        # end
       end
     end
 
@@ -233,7 +236,8 @@ class Onceover
 
     def write_spec_test(location, test)
       # Use an ERB template to write a spec test
-      File.write("#{location}/#{test.to_s}_spec.rb",
+      # Some names have "/" so I need to gsub it to create correct files
+      File.write("#{location}/#{test.to_s.gsub('/', '_')}_spec.rb",
         Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding))
     end
 

@@ -7,6 +7,7 @@ require 'pathname'
 require 'thread'
 require 'onceover/beaker'
 require 'onceover/logger'
+require 'onceover/facter'
 include Onceover::Logger
 
 class Onceover
@@ -18,7 +19,6 @@ class Onceover
 
     attr_accessor :root
     attr_accessor :puppetfile
-    attr_accessor :facts_files
     attr_accessor :environmentpath
     attr_accessor :role_regex
     attr_accessor :profile_regex
@@ -29,6 +29,7 @@ class Onceover
     attr_accessor :tempdir
     attr_accessor :onceover_yaml
     attr_accessor :opts
+    attr_reader   :facter
 
     # Create methods on self so that we can access these basic things without
     # having to actually instantiate the class, I'm debating how much stuff
@@ -49,10 +50,6 @@ class Onceover
      @@existing_controlrepo.puppetfile
     end
 
-    def self.facts_files
-     @@existing_controlrepo.facts_files
-    end
-
     def self.classes
      @@existing_controlrepo.classes
     end
@@ -67,10 +64,6 @@ class Onceover
 
     def self.config
       @@existing_controlrepo.config
-    end
-
-    def self.facts(filter = nil)
-      @@existing_controlrepo.facts(filter)
     end
 
     def self.hiera_config_file
@@ -103,17 +96,11 @@ class Onceover
       if File.exists?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
         opts.merge!(_data.fetch('opts',{})||{})
       end
-      opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path, @root)}
-      opts.fetch(:facts_files,[]).map!{|path| path =~ %r{^[/.]} ? path : File.expand_path(path, @root)}
 
       @environmentpath  = opts[:environmentpath]  || 'etc/puppetlabs/code/environments'
       @puppetfile       = opts[:puppetfile]       || File.expand_path('./Puppetfile', @root)
       @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf', @root)
       @spec_dir         = opts[:spec_dir]         || File.expand_path('./spec', @root)
-      @facts_dir        = opts[:facts_dir]        || File.expand_path('factsets', @spec_dir)
-      _facts_dirs       = [@facts_dir, File.expand_path('../../../factsets', __FILE__)]
-      _facts_files      = opts[:facts_files]      || _facts_dirs.map{|d| File.join(d, '*.json')}
-      @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
 
       @nodeset_file     = opts[:nodeset_file]     || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml', @root)
       @role_regex       = opts[:role_regex]       ?  Regexp.new(opts[:role_regex]) : /role[s]?:{2}/
@@ -122,6 +109,9 @@ class Onceover
       $temp_modulepath  = nil
       @manifest         = opts[:manifest]         || config['manifest'] ? File.expand_path(config['manifest'], @root) : nil
       @opts             = opts
+
+      @facter = Onceover::Facter.new
+
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
     end
@@ -133,9 +123,7 @@ class Onceover
       <<-END.gsub(/^\s{4}/,'')
       #{'puppetfile'.green}       #{@puppetfile}
       #{'environment_conf'.green} #{@environment_conf}
-      #{'facts_dir'.green}        #{@facts_dir}
       #{'spec_dir'.green}         #{@spec_dir}
-      #{'facts_files'.green}      #{@facts_files}
       #{'nodeset_file'.green}     #{@nodeset_file}
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
@@ -168,31 +156,6 @@ class Onceover
         classes << get_classes(dir)
       end
       classes.flatten
-    end
-
-    def facts(filter = nil)
-      # Returns an array facts hashes
-      all_facts = []
-      logger.debug "Reading factsets"
-      @facts_files.each do |file|
-        all_facts << read_facts(file)['values']
-      end
-      if filter
-        # Allow us to pass a hash of facts to filter by
-        raise "Filter param must be a hash" unless filter.is_a?(Hash)
-        all_facts.keep_if do |hash|
-          matches = []
-          filter.each do |filter_fact,value|
-            matches << keypair_is_in_hash(hash,filter_fact,value)
-          end
-          if matches.include? false
-            false
-          else
-            true
-          end
-        end
-      end
-      return all_facts
     end
 
     def print_puppetfile_table
@@ -441,9 +404,6 @@ class Onceover
         evaluate_template('pre_conditions_README.md.erb', binding),
         File.expand_path('./pre_conditions/README.md', repo.spec_dir))
       init_write_file(
-        evaluate_template('factsets_README.md.erb', binding),
-        File.expand_path('./factsets/README.md', repo.spec_dir))
-      init_write_file(
         evaluate_template('Rakefile.erb', binding),
         File.expand_path('./Rakefile', repo.root))
       init_write_file(
@@ -564,16 +524,6 @@ class Onceover
     end
 
     private
-
-    def read_facts(facts_file)
-      file = File.read(facts_file)
-      begin
-        result = JSON.parse(file)
-      rescue JSON::ParserError
-        raise "Could not parse the JSON file, check that it is valid JSON and that the encoding is correct"
-      end
-      result
-    end
 
     def keypair_is_in_hash(first_hash, key, value)
       matches = []
