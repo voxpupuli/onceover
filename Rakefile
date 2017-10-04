@@ -29,7 +29,7 @@ desc "Run full set of tests"
 task full_tests: [:rspec_unit_tests, :rspec_acceptance_tests, :cucumber_acceptance_tests]
 
 task :syntax do
-  paths = ['lib',]
+  paths = ['lib', 'spec/onceover', 'spec/acceptance', 'features']
   require 'find'
   Find.find(*paths) do |path|
     next unless path =~ /\.rb$/
