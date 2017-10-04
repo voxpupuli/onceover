@@ -34,10 +34,11 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'table_print', '>= 1.0.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
+  s.add_runtime_dependency 'facterdb'
 
   # Development
   s.add_development_dependency 'rubocop', '~> 0.39.0'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
-  s.add_development_dependency 'pry', '~> 0.10.0'
+  s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'cucumber', '~> 2.0'
 end
