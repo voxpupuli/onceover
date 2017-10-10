@@ -1,4 +1,4 @@
-Feature: Run basic function of Onceover
+Feature: Get help about Onceover's features, commands and commands' parameters
   I would like to use executable file to run Onceover and read help
 
   Background:

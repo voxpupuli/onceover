@@ -1,6 +1,6 @@
 require "open3"
 
-class Command
+class Command_Helper
 
   attr_reader(:output, :result)
 
@@ -11,18 +11,20 @@ class Command
   end
 
   def run
-    controlrepo_param = @controlrepo ? "--path tmp/tests/#{@controlrepo}" : ''
-    full_cmd = "#{@executable} #{@command} #{controlrepo_param}"
-    @output, @result = Open3.capture2e full_cmd
+    @output, @result = Open3.capture2e generate_command
   end
 
   def success?
     return @result.success?
   end
 
-  def to_s
-    controlrepo_param = @controlrepo ? "--path tmp/tests/#{@controlrepo}" : ''
+  def generate_command
+    controlrepo_param = @controlrepo ? "--path #{@controlrepo.root_folder}" : ''
     return "#{@executable} #{@command} #{controlrepo_param}"
+  end
+
+  def to_s
+    return generate_command
   end
 
 end

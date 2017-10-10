@@ -147,7 +147,7 @@ class Onceover
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Onceover::Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
@@ -221,6 +221,7 @@ class Onceover
             install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
+            raise 'r10k could not install all required modules' unless $?.success?
           end
         else
           raise "#{repo.tempdir} is not a directory"
