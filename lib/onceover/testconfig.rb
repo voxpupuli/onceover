@@ -203,6 +203,22 @@ class Onceover
       files_to_copy.each do |file|
         FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
       end
+
+      # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
+      # located in the Puppetfile. To accomplish that, we use git and find the current
+      # branch name, then replace strings within the staged puppetfile, prior to copying.
+
+      logger.debug "Checking current working branch"
+      git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+
+      logger.debug "found #{git_branch} as current working branch"
+      puppetfile_contents = File.read("#{temp_controlrepo}/puppetfile")
+
+      logger.debug "replacing :control_branch mentions in the puppetfile with #{git_branch}"
+      new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+      File.write("#{temp_controlrepo}/puppetfile", new_puppetfile_contents)
+
+
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
