@@ -212,11 +212,11 @@ class Onceover
       git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
 
       logger.debug "found #{git_branch} as current working branch"
-      puppetfile_contents = File.read("#{temp_controlrepo}/puppetfile")
+      puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
 
-      logger.debug "replacing :control_branch mentions in the puppetfile with #{git_branch}"
+      logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
       new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
-      File.write("#{temp_controlrepo}/puppetfile", new_puppetfile_contents)
+      File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
 
 
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
