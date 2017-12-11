@@ -48,4 +48,3 @@ task :fixtures do
   system 'git submodule init && git submodule update --recursive'
   raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
 end
-

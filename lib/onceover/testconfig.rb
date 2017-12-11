@@ -28,7 +28,7 @@ class Onceover
 
     def initialize(file, opts = {})
       begin
-        config = YAML.load(File.read(file))
+        config = YAML.safe_load(File.read(file))
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
@@ -153,7 +153,7 @@ class Onceover
         logger.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
-      return nil if puppetcode.count == 0
+      return nil if puppetcode.count.zero?
       puppetcode.join("\n")
     end
 
