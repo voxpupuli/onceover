@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "onceover"
-  s.version     = "3.2.7"
+  s.version     = "3.2.8"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
 
   # Development
-  s.add_development_dependency 'rubocop', '~> 0.39.0'
+  s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
   s.add_development_dependency 'pry', '~> 0.10.0'
   s.add_development_dependency 'cucumber', '~> 2.0'
