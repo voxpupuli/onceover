@@ -4,7 +4,7 @@ module Onceover::Logger
   def logger
     unless $logger
       # here we setup a color scheme called 'bright'
-      Logging.color_scheme( 'bright',
+      Logging.color_scheme('bright',
         :levels => {
           :debug => :cyan,
           :info  => :green,

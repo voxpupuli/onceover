@@ -345,10 +345,14 @@ class Onceover
     end
 
     def hiera_config_file
-      # try to find the hiera.yaml file
-      hiera_config_file = File.expand_path('./hiera.yaml', @spec_dir) if File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
-      hiera_config_file = File.expand_path('./hiera.yaml', @root)     if File.exist?(File.expand_path('./hiera.yaml', @root))
-      hiera_config_file
+      case
+      when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
+        File.expand_path('./hiera.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./hiera.yaml', @root))
+        File.expand_path('./hiera.yaml', @root)
+      else
+        nil
+      end
     end
 
     def hiera_config_file_relative_path
@@ -407,6 +411,8 @@ class Onceover
         File.expand_path('./r10k.yaml', @spec_dir)
       when File.exist?(File.expand_path('./r10k.yaml', @root))
         File.expand_path('./r10k.yaml', @root)
+      else
+        nil
       end
     end
 
@@ -433,16 +439,20 @@ class Onceover
       #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
       init_write_file(
         evaluate_template('pre_conditions_README.md.erb', binding),
-        File.expand_path('./pre_conditions/README.md', repo.spec_dir))
+        File.expand_path('./pre_conditions/README.md', repo.spec_dir)
+      )
       init_write_file(
         evaluate_template('factsets_README.md.erb', binding),
-        File.expand_path('./factsets/README.md', repo.spec_dir))
+        File.expand_path('./factsets/README.md', repo.spec_dir)
+      )
       init_write_file(
         evaluate_template('Rakefile.erb', binding),
-        File.expand_path('./Rakefile', repo.root))
+        File.expand_path('./Rakefile', repo.root)
+      )
       init_write_file(
         evaluate_template('Gemfile.erb', binding),
-        File.expand_path('./Gemfile', repo.root))
+        File.expand_path('./Gemfile', repo.root)
+      )
 
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore', repo.root)

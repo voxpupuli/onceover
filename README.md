@@ -439,11 +439,14 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 ### Plugins
 
-Onceover now allows for plugins. The framework is extremely simple and basically relies on the plugins to monkey-patch themselves in. It will likely be improved in future. To create a plugin simply install a gem with a name that starts with `onceover-` and onceover will `require` it. Once it has been required it is up to the plugin to insert itself wherever it is required.
+Onceover now allows for plugins. To use a plugin simply install a gem with a name that starts with `onceover-` and onceover will activate it.
 
-Examples:
+Useful plugins:
 
-  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff)
+  - [onceover-codequality](https://github.com/declarativesystems/onceover-codequality) _Check lint and syntax_
+  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff) _See the differences between two versions of a catalog_
+
+If you want to write your own plugin, take a look at [onceover-helloworld](https://github.com/declarativesystems/onceover-helloworld) to help you get started.
 
 ### Inspecting and updating the Puppetfile
 
@@ -576,7 +579,7 @@ repo.role_regex = /.*/ # Tells the class how to find roles, will be applied to r
 repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applied to repo.classes
 ```
 
-Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles`
+Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles
 
 ### Rake tasks
 
@@ -654,4 +657,3 @@ Cheers to all of those who helped out:
   - natemccurdy
   - aardvark
   - Mandos
-

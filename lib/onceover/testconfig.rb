@@ -28,7 +28,7 @@ class Onceover
 
     def initialize(file, opts = {})
       begin
-        config = YAML.load(File.read(file))
+        config = YAML.safe_load(File.read(file))
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
@@ -147,13 +147,13 @@ class Onceover
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Onceover::Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
-      return nil if puppetcode.count == 0
+      return nil if puppetcode.count.zero?
       puppetcode.join("\n")
     end
 
@@ -234,9 +234,10 @@ class Onceover
           # R10K::Action::Deploy::Environment
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
-            install_cmd = "r10k puppetfile install --verbose --color"
+            install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
+            raise 'r10k could not install all required modules' unless $?.success?
           end
         else
           raise "#{repo.tempdir} is not a directory"
