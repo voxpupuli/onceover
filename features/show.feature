@@ -24,5 +24,5 @@ Feature: Show the state of things
     Given initialized control repo "basic"
     When I run onceover command "show puppetfile"
     Then I should not see any errors
-    And I should see message pattern "puppetlabs-stdlib | 4.11.0"
-    And I should see message pattern "puppetlabs-apache | N/A"
+    And I should see message pattern "puppetlabs-stdlib\s+\|\s+4\.11\.0"
+    And I should see message pattern "apache\s+\|\s+N/A"
