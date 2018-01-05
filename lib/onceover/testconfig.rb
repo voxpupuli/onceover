@@ -278,7 +278,15 @@ class Onceover
       modulepath.map! do |path|
         "#{environmentpath}/production/#{path}"
       end
-      modulepath = modulepath.join(":")
+
+      # We need to select the right delimiter based on OS
+      require 'facter'
+      if Facter[:kernel].value == 'windows'
+        modulepath = modulepath.join(";")
+      else
+        modulepath = modulepath.join(':')
+      end
+
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
