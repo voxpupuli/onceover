@@ -11,8 +11,20 @@ class ControlRepo_Helper
     return @tmp_folder + @name + '/'
   end
 
+  def puppetfile
+    return root_folder + "Puppetfile"
+  end
+
+  def onceover_temp_root_folder
+    return root_folder + '.onceover/etc/puppetlabs/code/environments/production/'
+  end
+
+  def onceover_temp_puppetfile
+    return onceover_temp_root_folder + "Puppetfile"
+  end
+
   def add_line_to_puppetfile( line )
-    open(root_folder + 'Puppetfile', 'a') { |f| f.puts line }
+    open(puppetfile, 'a') { |f| f.puts line }
   end
 
 end

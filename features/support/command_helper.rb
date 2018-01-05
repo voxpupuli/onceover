@@ -19,7 +19,7 @@ class Command_Helper
   end
 
   def generate_command
-    controlrepo_param = @controlrepo ? "--path #{@controlrepo.root_folder}" : ''
+    controlrepo_param = @controlrepo ? "--path #{File.expand_path(@controlrepo.root_folder)}" : ''
     return "#{@executable} #{@command} #{controlrepo_param}"
   end
 

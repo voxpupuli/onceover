@@ -36,8 +36,6 @@ Then /^I see help for commands: "([^"]*)"$/ do |commands|
 end
 
 Then(/^I should not see any errors$/) do
-  # require 'pry'
-  # binding.pry
   expect(@cmd.success?).to be true
 end
 
@@ -45,6 +43,16 @@ Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be false
   puts @cmd.output
   expect(@cmd.output.match err_msg_regexp).to_not be nil
+end
+
+Then(/^the temporary Puppetfile should contain \/(.*)\/$/) do |regex|
+  puppetfile = File.read(@repo.onceover_temp_puppetfile)
+  expect(puppetfile).to match(Regexp.new(regex))
+end
+
+Then(/^the temporary Puppetfile should contain the git branch/) do
+  git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+  step %Q(the temporary Puppetfile should contain /#{git_branch}/)
 end
 
 Given(/^in Puppetfile is misspelled module's name$/) do

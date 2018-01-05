@@ -20,16 +20,13 @@ desc "Run unit tests"
 task rspec_unit_tests: [:syntax, :rubocop, :spec]
 
 desc "Run acceptance cucumber tests"
-task cucumber_acceptance_tests: [:syntax, :rubocop, :cucumber]
-
-desc "Run acceptance rspec tests"
-task rspec_acceptance_tests: [:syntax, :rubocop, :fixtures, :acceptance]
+task cucumber_acceptance_tests: [:syntax, :rubocop, :fixtures, :cucumber]
 
 desc "Run full set of tests"
-task full_tests: [:rspec_unit_tests, :rspec_acceptance_tests, :cucumber_acceptance_tests]
+task full_tests: [:rspec_unit_tests, :cucumber_acceptance_tests]
 
 task :syntax do
-  paths = ['lib', 'spec/onceover', 'spec/acceptance', 'features']
+  paths = ['lib', 'spec/onceover', 'features']
   require 'find'
   Find.find(*paths) do |path|
     next unless path =~ /\.rb$/
