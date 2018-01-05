@@ -6,7 +6,7 @@ describe "Onceover::Controlrepo" do
     before do
       @repo = Onceover::Controlrepo.new(
         {
-          path:'spec/fixtures/controlrepo_minimal'
+          path:'spec/fixtures/controlrepos/minimal'
         }
       )
     end

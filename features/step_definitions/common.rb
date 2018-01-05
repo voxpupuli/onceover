@@ -6,8 +6,8 @@ Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
   @repo = ControlRepo_Helper.new( controlrepo_name )
   @cmd.controlrepo = @repo
   FileUtils.rm_rf @repo.root_folder
-  FileUtils.mkdir_p 'tmp'
-  FileUtils.cp_r "spec/fixtures/#{controlrepo_name}", 'tmp'
+  FileUtils.mkdir_p @repo.tmp_folder
+  FileUtils.cp_r "spec/fixtures/controlrepos/#{controlrepo_name}", @repo.tmp_folder
 end
 
 Given(/^initialized control repo "([^"]*)"$/) do |controlrepo_name|
@@ -36,6 +36,8 @@ Then /^I see help for commands: "([^"]*)"$/ do |commands|
 end
 
 Then(/^I should not see any errors$/) do
+  # require 'pry'
+  # binding.pry
   expect(@cmd.success?).to be true
 end
 

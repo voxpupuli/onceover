@@ -7,13 +7,17 @@ Feature: Run rspec and acceptance test suits
     Given onceover executable
 
  Scenario: Run correct spec tests
-    Given initialized control repo "controlrepo_basic"
+    Given initialized control repo "basic"
     When I run onceover command "run spec"
     Then I should not see any errors
 
  Scenario: Run spec tests with misspelled module in Puppetfile
-    Given initialized control repo "controlrepo_basic"
+    Given initialized control repo "basic"
     And in Puppetfile is misspelled module's name
     When I run onceover command "run spec"
     Then I should see error with message pattern "The module acme-not_exists does not exist"
 
+  Scenario: Run advanced spec tests
+      Given initialized control repo "puppet_controlrepo"
+      When I run onceover command "run spec"
+      Then I should not see any errors

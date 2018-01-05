@@ -1,8 +1,10 @@
 class ControlRepo_Helper
 
+  attr_reader :tmp_folder
+
   def initialize( name )
-    @name = name
-    @tmp_folder = 'tmp/'
+    @name       = name
+    @tmp_folder = '.cucumber/tmp/'
   end
 
   def root_folder

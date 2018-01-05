@@ -6,7 +6,7 @@ describe "Onceover::Controlrepo" do
     before do
       @repo = Onceover::Controlrepo.new(
         {
-          path:'spec/fixtures/puppet_controlrepo'
+          path:'spec/fixtures/controlrepos/puppet_controlrepo'
         }
       )
     end
@@ -18,7 +18,7 @@ describe "Onceover::Controlrepo" do
     context "when running the tests" do
       it "doesn't die horribly" do
         expect{
-          Dir.chdir('spec/fixtures/puppet_controlrepo') do
+          Dir.chdir('spec/fixtures/controlrepos/puppet_controlrepo') do
             require 'onceover/controlrepo'
             require 'onceover/cli'
             require 'onceover/runner'
