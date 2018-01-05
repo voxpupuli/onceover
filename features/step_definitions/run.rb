@@ -1,0 +1,9 @@
+Then(/^the temporary Puppetfile should contain \/(.*)\/$/) do |regex|
+  puppetfile = File.read(@repo.onceover_temp_puppetfile)
+  expect(puppetfile).to match(Regexp.new(regex))
+end
+
+Then(/^the temporary Puppetfile should contain the git branch/) do
+  git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+  step %Q(the temporary Puppetfile should contain /#{git_branch}/)
+end
