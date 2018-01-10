@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   # Development
   s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
-  s.add_development_dependency 'pry', '~> 0.10.0'
   s.add_development_dependency 'cucumber', '~> 2.0'
+  s.add_development_dependency 'pry-byebug', '~> 3.0'
+
 end

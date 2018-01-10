@@ -1,6 +1,6 @@
 Feature: Show the state of things
   For a correct controlrepo I would like to see details of the Puppetfile and
-  the things that have been detedted by onceover in the controlrepo.
+  the things that have been detected by onceover in the controlrepo.
 
   Background:
     Given onceover executable
