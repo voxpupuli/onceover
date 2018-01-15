@@ -181,27 +181,29 @@ class Onceover
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_files = []
-      if ENV['GEM_HOME']
-        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo copy"
-        excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
-        excluded_files.flatten!
+      excluded_dirs = []
+      excluded_dirs << Pathname.new("#{repo.root}/.onceover")
+      excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
+
+      controlrepo_files = get_children_recursive(Pathname.new(repo.root))
+
+      # Exclude the files that should be skipped
+      controlrepo_files.delete_if do |path|
+        path.ascend.any? { |x| excluded_dirs.include?(x) }
       end
 
-      # Exclude the files we need to
-      controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy     = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
-      folders_to_copy   = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
+      folders_to_copy = controlrepo_files.select { |x| x.directory? }
+      files_to_copy   = controlrepo_files.select { |x| x.file? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
+      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(folder.relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
       files_to_copy.each do |file|
-        FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+        FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
       end
 
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
@@ -219,10 +221,10 @@ class Onceover
       File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
 
 
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
-      FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r(temp_controlrepo, "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
@@ -331,5 +333,18 @@ class Onceover
       tests
     end
 
+    private
+
+    def get_children_recursive(pathname)
+      results = []
+      results << pathname
+      pathname.each_child do |child|
+        results << child
+        if child.directory?
+          results << get_children_recursive(child)
+        end
+      end
+      results.flatten
+    end
   end
 end

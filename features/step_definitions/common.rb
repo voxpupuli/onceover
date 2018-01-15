@@ -1,4 +1,4 @@
-Given /^onceover executable$/ do
+Given(/^onceover executable$/) do
   @cmd = Command_Helper.new
 end
 
@@ -20,13 +20,13 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
   FileUtils.rm_rf "#{@repo.root_folder}/#{filename}"
 end
 
-When /^I run onceover command "([^"]*)"$/  do |command|
+When(/^I run onceover command "([^"]*)"$/)  do |command|
   @cmd.command = command
   puts @cmd
   @cmd.run
 end
 
-Then /^I see help for commands: "([^"]*)"$/ do |commands|
+Then(/^I see help for commands: "([^"]*)"$/) do |commands|
   # Get chunk of output between COMMANDS and OPTION, there should be help section
   commands_help = @cmd.output[/COMMANDS(.*)OPTIONS/m, 1]
   commands.split(',').each do |command|

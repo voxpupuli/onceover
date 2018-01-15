@@ -9,25 +9,25 @@ Feature: Create and maintain a .onceover cache
     Given onceover executable
 
   Scenario: Creating a cache
-    Given initialized control repo "basic"
+    Given control repo "caching"
     When I run onceover command "run spec"
     Then the cache should exist
     And the cache should contain all controlrepo files
 
   Scenario: Creating a new file
-    Given initialized control repo "basic"
+    Given control repo "caching"
     When I create a file "example.txt"
     And I run onceover command "run spec"
     Then "example.txt" should be cached correctly
 
   Scenario: Deleting a file
-    Given initialized control repo "basic"
-    When I delete a file "example.txt"
+    Given control repo "caching"
+    When I delete a file "deleteme.txt"
     And I run onceover command "run spec"
-    Then "example.txt" should be deleted from the cache
+    Then "deleteme.txt" should be deleted from the cache
 
   Scenario: Caching hidden files
-    Given initialized control repo "basic"
+    Given control repo "caching"
     When I create a file ".hidden/.hiddenfile"
     And I run onceover command "run spec"
     Then ".hidden/.hiddenfile" should be cached correctly
