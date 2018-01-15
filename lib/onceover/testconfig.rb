@@ -189,7 +189,11 @@ class Onceover
 
       # Exclude the files that should be skipped
       controlrepo_files.delete_if do |path|
-        path.ascend.any? { |x| excluded_dirs.include?(x) }
+        parents = [path]
+        path.ascend do |parent|
+          parents << parent
+        end
+        parents.any? { |x| excluded_dirs.include?(x) }
       end
 
       folders_to_copy = controlrepo_files.select { |x| x.directory? }
@@ -223,6 +227,8 @@ class Onceover
 
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
+      require 'pry'
+      binding.pry
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
       FileUtils.cp_r(temp_controlrepo, "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
