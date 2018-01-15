@@ -227,8 +227,6 @@ class Onceover
 
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
-      require 'pry'
-      binding.pry
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
       FileUtils.cp_r(temp_controlrepo, "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
