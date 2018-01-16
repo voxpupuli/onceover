@@ -85,7 +85,7 @@ If we are doing acceptance testing then we need information about how to spin up
 
 ### onceover.yaml
 
-`spec/onceover.yaml`
+`spec/onceover.yaml` _(override with environment variable: `ONCEOVER_YAML`)_
 
 Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
 
@@ -113,6 +113,25 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
 **functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following agruments:
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
+
+**opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
+
+```yaml
+opts:
+  :facts_dirs:        # Remember: `opts` keys are symbols!
+    - 'spec/factsets' # Limit factsets to files in this repository
+  :debug: true        # set the `logger.level` to debug
+```
+
+```yaml
+opts:
+  # profiles include a legacy module named `site::`
+  :profile_regex: '^(profile|site)::'
+
+  # factset filenames use the extension`.facts` instead of `.json`
+  :facts_files:
+    - 'spec/factsets/*.facts'
+```
 
 A full example:
 
@@ -166,6 +185,10 @@ functions:
   query_resources:
     type: rvalue
     returns: []
+
+opts:
+  :facts_dirs:
+    - spec/factsets
 ```
 
 **Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
@@ -281,11 +304,23 @@ HOSTS:
 
 ### Hiera Data
 
-If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory or the root of your controlrepo and you are good to go.
+If you have hiera data inside your controlrepo (or somewhere else) Onceover can be configured to use it. It is however worth noting the the `hiera.yaml` file that you currently use may not be applicable for testing right away. For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
 
-**WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
+It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
 
-**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x, the tool will automatically detect this and everything should work.
+#### Creating the config file
+
+If your `hiera.yaml` is version 4 or 5 and lives in the root of the controlrepo (as it should), Onceover will pick this up automatically. If you would like to make changes to this file for testing purposes, create a copy under `spec/hiera.yaml`. Onceover will use this version of the hiera config file first if it exists.
+
+#### Setting the `datadir`
+
+| Hiera Version | Config File Location | Required datadir |
+|---------------|----------------------|------------------|
+| 3 | `spec` folder | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | Root of repo | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | `spec` folder | relative to the spec folder e.g. `../data` |
+| 5 | Root of repo | relative to the root of the repo e.g. `data` |
+| 5 | `spec` folder | relative to the spec folder e.g. `../data` |
 
 ## Spec testing
 
@@ -305,6 +340,12 @@ This will do the following things:
 ### Adding your own spec tests
 
 When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
+
+### Exposing Puppet output
+
+If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environment variable to `true`, eg:
+
+`SHOW_PUPPET_OUTPUT=true onceover run spec`
 
 ## Acceptance testing
 
@@ -410,11 +451,14 @@ Here we are specifying custom commands to run for starting, stopping and checkin
 
 ### Plugins
 
-Onceover now allows for plugins. The framework is extremely simple and basically relies on the plugins to monkey-patch themselves in. It will likely be improved in future. To create a plugin simply install a gem with a name that starts with `onceover-` and onceover will `require` it. Once it has been required it is up to the plugin to insert itself wherever it is required.
+Onceover now allows for plugins. To use a plugin simply install a gem with a name that starts with `onceover-` and onceover will activate it.
 
-Examples:
+Useful plugins:
 
-  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff)
+  - [onceover-codequality](https://github.com/declarativesystems/onceover-codequality) _Check lint and syntax_
+  - [onceover-octocatalog-diff](https://github.com/dylanratcliffe/onceover-octocatalog-diff) _See the differences between two versions of a catalog_
+
+If you want to write your own plugin, take a look at [onceover-helloworld](https://github.com/declarativesystems/onceover-helloworld) to help you get started.
 
 ### Inspecting and updating the Puppetfile
 
@@ -547,7 +591,7 @@ repo.role_regex = /.*/ # Tells the class how to find roles, will be applied to r
 repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applied to repo.classes
 ```
 
-Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles`
+Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles
 
 ### Rake tasks
 
@@ -599,6 +643,20 @@ fixtures:
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
 
+## Developing Onceover
+
+Install gem dependencies:
+
+`bundle install`
+
+Clone the submodules
+
+`git submodule init && git submodule update --recursive`
+
+Execute tests
+
+`bundle exec rake`
+
 ## Contributors
 
 Cheers to all of those who helped out:
@@ -610,4 +668,5 @@ Cheers to all of those who helped out:
   - jairojunior
   - natemccurdy
   - aardvark
-
+  - Mandos
+  - Nekototori

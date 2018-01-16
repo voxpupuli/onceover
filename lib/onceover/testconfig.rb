@@ -26,9 +26,9 @@ class Onceover
     attr_accessor :skip_r10k
     attr_accessor :strict_variables
 
-    def initialize(file,opts = {})
+    def initialize(file, opts = {})
       begin
-        config = YAML.load(File.read(file))
+        config = YAML.safe_load(File.read(file))
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
@@ -53,17 +53,17 @@ class Onceover
       @nodes = Onceover::Node.all
 
       # Add the 'all_classes' and 'all_nodes' default groups
-      @node_groups << Onceover::Group.new('all_nodes',@nodes)
-      @class_groups << Onceover::Group.new('all_classes',@classes)
+      @node_groups  << Onceover::Group.new('all_nodes', @nodes)
+      @class_groups << Onceover::Group.new('all_classes', @classes)
 
       # Initialise all of the groups
       config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
 
-      @filter_tags      = opts[:tags] ? [opts[:tags].split(',')].flatten : nil
-      @filter_classes   = opts[:classes] ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
-      @filter_nodes     = opts[:nodes] ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
-      @skip_r10k        = opts[:skip_r10k] ? true : false
+      @filter_tags    = opts[:tags]      ? [opts[:tags].split(',')].flatten : nil
+      @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
+      @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
+      @skip_r10k      = opts[:skip_r10k] ? true : false
 
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
@@ -127,7 +127,7 @@ class Onceover
       include_list - exclude_list
     end
 
-    def verify_spec_test(controlrepo,test)
+    def verify_spec_test(controlrepo, test)
       test.nodes.each do |node|
         unless controlrepo.facts_files.any? { |file| file =~ /\/#{node.name}\.json/ }
           raise "Could not find factset for node: #{node.name}"
@@ -135,7 +135,7 @@ class Onceover
       end
     end
 
-    def verify_acceptance_test(controlrepo,test)
+    def verify_acceptance_test(controlrepo, test)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       require 'yaml'
@@ -149,19 +149,22 @@ class Onceover
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Onceover::Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
-      return nil if puppetcode.count == 0
+      return nil if puppetcode.count.zero?
       puppetcode.join("\n")
     end
 
-    def r10k_deploy_local(repo = Onceover::Controlrepo.new)
+    def deploy_local(repo = Onceover::Controlrepo.new, opts = {})
       require 'onceover/controlrepo'
       require 'pathname'
+
+      skip_r10k = opts[:skip_r10k] || false
+
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       else
@@ -176,48 +179,73 @@ class Onceover
       # We might need to exclude some files
       #
       # if we are using bundler to install gems below the controlrepo
-      # we don't wan two copies so exclude those
+      # we don't want two copies so exclude those
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_files = []
-      if ENV['GEM_HOME']
-        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo copy"
-        excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
-        excluded_files.flatten!
+      excluded_dirs = []
+      excluded_dirs << Pathname.new("#{repo.root}/.onceover")
+      excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
+
+      controlrepo_files = get_children_recursive(Pathname.new(repo.root))
+
+      # Exclude the files that should be skipped
+      controlrepo_files.delete_if do |path|
+        parents = [path]
+        path.ascend do |parent|
+          parents << parent
+        end
+        parents.any? { |x| excluded_dirs.include?(x) }
       end
 
-      # Exclude the files we need to
-      controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
-      folders_to_copy = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
+      folders_to_copy = controlrepo_files.select { |x| x.directory? }
+      files_to_copy   = controlrepo_files.select { |x| x.file? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
+      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(folder.relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
       files_to_copy.each do |file|
-        FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+        FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
       end
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+
+      # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
+      # located in the Puppetfile. To accomplish that, we use git and find the current
+      # branch name, then replace strings within the staged puppetfile, prior to copying.
+
+      logger.debug "Checking current working branch"
+      git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+
+      logger.debug "found #{git_branch} as current working branch"
+      puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
+
+      logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
+      new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+      File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
+
+
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
-      FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r(temp_controlrepo, "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
-      if repo.tempdir
+      if repo.tempdir and not skip_r10k
         if File.directory?(repo.tempdir)
           # TODO: Change this to call out to r10k directly to do this
           # Probably something like:
           # R10K::Settings.global_settings.evaluate(with_overrides)
           # R10K::Action::Deploy::Environment
-          Dir.chdir("#{repo.tempdir}/#{repo.environmentpath}/production") do
-            logger.debug "Runing r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile} from #{repo.tempdir}/#{repo.environmentpath}/production"
-            system("r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}")
+          prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
+          Dir.chdir(prod_dir) do
+            install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            logger.debug "Running #{install_cmd} from #{prod_dir}"
+            system(install_cmd)
+            raise 'r10k could not install all required modules' unless $?.success?
           end
         else
           raise "#{repo.tempdir} is not a directory"
@@ -233,21 +261,25 @@ class Onceover
       Onceover::Plugins::Hooks.execute(:pre_write_spec_test, test)
 
       # Use an ERB template to write a spec test
-      File.write("#{location}/#{test.to_s}_spec.rb",Onceover::Controlrepo.evaluate_template('test_spec.rb.erb',binding))
+      File.write("#{location}/#{test.to_s}_spec.rb",
+        Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding))
     end
 
     def write_acceptance_tests(location, tests)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
-      File.write("#{location}/acceptance_spec.rb",Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb',binding))
+      File.write("#{location}/acceptance_spec.rb",
+        Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb', binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
-      File.write("#{location}/spec_helper_acceptance.rb",Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb',binding))
+      File.write("#{location}/spec_helper_acceptance.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb', binding))
     end
 
     def write_rakefile(location, pattern)
-      File.write("#{location}/Rakefile",Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb',binding))
+      File.write("#{location}/Rakefile",
+        Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb', binding))
     end
 
     def write_spec_helper(location, repo)
@@ -257,11 +289,20 @@ class Onceover
       modulepath.map! do |path|
         "#{environmentpath}/production/#{path}"
       end
-      modulepath = modulepath.join(":")
+
+      # We need to select the right delimiter based on OS
+      require 'facter'
+      if Facter[:kernel].value == 'windows'
+        modulepath = modulepath.join(";")
+      else
+        modulepath = modulepath.join(':')
+      end
+
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
-      File.write("#{location}/spec_helper.rb",Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb',binding))
+      File.write("#{location}/spec_helper.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb', binding))
     end
 
     def create_fixtures_symlinks(repo)
@@ -284,7 +325,7 @@ class Onceover
         'classes' => @filter_classes,
         'nodes'   => @filter_nodes
       }
-      filters.each do |method,filter_list|
+      filters.each do |method, filter_list|
         if filter_list
           # Remove tests that do not have matching tags
           tests.keep_if do |test|
@@ -299,6 +340,20 @@ class Onceover
         end
       end
       tests
+    end
+
+    private
+
+    def get_children_recursive(pathname)
+      results = []
+      results << pathname
+      pathname.each_child do |child|
+        results << child
+        if child.directory?
+          results << get_children_recursive(child)
+        end
+      end
+      results.flatten
     end
   end
 end

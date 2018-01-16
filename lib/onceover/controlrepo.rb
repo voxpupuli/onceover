@@ -89,32 +89,43 @@ class Onceover
         @root = opts[:path]
       else
         @root = Dir.pwd
-        until File.exist?(File.expand_path('./environment.conf',@root)) do
+        until File.exist?(File.expand_path('./environment.conf', @root)) do
           # Throw an exception if we can't go any further up
-          throw "Could not file root of the controlrepo anywhere above #{Dir.pwd}" if @root == File.expand_path('../',@root)
+          throw "Could not file root of the controlrepo anywhere above #{Dir.pwd}" if @root == File.expand_path('../', @root)
 
           # Step up and try again
-          @root = File.expand_path('../',@root)
+          @root = File.expand_path('../', @root)
         end
       end
 
-      @environmentpath  = opts[:environmentpath] || 'etc/puppetlabs/code/environments'
-      @puppetfile       = opts[:puppetfile] || File.expand_path('./Puppetfile',@root)
-      @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf',@root)
-      @facts_dir        = opts[:facts_dir] || File.expand_path('./spec/factsets',@root)
-      @spec_dir         = opts[:spec_dir] || File.expand_path('./spec',@root)
-      @facts_files      = opts[:facts_files] || [Dir["#{@facts_dir}/*.json"],Dir["#{File.expand_path('../../../factsets',__FILE__)}/*.json"]].flatten
-      @nodeset_file     = opts[:nodeset_file] || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml',@root)
-      @role_regex       = /role[s]?:{2}/
-      @profile_regex    = /profile[s]?:{2}/
-      @tempdir          = opts[:tempdir] || File.expand_path('./.onceover',@root)
+      @onceover_yaml = ENV['ONCEOVER_YAML'] || opts[:onceover_yaml] || File.expand_path("#{@root}/spec/onceover.yaml")
+
+      if File.exists?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
+        opts.merge!(_data.fetch('opts',{})||{})
+      end
+      opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path, @root)}
+      opts.fetch(:facts_files,[]).map!{|path| path =~ %r{^[/.]} ? path : File.expand_path(path, @root)}
+
+      @environmentpath  = opts[:environmentpath]  || 'etc/puppetlabs/code/environments'
+      @puppetfile       = opts[:puppetfile]       || File.expand_path('./Puppetfile', @root)
+      @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf', @root)
+      @spec_dir         = opts[:spec_dir]         || File.expand_path('./spec', @root)
+      @facts_dir        = opts[:facts_dir]        || File.expand_path('factsets', @spec_dir)
+      _facts_dirs       = [@facts_dir, File.expand_path('../../../factsets', __FILE__)]
+      _facts_files      = opts[:facts_files]      || _facts_dirs.map{|d| File.join(d, '*.json')}
+      @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
+
+      @nodeset_file     = opts[:nodeset_file]     || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml', @root)
+      @role_regex       = opts[:role_regex]       ?  Regexp.new(opts[:role_regex]) : /role[s]?:{2}/
+      @profile_regex    = opts[:profile_regex]    ?  Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
+      @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
       $temp_modulepath  = nil
-      @manifest         = opts[:manifest] || config['manifest'] ? File.expand_path(config['manifest'],@root) : nil
-      @onceover_yaml    = opts[:onceover_yaml] || "#{@spec_dir}/onceover.yaml"
+      @manifest         = opts[:manifest]         || config['manifest'] ? File.expand_path(config['manifest'], @root) : nil
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
     end
+
 
     def to_s
       require 'colored'
@@ -148,7 +159,7 @@ class Onceover
 
       # Make sure that the paths are relative to the controlrepo root
       code_dirs.map! do |dir|
-        File.expand_path(dir,@root)
+        File.expand_path(dir, @root)
       end
 
       # Get all the classes from all of the manifests
@@ -219,8 +230,8 @@ class Onceover
             end
           else
             return_hash[:current_version] = "N/A"
-            return_hash[:latest_version] = "N/A"
-            return_hash[:out_of_date] = "N/A"
+            return_hash[:latest_version]  = "N/A"
+            return_hash[:out_of_date]     = "N/A"
           end
           output_array << return_hash
         end
@@ -228,11 +239,11 @@ class Onceover
 
       threads.map(&:join)
 
-      tp output_array, \
-        {:full_name => {:display_name => "Full Name"}}, \
-        {:current_version => {:display_name => "Current Version"}}, \
-        {:latest_version => {:display_name => "Latest Version"}}, \
-        {:out_of_date => {:display_name => "Out of Date?"}}
+      tp output_array,
+        {:full_name       => {:display_name => "Full Name"}},
+        {:current_version => {:display_name => "Current Version"}},
+        {:latest_version  => {:display_name => "Latest Version"}},
+        {:out_of_date     => {:display_name => "Out of Date?"}}
     end
 
     def update_puppetfile
@@ -280,9 +291,9 @@ class Onceover
       modules = puppetfile.modules
 
       # Iterate over everything and seperate it out for the sake of readability
-      symlinks = []
+      symlinks      = []
       forge_modules = []
-      repositories = []
+      repositories  = []
 
       modules.each do |mod|
         logger.debug "Converting #{mod.to_s} to .fixtures.yml format"
@@ -292,14 +303,14 @@ class Onceover
             # Set it up as a symlink, because we are using local files in the Puppetfile
             symlinks << {
               'name' => mod.name,
-              'dir' => mod.expected_version[:path]
+              'dir'  => mod.expected_version[:path]
             }
           elsif mod.expected_version.is_a?(String)
-            # Set it up as a normal firge module
+            # Set it up as a normal forge module
             forge_modules << {
               'name' => mod.name,
               'repo' => mod.title,
-              'ref' => mod.expected_version
+              'ref'  => mod.expected_version
             }
           end
         elsif mod.is_a? R10K::Module::Git
@@ -309,7 +320,7 @@ class Onceover
               # I know I shouldn't be doing this, but trust me, there are no methods
               # anywhere that expose this value, I looked.
               'repo' => mod.instance_variable_get(:@remote),
-              'ref' => mod.version
+              'ref'  => mod.version
             }
         end
       end
@@ -324,20 +335,28 @@ class Onceover
         Dir["#{dir}/*"].each do |mod|
           symlinks << {
             'name' => File.basename(mod),
-            'dir' => Pathname.new(File.expand_path(mod)).relative_path_from(Pathname.new(@root))#File.expand_path(mod)
+            'dir'  => Pathname.new(File.expand_path(mod)).relative_path_from(Pathname.new(@root))#File.expand_path(mod)
           }
         end
       end
 
       # Use an ERB template to write the files
-      Onceover::Controlrepo.evaluate_template('.fixtures.yml.erb',binding)
+      Onceover::Controlrepo.evaluate_template('.fixtures.yml.erb', binding)
     end
 
     def hiera_config_file
-      # try to find the hiera.iyaml file
-      hiera_config_file = File.expand_path('./hiera.yaml',@spec_dir) if File.exist?(File.expand_path('./hiera.yaml',@spec_dir))
-      hiera_config_file = File.expand_path('./hiera.yaml',@root) if File.exist?(File.expand_path('./hiera.yaml',@root))
-      hiera_config_file
+      case
+      when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
+        File.expand_path('./hiera.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./hiera.yaml', @root))
+        File.expand_path('./hiera.yaml', @root)
+      else
+        nil
+      end
+    end
+
+    def hiera_config_file_relative_path
+      Pathname.new(hiera_config_file).relative_path_from(Pathname.new(root)).to_s if hiera_config_file
     end
 
     def hiera_config
@@ -387,9 +406,14 @@ class Onceover
     end
 
     def r10k_config_file
-      r10k_config_file = File.expand_path('./r10k.yaml',@spec_dir) if File.exist?(File.expand_path('./r10k.yaml',@spec_dir))
-      r10k_config_file = File.expand_path('./r10k.yaml',@root) if File.exist?(File.expand_path('./r10k.yaml',@root))
-      r10k_config_file
+      case
+      when File.exist?(File.expand_path('./r10k.yaml', @spec_dir))
+        File.expand_path('./r10k.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./r10k.yaml', @root))
+        File.expand_path('./r10k.yaml', @root)
+      else
+        nil
+      end
     end
 
     def r10k_config
@@ -397,11 +421,11 @@ class Onceover
     end
 
     def r10k_config=(data)
-      File.write(r10k_config_file,data.to_yaml)
+      File.write(r10k_config_file, data.to_yaml)
     end
 
     def temp_manifest
-      config['manifest'] ? File.expand_path(config['manifest'],@tempdir) : nil
+      config['manifest'] ? File.expand_path(config['manifest'], @tempdir) : nil
     end
 
     def self.init(repo)
@@ -410,18 +434,30 @@ class Onceover
       require 'pathname'
       require 'colored'
 
-      Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo),repo.onceover_yaml)
+      Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo), repo.onceover_yaml)
       # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
       #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding),File.expand_path('./Rakefile',repo.root))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Gemfile.erb',binding),File.expand_path('./Gemfile',repo.root))
+      init_write_file(
+        evaluate_template('pre_conditions_README.md.erb', binding),
+        File.expand_path('./pre_conditions/README.md', repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('factsets_README.md.erb', binding),
+        File.expand_path('./factsets/README.md', repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('Rakefile.erb', binding),
+        File.expand_path('./Rakefile', repo.root)
+      )
+      init_write_file(
+        evaluate_template('Gemfile.erb', binding),
+        File.expand_path('./Gemfile', repo.root)
+      )
 
       # Add .onceover to Gitignore
-      gitignore_path = File.expand_path('.gitignore',repo.root)
+      gitignore_path = File.expand_path('.gitignore', repo.root)
       if File.exists? gitignore_path
-        gitignore_content = (File.open(gitignore_path,'r') {|f| f.read }).split("\n")
+        gitignore_content = (File.open(gitignore_path, 'r') {|f| f.read }).split("\n")
         message = "#{'changed'.green}"
       else
         message = "#{'created'.green}"
@@ -430,14 +466,14 @@ class Onceover
 
       unless gitignore_content.include?(".onceover")
         gitignore_content << ".onceover\n"
-        File.open(gitignore_path,'w') {|f| f.write(gitignore_content.join("\n")) }
+        File.open(gitignore_path, 'w') {|f| f.write(gitignore_content.join("\n")) }
         puts "#{message} #{Pathname.new(gitignore_path).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
       end
     end
 
     def self.generate_onceover_yaml(repo)
       # This will return a controlrepo.yaml that can be written to a file
-      Onceover::Controlrepo.evaluate_template('controlrepo.yaml.erb',binding)
+      evaluate_template('controlrepo.yaml.erb', binding)
     end
 
     def self.generate_nodesets(repo)
@@ -450,9 +486,9 @@ class Onceover
       hosts_hash = {}
 
       repo.facts.each do |fact_set|
-        node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)],'.json')
-        boxname = Onceover::Beaker.facts_to_vagrant_box(fact_set)
-        platform = Onceover::Beaker.facts_to_platform(fact_set)
+        node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)], '.json')
+        boxname   = Onceover::Beaker.facts_to_vagrant_box(fact_set)
+        platform  = Onceover::Beaker.facts_to_platform(fact_set)
 
         logger.debug "Querying hashicorp API for Vagrant box that matches #{boxname}"
 
@@ -469,7 +505,7 @@ class Onceover
           comment_out = false
           box_info = JSON.parse(response.body)
           box_info['current_version']['providers'].each do |provider|
-            if  provider['name'] == 'virtualbox'
+            if provider['name'] == 'virtualbox'
               url = provider['original_url']
             end
           end
@@ -486,7 +522,7 @@ class Onceover
       end
 
       # Use an ERB template
-      Onceover::Controlrepo.evaluate_template('nodeset.yaml.erb',binding)
+      evaluate_template('nodeset.yaml.erb', binding)
     end
 
     def self.create_dirs_and_log(dir)
@@ -498,15 +534,15 @@ class Onceover
       end
     end
 
-    def self.evaluate_template(template_name,bind)
+    def self.evaluate_template(template_name, bind)
       logger.debug "Evaluating template #{template_name}"
-      template_dir = File.expand_path('../../templates',File.dirname(__FILE__))
-      template = File.read(File.expand_path("./#{template_name}",template_dir))
+      template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
+      template = File.read(File.expand_path("./#{template_name}", template_dir))
       ERB.new(template, nil, '-').result(bind)
     end
 
-    def self.init_write_file(contents,out_file)
-      Onceover::Controlrepo.create_dirs_and_log(File.dirname(out_file))
+    def self.init_write_file(contents, out_file)
+      create_dirs_and_log(File.dirname(out_file))
       if File.exists?(out_file)
         puts "#{'skipped'.yellow} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s} #{'(exists)'.yellow}"
       else
@@ -521,13 +557,13 @@ class Onceover
       require 'onceover/testconfig'
 
       # Load up all of the tests and deduplicate them
-      testconfig = Onceover::TestConfig.new(@onceover_yaml,@opts)
-      testconfig.spec_tests.each { |tst| testconfig.verify_spec_test(self,tst) }
+      testconfig = Onceover::TestConfig.new(@onceover_yaml, @opts)
+      testconfig.spec_tests.each { |tst| testconfig.verify_spec_test(self, tst) }
       tests = testconfig.run_filters(Onceover::Test.deduplicate(testconfig.spec_tests))
 
       # Loop over each test, executing the user's block on each
       tests.each do |tst|
-        block.call(tst.classes[0].name,tst.nodes[0].name,tst.nodes[0].fact_set,testconfig.pre_condition)
+        block.call(tst.classes[0].name, tst.nodes[0].name, tst.nodes[0].fact_set, testconfig.pre_condition)
       end
     end
 
@@ -547,8 +583,8 @@ class Onceover
       matches = []
       if first_hash.has_key?(key)
         if value.is_a?(Hash)
-          value.each do |k,v|
-            matches << keypair_is_in_hash(first_hash[key],k,v)
+          value.each do |k, v|
+            matches << keypair_is_in_hash(first_hash[key], k, v)
           end
         else
           if first_hash[key] == value
