@@ -304,11 +304,23 @@ HOSTS:
 
 ### Hiera Data
 
-If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory or the root of your controlrepo and you are good to go.
+If you have hiera data inside your controlrepo (or somewhere else) Onceover can be configured to use it. It is however worth noting the the `hiera.yaml` file that you currently use may not be applicable for testing right away. For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
 
-**WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
+It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
 
-**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x (Now called Hiera 5), the tool will automatically detect this and everything should work. If you want to use a different v5 `hiera.yaml` for testing, pleace it under the spec directory. Note that the datadir must be relative to the location of the hiera.yaml file in this instance. i.e. `../data`
+#### Creating the config file
+
+If your `hiera.yaml` is version 4 or 5 and lives in the root of the controlrepo (as it should), Onceover will pick this up automatically. If you would like to make changes to this file for testing purposes, create a copy under `spec/hiera.yaml`. Onceover will use this version of the hiera config file first if it exists.
+
+#### Setting the `datadir`
+
+| Hiera Version | Config File Location | Required datadir |
+|---------------|----------------------|------------------|
+| 3 | `spec` folder | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | Root of repo | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | `spec` folder | relative to the spec folder e.g. `../data` |
+| 5 | Root of repo | relative to the root of the repo e.g. `data` |
+| 5 | `spec` folder | relative to the spec folder e.g. `../data` |
 
 ## Spec testing
 
