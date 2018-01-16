@@ -36,3 +36,17 @@ Then(/^"([^"]*)" should be deleted from the cache$/) do |file|
   deleted_file = Pathname.new(File.join(@repo.root_folder,'.onceover/etc/puppetlabs/code/environments/production/',file))
   expect(deleted_file.exist?).to be false
 end
+
+When(/^I rename the class "([^"]*)" to "([^"]*)"$/) do |old_name, new_name|
+  old_role_file = Pathname.new(File.join(@repo.root_folder,'site',Cache_Helper.class_to_path(old_name)))
+  new_role_file = Pathname.new(File.join(@repo.root_folder,'site',Cache_Helper.class_to_path(new_name)))
+  puts "Moving #{old_role_file} to #{new_role_file}"
+  FileUtils.mv(old_role_file,new_role_file)
+
+  puts "Renaming class #{old_name} to #{new_name}"
+  text = File.read(new_role_file)
+  new_contents = text.gsub(/old_name/, "new_name")
+
+  # To write changes to the file, use:
+  File.open(new_role_file, "w") {|file| file.puts new_contents }
+end

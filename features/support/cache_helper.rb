@@ -1,9 +1,12 @@
 require 'pathname'
 
 class Cache_Helper
-
-  def cache_exists?
-    File.directory?(dir + '/.onceover')
+  def self.class_to_path(cls)
+    segments                = cls.split('::')
+    module_name             = segments[0]
+    class_name              = segments[-1]
+    folders_under_manifests = segments[1..-2] if segments.count > 2
+    [module_name,'manifests',folders_under_manifests,"#{class_name}.pp"].flatten.join('/')
   end
 
   def self.digest(path, opts = {

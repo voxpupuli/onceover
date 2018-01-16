@@ -31,3 +31,12 @@ Feature: Create and maintain a .onceover cache
     When I create a file ".hidden/.hiddenfile"
     And I run onceover command "run spec"
     Then ".hidden/.hiddenfile" should be cached correctly
+
+  Scenario: Renaming a role
+    Given control repo "caching"
+    When I run onceover command "run spec"
+    Then I rename the class "role::webserver" to "role::appserver"
+    And I run onceover command "run spec"
+    Then I should see error with message pattern "Could not find class ::role::webserver"
+    And "site/role/manifests/webserver.pp" should be deleted from the cache
+    And "site/role/manifests/appserver.pp" should be cached correctly

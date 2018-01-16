@@ -42,8 +42,8 @@ end
 
 Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be false
-  puts @cmd.output
-  expect(@cmd.output.match err_msg_regexp).to_not be nil
+  puts @cmd.output if @cmd.success?
+  expect(@cmd.output).to match(err_msg_regexp)
 end
 
 Then(/^I should see message pattern "([^"]*)"$/) do |err_msg_regexp|
