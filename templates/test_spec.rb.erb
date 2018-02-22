@@ -19,6 +19,20 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
     let(:facts) { <%= node.fact_set %> }
+<% if @before_conditions -%>
+    before :each do
+<% @before_conditions.each do |function| -%>
+      <%= function %>
+<% end -%>
+    end
+<% end -%>
+<% if @after_conditions -%>
+    after :each do
+<% @after_conditions.each do |function| -%>
+      <%= function %>
+<% end -%>
+    end
+<% end -%>
 <% if pre_condition -%>
     let(:pre_condition) {
       pp = <%= '<<' %>-END
