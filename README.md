@@ -114,8 +114,8 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
 
-**before and after conditions** We can set before and after blocks before each spec test. Each before or after block accepts a condition. The facts of a node
-are available through the `node_facts` hash.
+**before and after conditions** We can set before and after blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash.
+
 ```yaml
 before:
   - "Puppet::Util::Platform.stubs(:'windows?').returns(node_facts['kernel'] == 'windows')"
