@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 <% test.classes.each do |cls| -%>
 describe "<%= cls.name %>" do
 
@@ -18,7 +19,8 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% end -%>
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
-    let(:facts) { <%= node.fact_set %> }
+    node_facts = <%= node.fact_set %>
+    let(:facts) { node_facts }
 <% if @before_conditions -%>
     before :each do
 <% @before_conditions.each do |function| -%>
