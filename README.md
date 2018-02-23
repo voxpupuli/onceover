@@ -114,13 +114,14 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
 
-**before and after conditions** We can set before and after blocks before each spec test. Each before or after block accepts a condition.
+**before and after conditions** We can set before and after blocks before each spec test. Each before or after block accepts a condition. The facts of a node
+are available through the `node_facts` hash.
 ```yaml
 before:
-  - "Puppet::Util::Platform.stubs(:'windows?').returns(:facts['kernel'] == 'windows')"
+  - "Puppet::Util::Platform.stubs(:'windows?').returns(node_facts['kernel'] == 'windows')"
 
 after:
-  - "echo 'Test finished running'
+  - "puts 'Test finished running'"
 ``` 
 
 **opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
