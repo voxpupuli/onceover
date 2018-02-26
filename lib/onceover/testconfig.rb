@@ -210,6 +210,16 @@ class Onceover
         FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
       end
 
+      logger.debug "Writing manifest of copied controlrepo files"
+      require 'json'
+      # Create a manifest of all files that were in the original repo
+      manifest = controlrepo_files.map do |file|
+        # Make sure the paths are relative so they remain relevant when used later
+        file.relative_path_from(Pathname(repo.root)).to_s
+      end
+      # Write all but the first as this is the root and we don't care about that
+      File.write("#{temp_controlrepo}/.onceover_manifest.json",manifest[1..-1].to_json)
+
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
       # located in the Puppetfile. To accomplish that, we use git and find the current
       # branch name, then replace strings within the staged puppetfile, prior to copying.
@@ -224,11 +234,22 @@ class Onceover
       new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
       File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
 
-
+      # Remove all files written by the laste onceover run, but not the ones
+      # added by r10k, because that's what we are trying to cache but we don't
+      # know what they are
+      old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
+      if File.exist? old_manifest_path
+        logger.debug "Found manifest from previous run, parsing..."
+        old_manifest = JSON.parse(File.read(old_manifest_path))
+        logger.debug "Removing #{old_manifest.count} files"
+        old_manifest.reverse.each do |file|
+          FileUtils.rm_f(File.join("#{repo.tempdir}/#{repo.environmentpath}/production/",file))
+        end
+      end
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
-      FileUtils.cp_r(temp_controlrepo, "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
