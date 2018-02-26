@@ -10,6 +10,11 @@ Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
   FileUtils.cp_r "spec/fixtures/controlrepos/#{controlrepo_name}", @repo.tmp_folder
 end
 
+Given(/^existing control repo "([^"]*)"$/) do |controlrepo_name|
+  @repo = ControlRepo_Helper.new( controlrepo_name )
+  @cmd.controlrepo = @repo
+end
+
 Given(/^initialized control repo "([^"]*)"$/) do |controlrepo_name|
   step %Q(control repo "#{controlrepo_name}")
   step %Q(I run onceover command "init")
