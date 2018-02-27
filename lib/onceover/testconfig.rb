@@ -23,6 +23,8 @@ class Onceover
     attr_accessor :filter_classes
     attr_accessor :filter_nodes
     attr_accessor :mock_functions
+    attr_accessor :before_conditions
+    attr_accessor :after_conditions
     attr_accessor :skip_r10k
     attr_accessor :strict_variables
 
@@ -35,15 +37,17 @@ class Onceover
         raise "Could not parse #{file}, check that it is valid YAML and that the encoding is correct"
       end
 
-      @classes          = []
-      @nodes            = []
-      @node_groups      = []
-      @class_groups     = []
-      @spec_tests       = []
-      @acceptance_tests = []
-      @opts             = opts
-      @mock_functions   = config['functions']
-      @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
+      @classes           = []
+      @nodes             = []
+      @node_groups       = []
+      @class_groups      = []
+      @spec_tests        = []
+      @acceptance_tests  = []
+      @opts              = opts
+      @mock_functions    = config['functions']
+      @before_conditions = config['before']
+      @after_conditions  = config['after']
+      @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
