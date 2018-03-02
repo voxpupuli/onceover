@@ -537,7 +537,12 @@ class Onceover
     def self.evaluate_template(template_name, bind)
       logger.debug "Evaluating template #{template_name}"
       template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
-      template = File.read(File.expand_path("./#{template_name}", template_dir))
+      if File.file?(File.expand_path("./spec/templates/#{template_name}", @root))
+        puts "Using Custom #{template_name}"
+        template = File.read(File.expand_path("./spec/templates/#{template_name}", @root))
+      else
+        template = File.read(File.expand_path("./#{template_name}", template_dir))
+      end
       ERB.new(template, nil, '-').result(bind)
     end
 
