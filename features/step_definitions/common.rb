@@ -53,7 +53,7 @@ end
 
 Then(/^I should see message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be true
-  puts @cmd.output unless @cmd.success?
+  puts @cmd.output unless @cmd.output =~ Regexp.new(err_msg_regexp)
   expect(@cmd.output).to match(err_msg_regexp)
   puts @cmd.output.match(err_msg_regexp).to_s
 end

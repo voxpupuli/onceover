@@ -26,6 +26,7 @@ class Onceover
     attr_accessor :before_conditions
     attr_accessor :after_conditions
     attr_accessor :skip_r10k
+    attr_accessor :force
     attr_accessor :strict_variables
 
     def initialize(file, opts = {})
@@ -68,6 +69,7 @@ class Onceover
       @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
       @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
       @skip_r10k      = opts[:skip_r10k] ? true : false
+      @force          = opts[:force] || false
 
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
@@ -265,7 +267,10 @@ class Onceover
           # R10K::Action::Deploy::Environment
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
-            install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            install_cmd = []
+            install_cmd << "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            install_cmd << "--force" if @force
+            install_cmd = install_cmd.join(' ')
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
             raise 'r10k could not install all required modules' unless $?.success?
