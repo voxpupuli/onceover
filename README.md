@@ -20,6 +20,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
     - [Plugins](#plugins)
+    - [Overriding Onceover's Templates](#overriding-onceovers-templates)
     - [Accessing Onceover in a traditional RSpec test](#accessing-onceover-in-a-traditional-rspec-test)
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
@@ -122,7 +123,7 @@ before:
 
 after:
   - "puts 'Test finished running'"
-``` 
+```
 
 **opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
 
@@ -487,6 +488,10 @@ This takes your Puppetfile and actually modifies all of the module versions in t
   3. Update the Puppetfile with the latest versions of all modules
   4. Run Onceover agan
   5. Create a pull request if all tests pass
+
+### Overriding Onceover's Templates
+
+Onceover uses templates to create a bunch of files in the `.onceover` directory, these templates can be modified if required. To do this create your own custom template with the same name os the original in the `spec/templates/` directory and it will be used in preference to the default template. e.g. `spec/templates/spec_helper.rb.erb`
 
 ### Accessing Onceover in a traditional RSpec test
 
