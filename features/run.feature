@@ -1,5 +1,5 @@
 @run
-Feature: Run rspec and acceptance test suits
+Feature: Run rspec and acceptance test suites
   Onceover should allow to run rspec and acceptance test for all profvile and role classes
   or for any part of them. Use should set if he wants to see only summary of tests or full
   log info.
@@ -41,3 +41,8 @@ Feature: Run rspec and acceptance test suits
     And I make local modifications
     And I run onceover command "run spec --force"
     Then I should see message pattern "Overwriting local modifications"
+
+  Scenario: Run correct spec tests
+    Given control repo "function_mocking"
+    When I run onceover command "run spec"
+    Then I should not see any errors
