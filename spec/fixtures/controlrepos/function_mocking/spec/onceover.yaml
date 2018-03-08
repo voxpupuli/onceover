@@ -1,0 +1,43 @@
+# Classes to be tested
+classes:
+  - role::test_functions
+
+# Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
+# depending on weather you are running 'spec' or 'acceptance' tests
+nodes:
+  - CentOS-7.0-64
+
+# You can group classes here to save typing
+class_groups:
+
+# You can group nodes here to save typing
+# We have created a 'non_windows_nodes' group because we can't
+# give you Windows vagrant boxes to test with because licensing,
+# we can give you fact sets though so go crazy with spec testing!
+node_groups:
+
+test_matrix:
+  - all_nodes:
+      classes: 'all_classes'
+      tests: 'spec'
+
+functions:
+  string:
+    type: rvalue
+    returns: string
+  number:
+    type: rvalue
+    returns: 400
+  boolean:
+    type: rvalue
+    returns: true
+  array:
+    type: rvalue
+    returns:
+      - 1
+      - 2
+      - 3
+  hash:
+    type: rvalue
+    returns:
+      foo: bar
