@@ -9,7 +9,7 @@ describe "<%= cls.name %>" do
 MockFunction.new('<%= function %>', {:type => :statement})
 <% else -%>
 let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
-    f.stubbed.returns(<%= params['returns'] %>)
+    f.stubbed.returns(<%= params['returns'].inspect %>)
   }
 }
 <% end -%>

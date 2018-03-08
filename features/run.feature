@@ -42,7 +42,7 @@ Feature: Run rspec and acceptance test suites
     And I run onceover command "run spec --force"
     Then I should see message pattern "Overwriting local modifications"
 
-  Scenario: Run correct spec tests
+  Scenario: Mocking functions should work and return the correct data types
     Given control repo "function_mocking"
     When I run onceover command "run spec"
     Then I should not see any errors
