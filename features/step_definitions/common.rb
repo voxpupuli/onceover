@@ -1,4 +1,4 @@
-Given /^onceover executable$/ do
+Given(/^onceover executable$/) do
   @cmd = Command_Helper.new
 end
 
@@ -8,6 +8,11 @@ Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
   FileUtils.rm_rf @repo.root_folder
   FileUtils.mkdir_p @repo.tmp_folder
   FileUtils.cp_r "spec/fixtures/controlrepos/#{controlrepo_name}", @repo.tmp_folder
+end
+
+Given(/^existing control repo "([^"]*)"$/) do |controlrepo_name|
+  @repo = ControlRepo_Helper.new( controlrepo_name )
+  @cmd.controlrepo = @repo
 end
 
 Given(/^initialized control repo "([^"]*)"$/) do |controlrepo_name|
@@ -20,13 +25,13 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
   FileUtils.rm_rf "#{@repo.root_folder}/#{filename}"
 end
 
-When /^I run onceover command "([^"]*)"$/  do |command|
+When(/^I run onceover command "([^"]*)"$/)  do |command|
   @cmd.command = command
   puts @cmd
   @cmd.run
 end
 
-Then /^I see help for commands: "([^"]*)"$/ do |commands|
+Then(/^I see help for commands: "([^"]*)"$/) do |commands|
   # Get chunk of output between COMMANDS and OPTION, there should be help section
   commands_help = @cmd.output[/COMMANDS(.*)OPTIONS/m, 1]
   commands.split(',').each do |command|
@@ -48,7 +53,7 @@ end
 
 Then(/^I should see message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be true
-  puts @cmd.output unless @cmd.success?
+  puts @cmd.output unless @cmd.output =~ Regexp.new(err_msg_regexp)
   expect(@cmd.output).to match(err_msg_regexp)
   puts @cmd.output.match(err_msg_regexp).to_s
 end

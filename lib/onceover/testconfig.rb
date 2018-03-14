@@ -23,7 +23,10 @@ class Onceover
     attr_accessor :filter_classes
     attr_accessor :filter_nodes
     attr_accessor :mock_functions
+    attr_accessor :before_conditions
+    attr_accessor :after_conditions
     attr_accessor :skip_r10k
+    attr_accessor :force
     attr_accessor :strict_variables
 
     def initialize(file, opts = {})
@@ -35,15 +38,17 @@ class Onceover
         raise "Could not parse #{file}, check that it is valid YAML and that the encoding is correct"
       end
 
-      @classes          = []
-      @nodes            = []
-      @node_groups      = []
-      @class_groups     = []
-      @spec_tests       = []
-      @acceptance_tests = []
-      @opts             = opts
-      @mock_functions   = config['functions']
-      @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
+      @classes           = []
+      @nodes             = []
+      @node_groups       = []
+      @class_groups      = []
+      @spec_tests        = []
+      @acceptance_tests  = []
+      @opts              = opts
+      @mock_functions    = config['functions']
+      @before_conditions = config['before']
+      @after_conditions  = config['after']
+      @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
@@ -64,6 +69,7 @@ class Onceover
       @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
       @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
       @skip_r10k      = opts[:skip_r10k] ? true : false
+      @force          = opts[:force] || false
 
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
@@ -181,23 +187,29 @@ class Onceover
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_files = []
-      if ENV['GEM_HOME']
-        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo copy"
-        excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
-        excluded_files.flatten!
+      excluded_dirs = []
+      excluded_dirs << Pathname.new("#{repo.root}/.onceover")
+      excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
+
+      controlrepo_files = get_children_recursive(Pathname.new(repo.root))
+
+      # Exclude the files that should be skipped
+      controlrepo_files.delete_if do |path|
+        parents = [path]
+        path.ascend do |parent|
+          parents << parent
+        end
+        parents.any? { |x| excluded_dirs.include?(x) }
       end
 
-      # Exclude the files we need to
-      controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy     = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
-      folders_to_copy   = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
+      folders_to_copy = controlrepo_files.select { |x| x.directory? }
+      files_to_copy   = controlrepo_files.select { |x| x.file? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
+      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(folder.relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
 
@@ -210,7 +222,7 @@ class Onceover
 
       files_to_copy.each do |file|
         unless (Pathname(file).relative_path_from(Pathname(repo.root))).to_s.start_with?("modules/")
-          FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+          FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
         else
           found_local_modules = true
         end
@@ -219,6 +231,16 @@ class Onceover
       if found_local_modules
         logger.warning "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
       end
+
+      logger.debug "Writing manifest of copied controlrepo files"
+      require 'json'
+      # Create a manifest of all files that were in the original repo
+      manifest = controlrepo_files.map do |file|
+        # Make sure the paths are relative so they remain relevant when used later
+        file.relative_path_from(Pathname(repo.root)).to_s
+      end
+      # Write all but the first as this is the root and we don't care about that
+      File.write("#{temp_controlrepo}/.onceover_manifest.json",manifest[1..-1].to_json)
 
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
       # located in the Puppetfile. To accomplish that, we use git and find the current
@@ -234,11 +256,22 @@ class Onceover
       new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
       File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
 
-
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+      # Remove all files written by the laste onceover run, but not the ones
+      # added by r10k, because that's what we are trying to cache but we don't
+      # know what they are
+      old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
+      if File.exist? old_manifest_path
+        logger.debug "Found manifest from previous run, parsing..."
+        old_manifest = JSON.parse(File.read(old_manifest_path))
+        logger.debug "Removing #{old_manifest.count} files"
+        old_manifest.reverse.each do |file|
+          FileUtils.rm_f(File.join("#{repo.tempdir}/#{repo.environmentpath}/production/",file))
+        end
+      end
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
-      FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
@@ -250,7 +283,10 @@ class Onceover
           # R10K::Action::Deploy::Environment
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
-            install_cmd = "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            install_cmd = []
+            install_cmd << "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            install_cmd << "--force" if @force
+            install_cmd = install_cmd.join(' ')
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
             raise 'r10k could not install all required modules' unless $?.success?
@@ -347,5 +383,18 @@ class Onceover
       tests
     end
 
+    private
+
+    def get_children_recursive(pathname)
+      results = []
+      results << pathname
+      pathname.each_child do |child|
+        results << child
+        if child.directory?
+          results << get_children_recursive(child)
+        end
+      end
+      results.flatten
+    end
   end
 end

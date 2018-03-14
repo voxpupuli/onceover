@@ -7,3 +7,7 @@ Then(/^the temporary Puppetfile should contain the git branch/) do
   git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
   step %Q(the temporary Puppetfile should contain /#{git_branch}/)
 end
+
+When(/^I make local modifications$/) do
+  FileUtils.rm_rf("#{@repo.onceover_temp_root_folder}/modules/apache/manifests")
+end

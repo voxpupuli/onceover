@@ -9,7 +9,7 @@ describe "<%= cls.name %>" do
 MockFunction.new('<%= function %>', {:type => :statement})
 <% else -%>
 let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
-    f.stubbed.returns(<%= params['returns'] %>)
+    f.stubbed.returns(<%= params['returns'].inspect %>)
   }
 }
 <% end -%>
@@ -18,7 +18,22 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% end -%>
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
-    let(:facts) { <%= node.fact_set %> }
+    node_facts = <%= node.fact_set %>
+    let(:facts) { node_facts }
+<% if @before_conditions -%>
+    before :each do
+<% @before_conditions.each do |function| -%>
+      <%= function %>
+<% end -%>
+    end
+<% end -%>
+<% if @after_conditions -%>
+    after :each do
+<% @after_conditions.each do |function| -%>
+      <%= function %>
+<% end -%>
+    end
+<% end -%>
 <% if pre_condition -%>
     let(:pre_condition) {
       pp = <%= '<<' %>-END

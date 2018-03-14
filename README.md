@@ -20,6 +20,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
     - [Plugins](#plugins)
+    - [Overriding Onceover's Templates](#overriding-onceovers-templates)
     - [Accessing Onceover in a traditional RSpec test](#accessing-onceover-in-a-traditional-rspec-test)
     - [Accessing fact sets in a traditional RSpec test](#accessing-fact-sets-in-a-traditional-rspec-test)
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
@@ -110,9 +111,19 @@ Why an array of hashes? Well, that is so that we can refer to the same node or n
 
 In the example below we have referred to `centos6a` and `centos7b` in all of our tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have *left the more specific references to last*. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two Centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
 
-**functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following agruments:
+**functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following arguments:
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
+
+**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash.
+
+```yaml
+before:
+  - "Puppet::Util::Platform.stubs(:'windows?').returns(node_facts['kernel'] == 'windows')"
+
+after:
+  - "puts 'Test finished running'"
+```
 
 **opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
 
@@ -304,11 +315,23 @@ HOSTS:
 
 ### Hiera Data
 
-If you have hiera data inside your controlrepo (or somewhere else) the Controlrepo gem can be configured to use it. Just dump your `hiera.yaml` file from the puppet master into the `spec/` directory or the root of your controlrepo and you are good to go.
+If you have hiera data inside your controlrepo (or somewhere else) Onceover can be configured to use it. It is however worth noting the the `hiera.yaml` file that you currently use may not be applicable for testing right away. For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
 
-**WARNING:** This assumes that the path to your hiera data (datadir) is relative to the root of the controlrepo, if not it will fall over.
+It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
 
-**Alternatively:**, if you are using cool new per-environment hiera config made available in puppet 4.x (Now called Hiera 5), the tool will automatically detect this and everything should work. If you want to use a different v5 `hiera.yaml` for testing, pleace it under the spec directory. Note that the datadir must be relative to the location of the hiera.yaml file in this instance. i.e. `../data`
+#### Creating the config file
+
+If your `hiera.yaml` is version 4 or 5 and lives in the root of the controlrepo (as it should), Onceover will pick this up automatically. If you would like to make changes to this file for testing purposes, create a copy under `spec/hiera.yaml`. Onceover will use this version of the hiera config file first if it exists.
+
+#### Setting the `datadir`
+
+| Hiera Version | Config File Location | Required datadir |
+|---------------|----------------------|------------------|
+| 3 | `spec` folder | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | Root of repo | relative to the root of the repo e.g. `data` |
+| 4 *deprecated* | `spec` folder | relative to the spec folder e.g. `../data` |
+| 5 | Root of repo | relative to the root of the repo e.g. `data` |
+| 5 | `spec` folder | relative to the spec folder e.g. `../data` |
 
 ## Spec testing
 
@@ -465,6 +488,10 @@ This takes your Puppetfile and actually modifies all of the module versions in t
   3. Update the Puppetfile with the latest versions of all modules
   4. Run Onceover agan
   5. Create a pull request if all tests pass
+
+### Overriding Onceover's Templates
+
+Onceover uses templates to create a bunch of files in the `.onceover` directory, these templates can be modified if required. To do this create your own custom template with the same name os the original in the `spec/templates/` directory and it will be used in preference to the default template. e.g. `spec/templates/spec_helper.rb.erb`
 
 ### Accessing Onceover in a traditional RSpec test
 
@@ -658,3 +685,4 @@ Cheers to all of those who helped out:
   - aardvark
   - Mandos
   - Nekototori
+  - LMacchi
