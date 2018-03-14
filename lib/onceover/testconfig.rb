@@ -200,8 +200,24 @@ class Onceover
       FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
+
+      # 
+      # A Local modules directory likely means that the user installed r10k folders into their local control repo
+      # This conflicts with the step where onceover installs r10k after copying the control repo to the temporary 
+      # .onceover directory.  The following skips copying the modules folder, to not later cause an error.
+      #
+      found_local_modules = false
+
       files_to_copy.each do |file|
-        FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+        unless (Pathname(file).relative_path_from(Pathname(repo.root))).to_s.start_with?("modules/")
+          FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+        else
+          found_local_modules = true
+        end
+      end
+
+      if found_local_modules
+        logger.warning "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
       end
 
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
