@@ -191,6 +191,16 @@ class Onceover
       excluded_dirs << Pathname.new("#{repo.root}/.onceover")
       excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
 
+      #
+      # A Local modules directory likely means that the user installed r10k folders into their local control repo
+      # This conflicts with the step where onceover installs r10k after copying the control repo to the temporary
+      # .onceover directory.  The following skips copying the modules folder, to not later cause an error.
+      #
+      if File.directory?("#{repo.root}/modules")
+        logger.warn "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
+      end
+      excluded_dirs << Pathname.new("#{repo.root}/modules")
+
       controlrepo_files = get_children_recursive(Pathname.new(repo.root))
 
       # Exclude the files that should be skipped
