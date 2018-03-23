@@ -179,7 +179,6 @@ class Onceover
       all_facts = []
       logger.debug "Reading factsets"
       @facts_files.each do |file|
-        logger.debug "########### Retrieving #{key} for #{file} ############"
         all_facts << read_facts(file)[key]
       end
       if filter
