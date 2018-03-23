@@ -8,6 +8,7 @@ class Onceover
     attr_accessor :name
     attr_accessor :beaker_node
     attr_accessor :fact_set
+    attr_accessor :trusted_set
 
     def initialize(name)
       @name = name
@@ -19,9 +20,12 @@ class Onceover
           File.basename(facts_file, '.json') == name
         }
         @fact_set = Onceover::Controlrepo.facts[facts_file_index]
+        @trusted_set = Onceover::Controlrepo.trusted_facts[facts_file_index]
       rescue TypeError
         @fact_set = nil
+        @trusted_set = nil
       end
+
       @@all << self
 
     end

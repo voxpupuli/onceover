@@ -70,7 +70,11 @@ class Onceover
     end
 
     def self.facts(filter = nil)
-      @@existing_controlrepo.facts(filter)
+      @@existing_controlrepo.facts(filter, 'values')
+    end
+
+    def self.trusted_facts(filter = nil)
+      @@existing_controlrepo.facts(filter, 'trusted')
     end
 
     def self.hiera_config_file
@@ -170,12 +174,13 @@ class Onceover
       classes.flatten
     end
 
-    def facts(filter = nil)
+    def facts(filter = nil, key = 'values')
       # Returns an array facts hashes
       all_facts = []
       logger.debug "Reading factsets"
       @facts_files.each do |file|
-        all_facts << read_facts(file)['values']
+        logger.debug "########### Retrieving #{key} for #{file} ############"
+        all_facts << read_facts(file)[key]
       end
       if filter
         # Allow us to pass a hash of facts to filter by
@@ -579,7 +584,7 @@ class Onceover
       begin
         result = JSON.parse(file)
       rescue JSON::ParserError
-        raise "Could not parse the JSON file, check that it is valid JSON and that the encoding is correct"
+        raise "Could not parse the file #{facts_file}, check that it is valid JSON and that the encoding is correct"
       end
       result
     end

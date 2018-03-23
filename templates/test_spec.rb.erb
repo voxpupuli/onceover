@@ -19,7 +19,9 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
     node_facts = <%= node.fact_set %>
+    trusted_facts = <%= node.trusted_set %>
     let(:facts) { node_facts }
+    let(:trusted_facts) { trusted_facts }
 <% if @before_conditions -%>
     before :each do
 <% @before_conditions.each do |function| -%>
