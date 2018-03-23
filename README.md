@@ -260,7 +260,6 @@ You can add trusted facts to the nodesets by creating a new section called trust
   "trusted": {
     "pp_role": "agent",
     "pp_datacenter": "puppet",
-    "pp_created_by": "laura"
   },
   "values": {
     "aio_agent_build": "1.10.4",
