@@ -115,7 +115,7 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
   - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
 
-**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash.
+**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
 
 ```yaml
 before:
@@ -249,6 +249,26 @@ Once we have our factset all we need to do is copy it into `spec/factsets/` insi
 `spec/factsets/server2008r2.json`
 
 Would map to a node named `server2008r2` in `onceover.yaml`
+
+#### Trusted Facts
+
+You can add trusted facts to the nodesets by creating a new section called trusted:
+
+```
+{
+  "name": "node.puppetlabs.net",
+  "trusted": {
+    "pp_role": "agent",
+    "pp_datacenter": "puppet",
+  },
+  "values": {
+    "aio_agent_build": "1.10.4",
+    "aio_agent_version": "1.10.4",
+    "architecture": "x86_64",
+
+```
+
+Notice that the `extensions` part is implied. The first fact in that example translates to `$trusted['extensions']['pp_role']` in Puppet code.
 
 ### nodesets
 
