@@ -126,7 +126,7 @@ class Onceover
       $temp_modulepath  = nil
       @manifest         = opts[:manifest]         || config['manifest'] ? File.expand_path(config['manifest'], @root) : nil
       @opts             = opts
-      logger.level = :debug if @opts[:debug]
+      logger.level = :debug if @opts['debug']
       @@existing_controlrepo = self
     end
 
