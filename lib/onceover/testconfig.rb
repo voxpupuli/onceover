@@ -347,8 +347,22 @@ class Onceover
       repo.temp_modulepath.split(':').each do |path|
         Dir["#{path}/*"].each do |mod|
           modulename = File.basename(mod)
-          logger.debug "Symlinking #{mod} to #{repo.tempdir}/spec/fixtures/modules/#{modulename}"
-          FileUtils.ln_s(mod, "#{repo.tempdir}/spec/fixtures/modules/#{modulename}")
+          link = "#{repo.tempdir}/spec/fixtures/modules/#{modulename}"
+          logger.debug "Symlinking #{mod} to #{link}"
+          unless File.symlink?(link)
+            # Ruby only sets File::ALT_SEPARATOR on Windows and Rubys standard library
+            # uses this to check for Windows
+            if !!File::ALT_SEPARATOR
+              mod = File.join(File.dirname(link), mod) unless Pathname.new(mod).absolute?
+              if Dir.respond_to?(:create_junction)
+                Dir.create_junction(link, mod)
+              else
+                system("call mklink /J \"#{link.gsub('/', '\\')}\" \"#{mod.gsub('/', '\\')}\"")
+              end
+            else
+              FileUtils.ln_s(mod, link)
+            end
+          end
         end
       end
     end
