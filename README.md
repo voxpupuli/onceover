@@ -353,6 +353,27 @@ If your `hiera.yaml` is version 4 or 5 and lives in the root of the controlrepo 
 | 5 | Root of repo | relative to the root of the repo e.g. `data` |
 | 5 | `spec` folder | relative to the spec folder e.g. `../data` |
 
+#### `hiera-eyaml`
+
+If you are using the `hiera-eyaml` backend there are some modifications that you will need to make in order to ensure that things actually work. Remember that when onceover compiles catalogs it is actually using hiera with your config file to do the lookups on the host that is running the tests, meaning that the `hiera-eyaml` gem will need to be present (put it in your Gemfile), as will the keys in the correct location, otherwise hiera will fail to load them. *This is really not a great situation as you don't want to be distributing your private keys*
+
+**Recommended Solution:** I recommend that if you are using `hiera-eyaml` (which you probably should be) that you do the following:
+
+  1. Duplicate your `hiera.yaml` file so that there is a copy in the `spec/` directory
+  1. Change the `datadir` setting as described above
+  1. Remove the eyaml backend entirely and just use the base yaml backend. For hiera 5 this will look like:
+
+  ```yaml
+  ---
+  version: 5
+  defaults:
+    datadir: "../data"
+    data_hash: yaml_data
+  ```
+
+This means that for testing, hiera will just return the encrypted string for anything that is encrypted using eyaml. This usually isn't a problem for catalog compilation and will allow tests to pass.
+
+
 ## Spec testing
 
 Once you have your `onceover.yaml` and factsets set up you are ready to go with spec testing.
