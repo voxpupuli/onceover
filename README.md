@@ -717,13 +717,15 @@ Execute tests
 
 Cheers to all of those who helped out:
 
-  - jessereynolds
-  - op-ct
-  - GeoffWilliams
-  - beergeek
-  - jairojunior
-  - natemccurdy
-  - aardvark
-  - Mandos
-  - Nekototori
-  - LMacchi
+  - @jessereynolds
+  - @op-ct
+  - @GeoffWilliams
+  - @beergeek
+  - @jairojunior
+  - @natemccurdy
+  - @aardvark
+  - @Mandos
+  - @Nekototori
+  - @LMacchi
+  - @tabakhase
+  - @binford2k
