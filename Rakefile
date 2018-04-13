@@ -3,6 +3,12 @@ require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 Gem::Tasks.new
 
+def windows?
+  # Ruby only sets File::ALT_SEPARATOR on Windows and the Ruby standard
+  # library uses that to test what platform it's on.
+  !!File::ALT_SEPARATOR
+end
+
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.rspec_opts = '--pattern spec/onceover/**/*_spec.rb'
 end
@@ -30,7 +36,11 @@ task :syntax do
   require 'find'
   Find.find(*paths) do |path|
     next unless path =~ /\.rb$/
-    sh "ruby -cw #{path} > /dev/null"
+    if windows?
+      sh "ruby -cw #{path} > NUL"
+    else
+      sh "ruby -cw #{path} > /dev/null"
+    end
   end
 end
 
