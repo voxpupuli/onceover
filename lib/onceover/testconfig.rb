@@ -126,9 +126,13 @@ class Onceover
       # { 'include' => 'somegroup'
       #   'exclude' => 'other'}
       # and return a list of classes/nodes
-      include_list = Onceover::TestConfig.find_list(subtractive_hash['include']).flatten
-      exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude']).flatten
-      include_list - exclude_list
+      if subtractive_hash.has_key?('include') && subtractive_hash.has_key?('exclude')
+        include_list = Onceover::TestConfig.find_list(subtractive_hash['include']).flatten
+        exclude_list = Onceover::TestConfig.find_list(subtractive_hash['exclude']).flatten
+        include_list - exclude_list
+      else
+        raise "The classes/nodes hash must have an `exclude` if using an `include`"
+      end
     end
 
     def verify_spec_test(controlrepo, test)
