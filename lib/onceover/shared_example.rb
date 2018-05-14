@@ -14,7 +14,7 @@ class Onceover
           if cls = shared_example_name
             return se
           end
-        elsif ce.name == shared_example_name
+        elsif se.name == shared_example_name
           return se
         end
       end
