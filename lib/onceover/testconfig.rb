@@ -24,7 +24,10 @@ class Onceover
     attr_accessor :filter_classes
     attr_accessor :filter_nodes
     attr_accessor :mock_functions
+    attr_accessor :before_conditions
+    attr_accessor :after_conditions
     attr_accessor :skip_r10k
+    attr_accessor :force
     attr_accessor :strict_variables
     attr_accessor :shared_examples
     attr_accessor :shared_example_files
@@ -32,23 +35,24 @@ class Onceover
 
     def initialize(file, opts = {})
       begin
-        config = YAML.load(File.read(file))
+        config = YAML.safe_load(File.read(file), [Symbol])
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
         raise "Could not parse #{file}, check that it is valid YAML and that the encoding is correct"
       end
 
-      @classes          = []
-      @nodes            = []
-      @node_groups      = []
-      @class_groups     = []
-      @spec_tests       = []
-      @acceptance_tests = []
-      @opts             = opts
-      @mock_functions   = config['functions']
-      @strict_variables = opts[:strict_variables] ? 'yes' : 'no'
-      @shared_examples  = []
+      @classes           = []
+      @nodes             = []
+      @node_groups       = []
+      @class_groups      = []
+      @spec_tests        = []
+      @acceptance_tests  = []
+      @opts              = opts
+      @mock_functions    = config['functions']
+      @before_conditions = config['before']
+      @after_conditions  = config['after']
+      @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
@@ -70,6 +74,7 @@ class Onceover
       @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
       @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
       @skip_r10k      = opts[:skip_r10k] ? true : false
+      @force          = opts[:force] || false
 
       # Read all ruby files in teh shared_example directory for inclusion
       # in the spec_helper.rb
@@ -166,13 +171,13 @@ class Onceover
 
     def pre_condition
       # Read all the pre_conditions and return the string
-      spec_dir = Onceover::Controlrepo.new.spec_dir
+      spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
         logger.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
-      return nil if puppetcode.count == 0
+      return nil if puppetcode.count.zero?
       puppetcode.join("\n")
     end
 
@@ -200,32 +205,85 @@ class Onceover
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_files = []
-      if ENV['GEM_HOME']
-        logger.debug "Excluding #{ENV['GEM_HOME']} from controlrepo copy"
-        excluded_files << Dir.glob("#{ENV['GEM_HOME']}/**/*")
-        excluded_files.flatten!
+      excluded_dirs = []
+      excluded_dirs << Pathname.new("#{repo.root}/.onceover")
+      excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
+
+      #
+      # A Local modules directory likely means that the user installed r10k folders into their local control repo
+      # This conflicts with the step where onceover installs r10k after copying the control repo to the temporary
+      # .onceover directory.  The following skips copying the modules folder, to not later cause an error.
+      #
+      if File.directory?("#{repo.root}/modules")
+        logger.warn "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
+      end
+      excluded_dirs << Pathname.new("#{repo.root}/modules")
+
+      controlrepo_files = get_children_recursive(Pathname.new(repo.root))
+
+      # Exclude the files that should be skipped
+      controlrepo_files.delete_if do |path|
+        parents = [path]
+        path.ascend do |parent|
+          parents << parent
+        end
+        parents.any? { |x| excluded_dirs.include?(x) }
       end
 
-      # Exclude the files we need to
-      controlrepo_files = Dir.glob("#{repo.root}/**/*")
-      files_to_copy     = (controlrepo_files - excluded_files).delete_if { |path| Pathname(path).directory? }
-      folders_to_copy   = (controlrepo_files - excluded_files).keep_if { |path| Pathname(path).directory? }
+      folders_to_copy = controlrepo_files.select { |x| x.directory? }
+      files_to_copy   = controlrepo_files.select { |x| x.file? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(Pathname(folder).relative_path_from(Pathname(repo.root))).to_s}"})
+      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(folder.relative_path_from(Pathname(repo.root))).to_s}"})
 
       logger.debug "Copying files to #{temp_controlrepo}"
       files_to_copy.each do |file|
-        FileUtils.cp(file,"#{temp_controlrepo}/#{(Pathname(file).relative_path_from(Pathname(repo.root))).to_s}")
+        FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
       end
-      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}/production")
+
+      logger.debug "Writing manifest of copied controlrepo files"
+      require 'json'
+      # Create a manifest of all files that were in the original repo
+      manifest = controlrepo_files.map do |file|
+        # Make sure the paths are relative so they remain relevant when used later
+        file.relative_path_from(Pathname(repo.root)).to_s
+      end
+      # Write all but the first as this is the root and we don't care about that
+      File.write("#{temp_controlrepo}/.onceover_manifest.json",manifest[1..-1].to_json)
+
+      # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
+      # located in the Puppetfile. To accomplish that, we use git and find the current
+      # branch name, then replace strings within the staged puppetfile, prior to copying.
+
+      logger.debug "Checking current working branch"
+      git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+
+      logger.debug "found #{git_branch} as current working branch"
+      puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
+
+      logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
+      new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+      File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
+
+      # Remove all files written by the laste onceover run, but not the ones
+      # added by r10k, because that's what we are trying to cache but we don't
+      # know what they are
+      old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
+      if File.exist? old_manifest_path
+        logger.debug "Found manifest from previous run, parsing..."
+        old_manifest = JSON.parse(File.read(old_manifest_path))
+        logger.debug "Removing #{old_manifest.count} files"
+        old_manifest.reverse.each do |file|
+          FileUtils.rm_f(File.join("#{repo.tempdir}/#{repo.environmentpath}/production/",file))
+        end
+      end
+      FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
       logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
-      FileUtils.cp_r(Dir["#{temp_controlrepo}/*"], "#{repo.tempdir}/#{repo.environmentpath}/production")
+      FileUtils.cp_r("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
       # Pull the trigger! If it's not already been pulled
@@ -237,9 +295,13 @@ class Onceover
           # R10K::Action::Deploy::Environment
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
-            install_cmd = "r10k puppetfile install --verbose --color"
+            install_cmd = []
+            install_cmd << "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
+            install_cmd << "--force" if @force
+            install_cmd = install_cmd.join(' ')
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
+            raise 'r10k could not install all required modules' unless $?.success?
           end
         else
           raise "#{repo.tempdir} is not a directory"
@@ -280,7 +342,15 @@ class Onceover
       modulepath.map! do |path|
         "#{environmentpath}/production/#{path}"
       end
-      modulepath = modulepath.join(":")
+
+      # We need to select the right delimiter based on OS
+      require 'facter'
+      if Facter[:kernel].value == 'windows'
+        modulepath = modulepath.join(";")
+      else
+        modulepath = modulepath.join(':')
+      end
+
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
@@ -295,8 +365,22 @@ class Onceover
       repo.temp_modulepath.split(':').each do |path|
         Dir["#{path}/*"].each do |mod|
           modulename = File.basename(mod)
-          logger.debug "Symlinking #{mod} to #{repo.tempdir}/spec/fixtures/modules/#{modulename}"
-          FileUtils.ln_s(mod, "#{repo.tempdir}/spec/fixtures/modules/#{modulename}")
+          link = "#{repo.tempdir}/spec/fixtures/modules/#{modulename}"
+          logger.debug "Symlinking #{mod} to #{link}"
+          unless File.symlink?(link)
+            # Ruby only sets File::ALT_SEPARATOR on Windows and Rubys standard library
+            # uses this to check for Windows
+            if !!File::ALT_SEPARATOR
+              mod = File.join(File.dirname(link), mod) unless Pathname.new(mod).absolute?
+              if Dir.respond_to?(:create_junction)
+                Dir.create_junction(link, mod)
+              else
+                system("call mklink /J \"#{link.gsub('/', '\\')}\" \"#{mod.gsub('/', '\\')}\"")
+              end
+            else
+              FileUtils.ln_s(mod, link)
+            end
+          end
         end
       end
     end
@@ -325,5 +409,18 @@ class Onceover
       tests
     end
 
+    private
+
+    def get_children_recursive(pathname)
+      results = []
+      results << pathname
+      pathname.each_child do |child|
+        results << child
+        if child.directory?
+          results << get_children_recursive(child)
+        end
+      end
+      results.flatten
+    end
   end
 end

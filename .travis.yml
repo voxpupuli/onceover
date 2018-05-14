@@ -5,7 +5,7 @@ cache:
   directories:
     - 'spec/fixtures/puppet_controlrepo/.onceover' # Onceover cache
 
-script: bundler exec rake test
+script: bundle exec rake full_tests
 bundler_args: --path vendor/bundle
 
 rvm:
@@ -15,4 +15,6 @@ rvm:
   - 2.1.9
   - 2.2.7
   - 2.3.4
+  - 2.4.0
   - 2.4.1
+  - 2.4.2

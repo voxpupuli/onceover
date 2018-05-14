@@ -22,6 +22,7 @@ This includes deploying using r10k and running all custom tests.
           optional :c,  :classes,          'A list of classes. Only tests with these classes will be run'
           optional :n,  :nodes,            'A list of nodes. Only tests with these nodes will be run'
           optional :s,  :skip_r10k,        'Skip the r10k step'
+          optional :f,  :force,            'Passes --force to r10k, overwriting modules'
           optional :sv, :strict_variables, 'Run with strict_variables set to yes'
 
           run do |opts, args, cmd|

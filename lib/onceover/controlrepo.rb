@@ -70,7 +70,11 @@ class Onceover
     end
 
     def self.facts(filter = nil)
-      @@existing_controlrepo.facts(filter)
+      @@existing_controlrepo.facts(filter, 'values')
+    end
+
+    def self.trusted_facts(filter = nil)
+      @@existing_controlrepo.facts(filter, 'trusted')
     end
 
     def self.hiera_config_file
@@ -170,12 +174,12 @@ class Onceover
       classes.flatten
     end
 
-    def facts(filter = nil)
+    def facts(filter = nil, key = 'values')
       # Returns an array facts hashes
       all_facts = []
       logger.debug "Reading factsets"
       @facts_files.each do |file|
-        all_facts << read_facts(file)['values']
+        all_facts << read_facts(file)[key]
       end
       if filter
         # Allow us to pass a hash of facts to filter by
@@ -345,10 +349,14 @@ class Onceover
     end
 
     def hiera_config_file
-      # try to find the hiera.yaml file
-      hiera_config_file = File.expand_path('./hiera.yaml', @spec_dir) if File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
-      hiera_config_file = File.expand_path('./hiera.yaml', @root)     if File.exist?(File.expand_path('./hiera.yaml', @root))
-      hiera_config_file
+      case
+      when File.exist?(File.expand_path('./hiera.yaml', @spec_dir))
+        File.expand_path('./hiera.yaml', @spec_dir)
+      when File.exist?(File.expand_path('./hiera.yaml', @root))
+        File.expand_path('./hiera.yaml', @root)
+      else
+        nil
+      end
     end
 
     def hiera_config_file_relative_path
@@ -407,6 +415,8 @@ class Onceover
         File.expand_path('./r10k.yaml', @spec_dir)
       when File.exist?(File.expand_path('./r10k.yaml', @root))
         File.expand_path('./r10k.yaml', @root)
+      else
+        nil
       end
     end
 
@@ -428,14 +438,33 @@ class Onceover
       require 'pathname'
       require 'colored'
 
-      Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo),repo.onceover_yaml)
-      Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('pre_conditions_README.md.erb',binding),File.expand_path('./pre_conditions/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('factsets_README.md.erb',binding),File.expand_path('./factsets/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('shared_examples_README.md.erb',binding),File.expand_path('./shared_examples/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('matchers_README.md.erb',binding),File.expand_path('./matchers/README.md',repo.spec_dir))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Rakefile.erb',binding),File.expand_path('./Rakefile',repo.root))
-      Onceover::Controlrepo.init_write_file(Onceover::Controlrepo.evaluate_template('Gemfile.erb',binding),File.expand_path('./Gemfile',repo.root))
+      Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo), repo.onceover_yaml)
+      # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
+      #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
+      init_write_file(
+        evaluate_template('pre_conditions_README.md.erb', binding),
+        File.expand_path('./pre_conditions/README.md', repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('factsets_README.md.erb', binding),
+        File.expand_path('./factsets/README.md', repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('shared_examples_README.md.erb',binding),
+        File.expand_path('./shared_examples/README.md',repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('matchers_README.md.erb',binding),
+        File.expand_path('./matchers/README.md',repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('Rakefile.erb', binding),
+        File.expand_path('./Rakefile', repo.root)
+      )
+      init_write_file(
+        evaluate_template('Gemfile.erb', binding),
+        File.expand_path('./Gemfile', repo.root)
+      )
 
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore', repo.root)
@@ -520,7 +549,12 @@ class Onceover
     def self.evaluate_template(template_name, bind)
       logger.debug "Evaluating template #{template_name}"
       template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
-      template = File.read(File.expand_path("./#{template_name}", template_dir))
+      if File.file?(File.expand_path("./spec/templates/#{template_name}", @root))
+        puts "Using Custom #{template_name}"
+        template = File.read(File.expand_path("./spec/templates/#{template_name}", @root))
+      else
+        template = File.read(File.expand_path("./#{template_name}", template_dir))
+      end
       ERB.new(template, nil, '-').result(bind)
     end
 
@@ -557,7 +591,7 @@ class Onceover
       begin
         result = JSON.parse(file)
       rescue JSON::ParserError
-        raise "Could not parse the JSON file, check that it is valid JSON and that the encoding is correct"
+        raise "Could not parse the file #{facts_file}, check that it is valid JSON and that the encoding is correct"
       end
       result
     end
