@@ -438,7 +438,6 @@ class Onceover
       require 'pathname'
       require 'colored'
 
-<<<<<<< HEAD
       Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo), repo.onceover_yaml)
       # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
       #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
