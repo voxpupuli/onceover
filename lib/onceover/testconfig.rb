@@ -91,6 +91,8 @@ class Onceover
         matcher_files << File.basename(matcher_file)
       end
 
+      # Loop over all of the items in the test matrix and add those as test
+      # objects to the list of tests
       config['test_matrix'].each do |test_hash|
         test_hash.each do |machines, settings|
           if settings['tests'] == 'spec'
