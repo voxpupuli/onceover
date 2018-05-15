@@ -3,18 +3,18 @@ require 'rspec-puppet-utils'
 require 'rspec_junit_formatter'
 
 RSpec.configure do |c|
-  c.parser = 'future'
-  c.formatter = 'documentation'
-
   # Also add JUnit output in case people want to use that
   c.add_formatter('RSpecJUnitFormatter','<%= repo.tempdir %>/spec.xml')
 
-  c.environmentpath = '<%= environmentpath %>'
-  c.module_path = '<%= modulepath %>'
+  c.parser                = 'future'
+  c.formatter             = 'documentation'
+  c.trusted_server_facts  = true
+  c.environmentpath       = '<%= environmentpath %>'
+  c.module_path           = '<%= modulepath %>'
 <% if repo.hiera_config_file_relative_path %>
-  c.hiera_config = '<%= environmentpath %>/production/<%= repo.hiera_config_file_relative_path %>'
+  c.hiera_config          = '<%= environmentpath %>/production/<%= repo.hiera_config_file_relative_path %>'
 <% end -%>
-  c.manifest = '<%= repo.temp_manifest %>'
+  c.manifest              = '<%= repo.temp_manifest %>'
   ENV['STRICT_VARIABLES'] = '<%= self.strict_variables %>'
 <% if ENV['SHOW_PUPPET_OUTPUT'] and ENV['SHOW_PUPPET_OUTPUT'].downcase == 'true' %>
   Puppet::Util::Log.level = :debug
