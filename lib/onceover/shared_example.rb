@@ -11,7 +11,7 @@ class Onceover
     def self.find(shared_example_name)
       @@all.each do |se|
         if shared_example_name.is_a?(Onceover::Shared_example)
-          if cls = shared_example_name
+          if se = shared_example_name
             return se
           end
         elsif se.name == shared_example_name
