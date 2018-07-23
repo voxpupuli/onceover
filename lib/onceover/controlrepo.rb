@@ -450,6 +450,14 @@ class Onceover
         File.expand_path('./factsets/README.md', repo.spec_dir)
       )
       init_write_file(
+        evaluate_template('shared_examples_README.md.erb',binding),
+        File.expand_path('./shared_examples/README.md',repo.spec_dir)
+      )
+      init_write_file(
+        evaluate_template('matchers_README.md.erb',binding),
+        File.expand_path('./matchers/README.md',repo.spec_dir)
+      )
+      init_write_file(
         evaluate_template('Rakefile.erb', binding),
         File.expand_path('./Rakefile', repo.root)
       )

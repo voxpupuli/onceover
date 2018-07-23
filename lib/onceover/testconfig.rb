@@ -4,6 +4,7 @@ require 'onceover/group'
 require 'onceover/test'
 require 'onceover/logger'
 require 'onceover/controlrepo'
+require 'onceover/shared_example'
 require 'git'
 include Onceover::Logger
 
@@ -28,6 +29,9 @@ class Onceover
     attr_accessor :skip_r10k
     attr_accessor :force
     attr_accessor :strict_variables
+    attr_accessor :shared_examples
+    attr_accessor :shared_example_files
+    attr_accessor :matcher_files
 
     def initialize(file, opts = {})
       begin
@@ -49,6 +53,7 @@ class Onceover
       @before_conditions = config['before']
       @after_conditions  = config['after']
       @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
+      @shared_examples   = []
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil
@@ -64,12 +69,28 @@ class Onceover
       # Initialise all of the groups
       config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
+      config['shared_examples'].each { |shared_example| @shared_examples << Onceover::Shared_example.new(shared_example) } unless config['shared_examples'] == nil
 
       @filter_tags    = opts[:tags]      ? [opts[:tags].split(',')].flatten : nil
       @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
       @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
       @skip_r10k      = opts[:skip_r10k] ? true : false
       @force          = opts[:force] || false
+
+      # Read all ruby files in teh shared_example directory for inclusion
+      # in the spec_helper.rb
+      spec_dir = Onceover::Controlrepo.new.spec_dir
+      @shared_example_files = []
+      Dir["#{spec_dir}/shared_examples/*.rb"].each do |shared_example_file|
+        logger.debug "Found shared_example #{shared_example_file}"
+        shared_example_files << File.basename(shared_example_file)
+      end
+      # now extra matchers
+      @matcher_files = []
+      Dir["#{spec_dir}/matchers/*.rb"].each do |matcher_file|
+        logger.debug "Found matcher #{matcher_file}"
+        matcher_files << File.basename(matcher_file)
+      end
 
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
