@@ -94,9 +94,9 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 **nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
 
-**node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax.
+**node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax. The names used for the actual `class_groups` and `node_groups` must be unique.
 
-**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again.
+**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again. The names used for the actual `class_groups` and `node_groups` must be unique.
 
 **shared_examples:** This section allows you to list the shared examples to be included in every node test.  Value is an Array
 
@@ -162,11 +162,14 @@ nodes:
   - centos7b
   - server2008r2a
   - ubuntu1404a
+  - ubuntu1604a
 
 node_groups:
   centos_severs:
     - centos6a
     - centos7b
+  ubuntu_servers:
+    - ubuntu1404a
   non_windows_servers:
     include: 'all_nodes'
     exclude: 'server2008r2a'
@@ -189,6 +192,8 @@ test_matrix:
       classes: 'all_classes'
       tests: 'spec'
   - non_windows_servers:
+      classes: 'non_windows_roles'
+  - ubuntu_servers:
       classes: 'all_classes'
       tests: 'all_tests'
   - centos_severs:
