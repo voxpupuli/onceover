@@ -221,6 +221,9 @@ class Onceover
           if mod.is_a?(R10K::Module::Forge)
             return_hash[:current_version] = mod.expected_version
             return_hash[:latest_version] = mod.v3_module.current_release.version
+            return_hash[:endorsement] = mod.v3_module.endorsement
+            superseded_by = mod.v3_module.superseded_by
+            return_hash[:superseded_by] = superseded_by.nil? ? '' : superseded_by[:slug]
             current = Versionomy.parse(return_hash[:current_version])
             latest = Versionomy.parse(return_hash[:latest_version])
             if current.major < latest.major
@@ -236,6 +239,8 @@ class Onceover
             return_hash[:current_version] = "N/A"
             return_hash[:latest_version]  = "N/A"
             return_hash[:out_of_date]     = "N/A"
+            return_hash[:endorsement]     = "N/A"
+            return_hash[:superseded_by]   = "N/A"
           end
           output_array << return_hash
         end
@@ -247,7 +252,9 @@ class Onceover
         {:full_name       => {:display_name => "Full Name"}},
         {:current_version => {:display_name => "Current Version"}},
         {:latest_version  => {:display_name => "Latest Version"}},
-        {:out_of_date     => {:display_name => "Out of Date?"}}
+        {:out_of_date     => {:display_name => "Out of Date?"}},
+        {:endorsement     => {:display_name => "Endorsement"}},
+        {:superseded_by   => {:display_name => "Superseded by"}}
     end
 
     def update_puppetfile
