@@ -92,7 +92,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
 **classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/)). To make life easier you can also specify one or many **regular expressions** in this section. A good one to start with would be `/^role::/`. Regular expressions are just strings that start and end with a forward slash.
 
-**nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on weather we are running spec or acceptance tests respectively.
+**nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on whether we are running spec or acceptance tests respectively.
 
 **node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax. The names used for the actual `class_groups` and `node_groups` must be unique.
 
@@ -226,7 +226,7 @@ It's important to note that in order to reference a group using the *include/exc
 
 **check_idempotency** *Default: true*
 
-Weather or not to check that puppet will be idempotent (Acceptance testing only)
+Whether or not to check that puppet will be idempotent (Acceptance testing only)
 
 **runs_before_idempotency** *Default: 1*
 

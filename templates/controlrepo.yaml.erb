@@ -5,7 +5,7 @@ classes:
 <% end -%>
 
 # Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
-# depending on weather you are running 'spec' or 'acceptance' tests
+# depending on whether you are running 'spec' or 'acceptance' tests
 nodes:
 <% repo.facts_files.each do |file| -%>
   - <%= File.basename(file,'.json') %>

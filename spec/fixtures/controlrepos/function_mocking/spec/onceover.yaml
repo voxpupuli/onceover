@@ -3,7 +3,7 @@ classes:
   - role::test_functions
 
 # Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
-# depending on weather you are running 'spec' or 'acceptance' tests
+# depending on whether you are running 'spec' or 'acceptance' tests
 nodes:
   - CentOS-7.0-64
 
