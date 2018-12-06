@@ -26,6 +26,7 @@ class Onceover
     attr_accessor :before_conditions
     attr_accessor :after_conditions
     attr_accessor :skip_r10k
+    attr_accessor :additional_excluded_dirs
     attr_accessor :force
     attr_accessor :strict_variables
 
@@ -64,6 +65,7 @@ class Onceover
       # Initialise all of the groups
       config['node_groups'].each { |name, members| @node_groups << Onceover::Group.new(name, members) } unless config['node_groups'] == nil
       config['class_groups'].each { |name, members| @class_groups << Onceover::Group.new(name, members) } unless config['class_groups'] == nil
+      @additional_excluded_dirs = config['excluded_dirs'] || []
 
       @filter_tags    = opts[:tags]      ? [opts[:tags].split(',')].flatten : nil
       @filter_classes = opts[:classes]   ? [opts[:classes].split(',')].flatten.map {|x| Onceover::Class.find(x)} : nil
@@ -191,7 +193,7 @@ class Onceover
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_dirs = []
+      excluded_dirs = @additional_excluded_dirs.map { |excluded_dir| Pathname.new("#{repo.root}/#{excluded_dir}") }
       excluded_dirs << Pathname.new("#{repo.root}/.onceover")
       excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
 
