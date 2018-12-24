@@ -3,6 +3,7 @@ classes:
   - role::database_server
   - role::webserver
   - role::example
+  - /apache::params/
 
 # Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
 # depending on whether you are running 'spec' or 'acceptance' tests

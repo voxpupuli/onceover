@@ -51,9 +51,13 @@ Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.output.match err_msg_regexp).to_not be nil
 end
 
-Then(/^I should see message pattern "([^"]*)"$/) do |err_msg_regexp|
-  expect(@cmd.success?).to be true
-  puts @cmd.output unless @cmd.output =~ Regexp.new(err_msg_regexp)
-  expect(@cmd.output).to match(err_msg_regexp)
-  puts @cmd.output.match(err_msg_regexp).to_s
+Then(/^I should see message pattern "([^"]*)"$/) do |msg_regexp|
+  output_surround = 30
+  match = Regexp.new(msg_regexp).match(@cmd.output)
+  expect(@cmd.output).to match(msg_regexp)
+  if match
+    puts match.pre_match[-output_surround..-1] + match.to_s + match.post_match[0..output_surround]
+  else
+    puts @cmd.output
+  end
 end
