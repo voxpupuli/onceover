@@ -9,12 +9,6 @@ script: bundle exec rake full_tests
 bundler_args: --path vendor/bundle
 
 rvm:
-  - 2.1.6
-  - 2.1.7
-  - 2.1.8
-  - 2.1.9
-  - 2.2.7
-  - 2.3.4
-  - 2.4.0
-  - 2.4.1
-  - 2.4.2
+  - 2.3.8
+  - 2.4.4
+  - 2.5.3
