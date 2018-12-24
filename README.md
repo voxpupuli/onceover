@@ -2,7 +2,7 @@
 
 *The gateway drug to automated infrastructure testing with Puppet*
 
-Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing the `Puppetfile`, `environment.conf` and others in order to run both basic compilation tests and also full acceptance tests!
+Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to run stop silly mistakes ever reaching your Puppet Master!
 
 ## Table of Contents
 
@@ -12,11 +12,9 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
   - [Config files](#config-files)
     - [onceover.yaml](#onceoveryaml)
     - [factsets](#factsets)
-    - [nodesets](#nodesets)
     - [Hiera Data](#hiera-data)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
-  - [Acceptance testing](#acceptance-testing)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
     - [Plugins](#plugins)
@@ -66,7 +64,7 @@ Run your spec tests!
 
 ## Overview
 
-This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running both spec and acceptance tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
+This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running rspec-puppet tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
 
 This toolset requires some config before it can be used so definitely read that section before getting started.
 
@@ -82,17 +80,15 @@ This project uses one main config file to determine what classes we should be te
 
 If we are doing spec testing we need sets of facts to compile the puppet code against, these are stored in [factsets](#factsets). (A few are provided out of the box for you)
 
-If we are doing acceptance testing then we need information about how to spin up VMs to do the testing on, these are configured in [nodesets](#nodesets). (Once again these are auto-generated with `onceover init`)
-
 ### onceover.yaml
 
 `spec/onceover.yaml` _(override with environment variable: `ONCEOVER_YAML`)_
 
-Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets)/[nodesets](#nodesets) that we want to test them against. The config file must contain the following sections:
+Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets) that we want to test them against. The config file must contain the following sections:
 
 **classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/)). To make life easier you can also specify one or many **regular expressions** in this section. A good one to start with would be `/^role::/`. Regular expressions are just strings that start and end with a forward slash.
 
-**nodes:** The nodes that we want to test against. The nodes that we list here map directly to either a [factset](#factsets) or a [nodeset](#nodesets) depending on whether we are running spec or acceptance tests respectively.
+**nodes:** The nodes that we want to test against. The nodes that we list here map directly to a [factset](#factsets).
 
 **node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax. The names used for the actual `class_groups` and `node_groups` must be unique.
 
@@ -103,7 +99,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 ```yaml
   - {nodes_to_test}: # The name of a node or node group
       classes: '{classes_to_test}' # the name of a class or
-      tests: '{all_tests|acceptance|spec}' # One of the three
+      tests: '{all_tests|acceptance|spec}' # acceptance deprecated/broken, set to spec
       {valid_option}: {value} # Check the doco for available options
 ```
 
@@ -190,10 +186,10 @@ test_matrix:
       classes: 'non_windows_roles'
   - ubuntu_servers:
       classes: 'all_classes'
-      tests: 'all_tests'
+      tests: 'spec'
   - centos_severs:
       classes: 'roles::frontend_webserver'
-      tests: 'acceptance'
+      tests: 'spec'
       runs_before_idempotency: 2
       tags:
         - 'frontend'
@@ -224,14 +220,6 @@ It's important to note that in order to reference a group using the *include/exc
 
 #### Optional test parameters
 
-**check_idempotency** *Default: true*
-
-Whether or not to check that puppet will be idempotent (Acceptance testing only)
-
-**runs_before_idempotency** *Default: 1*
-
-The number of runs to try before checking that it is idempotent. Required for some things that require restarts of the server or restarts of puppet. (Acceptance testing only)
-
 **tags** *Default: nil*
 
 One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter. **NOTE:** Custom spec tests will always be run as they are not subject to tags
@@ -258,7 +246,7 @@ Would map to a node named `server2008r2` in `onceover.yaml`
 
 #### Trusted Facts
 
-You can add trusted facts to the nodesets by creating a new section called trusted:
+You can add trusted facts to the factsets by creating a new section called trusted:
 
 ```
 {
@@ -275,69 +263,6 @@ You can add trusted facts to the nodesets by creating a new section called trust
 ```
 
 Notice that the `extensions` part is implied. The first fact in that example translates to `$trusted['extensions']['pp_role']` in Puppet code.
-
-### nodesets
-
-`spec/acceptance/nodesets/onceover-nodes.yml`
-
-Nodesets are used when running acceptance tests. They instruct the onceover gem how to spin up virtual machines to run the code on. Actually, that's a lie... What's really happening with nodesets is that we are using [Beaker](https://github.com/puppetlabs/beaker) to spin up the machines and then a combination of Beaker and RSpec to test them. But you don't need to worry about that too much. Due to the fact that we are using beaker to do the heavy lifting here the nodeset files follow the same format they would for normal Beaker tests, which at the time of writing supports the following hypervisors:
-
-  - [VMWare Fusion](https://github.com/puppetlabs/beaker/blob/master/docs/VMWare-Fusion-Support.md)
-  - [Amazon EC2](https://github.com/puppetlabs/beaker/blob/master/docs/EC2-Support.md)
-  - [vSphere](https://github.com/puppetlabs/beaker/blob/master/docs/vSphere-Support.md)
-  - [Vagrant](https://github.com/puppetlabs/beaker/blob/master/docs/Vagrant-Support.md)
-  - [Google Compute Engine](https://github.com/puppetlabs/beaker/blob/master/docs/Google-Compute-Engine-Support.md)
-  - [Docker](https://github.com/puppetlabs/beaker/blob/master/docs/Docker-Support.md)
-  - [Openstack](https://github.com/puppetlabs/beaker/blob/master/docs/Openstack-Support.md)
-  - [Solaris](https://github.com/puppetlabs/beaker/blob/master/docs/Solaris-Support.md)
-
-Before we configure a hypervisor to spin up a node however, we have to make sure that it can clone from a machine which is ready. The onceover gem **requires it's VMs to have puppet pre-installed.** It doesn't matter what version of puppet, as long as it is on the PATH and the `type` setting is configured correctly i.e.
-
-```yaml
-type: AIO # For machines that have the all-in-one agent installed (>=4.0 or >=2015.2)
-# OR
-type: pe # For puppet enterprise agents <2015.2
-# OR
-type: foss # For open source puppet <4.0
-```
-
-Here is an example of a nodeset file that you can use yourselves. It uses freely available Vagrant boxes from Puppet and Virtualbox as the Vagrant provider. (`onceover init` will generate most of this for you)
-
-```yaml
-HOSTS:
-  centos6a:
-    roles:
-      - agent
-    type: aio
-    platform: el-6-64
-    box: puppetlabs/centos-6.6-64-puppet
-    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-puppet
-    hypervisor: vagrant_virtualbox
-  centos7b:
-    roles:
-      - agent
-    type: aio
-    platform: el-7-64
-    box: puppetlabs/centos-7.0-64-puppet
-    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-puppet
-    hypervisor: vagrant_virtualbox
-  ubuntu1204:
-    roles:
-      - agent
-    type: aio
-    platform: ubuntu-12.04-32
-    box: puppetlabs/ubuntu-12.04-32-puppet
-    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/ubuntu-12.04-32-puppet
-    hypervisor: vagrant_virtualbox
-  debian78:
-    roles:
-      - agent
-    type: aio
-    platform: debian-7.8-64
-    box: puppetlabs/debian-7.8-64-puppet
-    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/debian-7.8-64-puppet
-    hypervisor: vagrant_virtualbox
-```
 
 ### Hiera Data
 
@@ -405,26 +330,6 @@ If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environ
 
 `SHOW_PUPPET_OUTPUT=true onceover run spec`
 
-## Acceptance testing
-
-Acceptance testing works in much the same way as spec testing except that it requires a nodeset file along with `onceover.yaml`
-
-To run the tests:
-
-`onceover run acceptance`
-
-This will do the following things:
-
-  1. Create a temporary directory under `.onceover`
-  2. Clone all repos in the Puppetfile into the temporary directory
-  3. Generate tests that use RSpec and Beaker
-  4. Run the tests, each test consists of:
-    - Spin up the VM
-    - Copy over the code
-    - Run puppet and catch any errors
-    - Run puppet again to catch anything that might not be idempotent
-    - Destroy the VM
-
 ## Using workarounds
 
 There may be situations where you cannot test everything that is in your puppet code, some common reasons for this include:
@@ -480,28 +385,8 @@ or
   }
 ```
 
-However this is going to pose an issue when we get to acceptance testing. Due to the fact that acceptance tests actually run the code, not just tries to compile a catalog, it will not be able to find the 'pe-pupetserver' service and will fail. One way to get around this is to use some of the optional parameters to the service resource e.g.
-
-```puppet
-# We are not going to actually have this service anywhere on our servers but
-# our code needs to refresh it. This is to trick puppet into doing nothing
-service { 'pe-puppetserver':
-  ensure     => 'running',
-  enable     => false,
-  hasrestart => false, # Force Puppet to use start and stop to restart
-  start      => 'echo "Start"', # This will always exit 0
-  stop       => 'echo "Stop"', # This will also always exit 0
-  hasstatus  => false, # Force puppet to use our command for status
-  status     => 'echo "Status"', # This will always exit 0 and therefore Puppet will think the service is running
-  provider   => 'base',
-}
-```
-
-Here we are specifying custom commands to run for starting, stopping and checking the status of a service. We know what the exit codes of these commands are going to be so we know what puppet will think the service is doing because we have [read the documentation](https://docs.puppetlabs.com/references/latest/type.html#service-attributes). If there are things other than services you need to check then I would recommend checking the documentation to see if you can mock things like we have here. Alternatively you might need to create specific VM images that are pre-prepared.
 
 [Resource collectors](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources_advanced.html#amending-attributes-with-a-collector) are likely to come in handy here too. They allow you to override values of resources that match given criteria. This way we can override things for the sake of testing without having to change the code.
-
-**NOTE:** If you need to run some pre_conditions during acceptance tests but not spec tests or vice versa you can check the status of the `$controlrepo_accpetance` variable. It will be `true` when run as an acceptance test and `undef` otherwise. If you want to limit pre_conditions to only certain nodes just use conditional logic based on facts like you normally would.
 
 **NOTE:** If you want to access the class or factset that onceover is running against just use the `$onceover_class` and `$onceover_node` variables respectively.
 
