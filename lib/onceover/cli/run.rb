@@ -4,6 +4,7 @@ require 'onceover/cli'
 require 'onceover/runner'
 require 'onceover/testconfig'
 require 'onceover/logger'
+require 'onceover/deploy'
 
 class Onceover
   class CLI
@@ -43,7 +44,9 @@ This includes deploying using r10k and running all custom tests.
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :spec)
+              config = Onceover::TestConfig.new(repo.onceover_yaml, opts)
+              Onceover::Deploy.new.deploy_local(repo, config, opts)
+              runner = Onceover::Runner.new(repo, config, :spec)
               runner.prepare!
               runner.run_spec!
             end

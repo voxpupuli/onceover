@@ -156,10 +156,16 @@ class Onceover
     end
 
     def classes
+      logger.debug('scanning for classes specified in onceover.yaml')
+
       # Get all of the possible places for puppet code and look for classes
       code_dirs = self.config['modulepath']
       # Remove interpolated references
       code_dirs.delete_if { |dir| dir[0] == '$'}
+
+      # Include all r10k-downloaded modules to support vendored and/or separate
+      # role and profile classes
+      code_dirs << "#{@tempdir}/#{@environmentpath}/production/modules"
 
       # Make sure that the paths are relative to the controlrepo root
       code_dirs.map! do |dir|

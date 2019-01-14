@@ -11,9 +11,6 @@ class Onceover
     end
 
     def prepare!
-      # Deploy the control repo
-      @config.deploy_local(@repo, {:skip_r10k => @config.skip_r10k})
-
       # Remove the entire spec directory to make sure we have
       # all the latest tests
       FileUtils.rm_rf("#{@repo.tempdir}/spec")

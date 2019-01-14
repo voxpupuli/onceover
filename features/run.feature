@@ -12,6 +12,11 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec"
     Then I should not see any errors
 
+  Scenario: Using regexes to define tests
+    Given initialized control repo "caching"
+    When I run onceover command "run spec"
+    Then I should see message pattern "apache::params"
+
   Scenario: Run spec tests with misspelled module in Puppetfile
     Given initialized control repo "basic"
     And in Puppetfile is misspelled module's name
