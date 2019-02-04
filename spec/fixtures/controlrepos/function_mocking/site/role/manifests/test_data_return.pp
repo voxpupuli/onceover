@@ -1,6 +1,6 @@
 # == Class: role::test_functions
 #
-class role::test_functions {
+class role::test_data_return {
   unless string('foo') =~ String {
     fail('string() did not return a string')
   }

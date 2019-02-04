@@ -37,11 +37,6 @@ Feature: Run rspec and acceptance test suites
     And I run onceover command "run spec --force"
     Then I should see message pattern "Overwriting local modifications"
 
-  Scenario: Run advanced spec tests
-    Given control repo "puppet_controlrepo"
-    When I run onceover command "run spec"
-    Then I should not see any errors
-
   Scenario: Check that control_branch functionality works
     Given initialized control repo "control_branch"
     When I run onceover command "run spec"
@@ -49,5 +44,16 @@ Feature: Run rspec and acceptance test suites
 
   Scenario: Mocking functions should work and return the correct data types
     Given control repo "function_mocking"
+    When I run onceover command "run spec" with class "role::test_data_return"
+    Then I should not see any errors
+
+  Scenario: Mocking tunctions that use the new :: pathing
+    Given control repo "function_mocking"
+    When I run onceover command "run spec" with class "role::test_new_functions"
+    Then I should not see any errors
+
+  # This test is a full test using my controlrepo. It should remain at the end because it takes ages
+  Scenario: Run advanced spec tests
+    Given control repo "puppet_controlrepo"
     When I run onceover command "run spec"
     Then I should not see any errors
