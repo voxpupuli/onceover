@@ -1,5 +1,21 @@
-require 'puppetlabs_spec_helper/module_spec_helper'
+# Yes this is a strage order of requring things. It's also strange that we have
+# to call `RSpec.configure` more than once. The reason we are doing this is to
+# silence the incredibly annoying warning:
+#
+# puppetlabs_spec_helper: defaults `mock_with` to `:mocha`
+#
+# In order to do this we have to require rspec-puppet-utils, then configure the
+# mocking, THEN require puppetlabs_spec_helper.
+#
+# Yes, I know. Someone buy me a 🍺 for fixing this.
+#
 require 'rspec-puppet-utils'
+
+RSpec.configure do |c|
+  c.mock_with :mocha
+end
+
+require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec_junit_formatter'
 
 RSpec.configure do |c|
