@@ -8,7 +8,7 @@ describe "<%= cls.name %>" do
 <% if params['type'] == 'statement' -%>
 MockFunction.new('<%= function %>', {:type => :statement})
 <% else -%>
-let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
+let!(<%= function.to_sym.inspect %>) { MockFunction.new('<%= function %>') { |f|
     f.stubbed.returns(<%= params['returns'].inspect %>)
   }
 }
