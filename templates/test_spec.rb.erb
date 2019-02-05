@@ -49,7 +49,14 @@ $onceover_node  = '<%= node.name %>'
 <% require 'json' -%>
 # Mocking functions
 <% @mock_functions.each do |function,params| -%>
-function <%= function %> (*$args) { from_json('<%= params['returns'].to_json %>') }
+<% if params['returns'].is_a? String -%>
+<% require 'pry' -%>
+<% binding.pry -%>
+<%   json = params['returns'].dump[1..-2].to_json -%>
+<% else -%>
+<%   json = params['returns'].to_json -%>
+<% end -%>
+function <%= function %> (*$args) { from_json('<%= json %>') }
 <% end -%>
 <% end -%>
 

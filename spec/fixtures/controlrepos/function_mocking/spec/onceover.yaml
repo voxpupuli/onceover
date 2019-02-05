@@ -23,30 +23,28 @@ test_matrix:
 
 functions:
   return_string:
-    type: rvalue
     returns: string
   return_number:
-    type: rvalue
     returns: 400
   return_boolean:
-    type: rvalue
     returns: true
   return_array:
-    type: rvalue
     returns:
       - 1
       - 2
       - 3
   return_hash:
-    type: rvalue
     returns:
       foo: bar
   profile::fail_puppet:
-    type: rvalue
-    returns: null
+    returns:
+      hash: cool
+      yeah:
+        - arrays
+        - are
+        - great
   profile::fail_ruby:
-    type: rvalue
-    returns: null
+    returns: "\r\n\t C:\\windows"
 
 opts:
   :debug: true
