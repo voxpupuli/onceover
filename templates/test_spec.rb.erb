@@ -3,19 +3,6 @@ require 'spec_helper'
 <% test.classes.each do |cls| -%>
 describe "<%= cls.name %>" do
 
-<% if @mock_functions -%>
-<% @mock_functions.each do |function,params| -%>
-<% if params['type'] == 'statement' -%>
-MockFunction.new('<%= function %>', {:type => :statement})
-<% else -%>
-let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
-    f.stubbed.returns(<%= params['returns'].inspect %>)
-  }
-}
-<% end -%>
-
-<% end -%>
-<% end -%>
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
     node_facts = <%= node.fact_set %>
@@ -31,6 +18,17 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% end -%>
     end
 <% end -%>
+
+<% if @mock_functions -%>
+    # Create a from_json function so that we can parse the output of json for mocked functions
+    before :each do
+      Puppet::Parser::Functions.newfunction(:from_json, :type => :rvalue) { |args|
+          require 'json'
+          JSON.parse(args[0])
+        }
+    end
+<% end -%>
+
 <% if @after_conditions -%>
     after :each do
 <% @after_conditions.each do |function| -%>
@@ -38,15 +36,26 @@ let!(:<%= function %>) { MockFunction.new('<%= function %>') { |f|
 <% end -%>
     end
 <% end -%>
-<% if pre_condition -%>
     let(:pre_condition) {
       pp = <%= '<<' %>-END
 $onceover_class = '<%= cls.name %>'
-$onceover_node = '<%= node.name %>'
-<%= pre_condition.chomp %>
+$onceover_node  = '<%= node.name %>'
+
+# Begin user-specified pre_condition
+<%= (pre_condition || "").chomp %>
+# End user-specified pre_condition
+
+<% if @mock_functions -%>
+<% require 'json' -%>
+# Mocking functions
+<% @mock_functions.each do |function,params| -%>
+function <%= function %> (*$args) { from_json('<%= params['returns'].to_json %>') }
+<% end -%>
+<% end -%>
+
 END
     }
-<% end -%>
+
     it { should compile }
   end
 <% end -%>

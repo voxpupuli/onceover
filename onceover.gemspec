@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec-puppet', ">= 2.4.0"
   s.add_runtime_dependency 'parallel_tests', ">= 2.0.0"
   s.add_runtime_dependency 'puppetlabs_spec_helper', ">= 0.4.0"
-  s.add_runtime_dependency 'rspec-puppet-utils', '>= 2.0.0'
   s.add_runtime_dependency 'rspec', '>= 3.0.0'
   s.add_runtime_dependency 'r10k', '>=2.1.0'
   s.add_runtime_dependency 'puppet', '>=3.4.0'

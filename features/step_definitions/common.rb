@@ -31,6 +31,12 @@ When(/^I run onceover command "([^"]*)"$/)  do |command|
   @cmd.run
 end
 
+When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/)  do |command, cls|
+  @cmd.command = "#{command} --classes #{cls}"
+  puts @cmd
+  @cmd.run
+end
+
 Then(/^I see help for commands: "([^"]*)"$/) do |commands|
   # Get chunk of output between COMMANDS and OPTION, there should be help section
   commands_help = @cmd.output[/COMMANDS(.*)OPTIONS/m, 1]
