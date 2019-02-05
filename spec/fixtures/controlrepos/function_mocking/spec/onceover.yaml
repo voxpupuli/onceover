@@ -22,22 +22,22 @@ test_matrix:
       tests: 'spec'
 
 functions:
-  string:
+  return_string:
     type: rvalue
     returns: string
-  number:
+  return_number:
     type: rvalue
     returns: 400
-  boolean:
+  return_boolean:
     type: rvalue
     returns: true
-  array:
+  return_array:
     type: rvalue
     returns:
       - 1
       - 2
       - 3
-  hash:
+  return_hash:
     type: rvalue
     returns:
       foo: bar

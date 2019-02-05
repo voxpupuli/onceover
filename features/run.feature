@@ -47,7 +47,7 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec" with class "role::test_data_return"
     Then I should not see any errors
 
-  Scenario: Mocking tunctions that use the new :: pathing
+  Scenario: Mocking functions that use the new :: pathing
     Given control repo "function_mocking"
     When I run onceover command "run spec" with class "role::test_new_functions"
     Then I should not see any errors
