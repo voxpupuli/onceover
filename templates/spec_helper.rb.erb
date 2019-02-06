@@ -15,12 +15,35 @@ end
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec_junit_formatter'
 
+class FailureCollector
+  RSpec::Core::Formatters.register self, :dump_failures
+
+  def initialize(output)
+    @output = output
+    puts "Initializing FailureCollector"
+    FileUtils.touch(File.expand_path('<%= repo.tempdir %>/failures.out'))
+  end
+
+  def dump_failures(failures)
+    open(File.expand_path('<%= repo.tempdir %>/failures.out'), 'a') { |f|
+      failures.failed_examples.each do |fe|
+        f.puts
+        f.puts "#{fe.metadata[:description]}"
+        f.puts "#{fe.metadata[:execution_result].exception.to_s}"
+        f.puts "#{fe.metadata[:file_path]}:#{fe.metadata[:line_number]}"
+        f.puts "------------------------------------------------------"
+      end
+    }
+  end
+end
+
 RSpec.configure do |c|
   # Also add JUnit output in case people want to use that
   c.add_formatter('RSpecJUnitFormatter','<%= repo.tempdir %>/spec.xml')
 
   c.parser                = 'future'
   c.formatter             = 'documentation'
+  c.formatter             = FailureCollector
   c.trusted_server_facts  = true
   c.environmentpath       = '<%= environmentpath %>'
   c.module_path           = '<%= modulepath %>'

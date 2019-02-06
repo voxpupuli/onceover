@@ -1,3 +1,5 @@
+require 'backticks'
+
 class Onceover
   class Runner
     attr_reader :repo
@@ -14,6 +16,9 @@ class Onceover
       # Remove the entire spec directory to make sure we have
       # all the latest tests
       FileUtils.rm_rf("#{@repo.tempdir}/spec")
+
+      # Remove any previous failure log
+      FileUtils.rm_f("#{@repo.tempdir}/failures.out")
 
       # Create the other directories we need
       FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
@@ -74,10 +79,17 @@ class Onceover
         #`bin/rake spec_standalone`
         if @config.opts[:parallel]
           logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
-          exec("#{@command_prefix}rake parallel_spec")
+          Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'parallel_spec').join
         else
           logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-          exec("#{@command_prefix}rake spec_standalone")
+          Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
+        end
+        puts '----------- Summary of failures -----------'
+        if File.exist?("#{@repo.tempdir}/failures.out") and ! File.zero?("#{@repo.tempdir}/failures.out")
+          logger.debug "Reading failures from #{@repo.tempdir}/failures.out"
+          puts File.read("#{@repo.tempdir}/failures.out")
+        else
+          puts 'No failures detected'
         end
       end
     end
@@ -89,7 +101,7 @@ class Onceover
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
         logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
-        exec("#{@command_prefix}rake acceptance")
+        Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'acceptance').join
       end
     end
   end
