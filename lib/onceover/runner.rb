@@ -84,12 +84,15 @@ class Onceover
           logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
           Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
         end
-        puts '----------- Summary of failures -----------'
-        if File.exist?("#{@repo.tempdir}/failures.out") and ! File.zero?("#{@repo.tempdir}/failures.out")
-          logger.debug "Reading failures from #{@repo.tempdir}/failures.out"
-          puts File.read("#{@repo.tempdir}/failures.out")
-        else
-          puts 'No failures detected'
+        # TODO: Refactor this to be much nicer
+        if @config.formatters.include? 'FailureCollector'
+          puts '----------- Summary of failures -----------'
+          if File.exist?("#{@repo.tempdir}/failures.out") and ! File.zero?("#{@repo.tempdir}/failures.out")
+            logger.debug "Reading failures from #{@repo.tempdir}/failures.out"
+            puts File.read("#{@repo.tempdir}/failures.out")
+          else
+            puts 'No failures detected'
+          end
         end
       end
     end

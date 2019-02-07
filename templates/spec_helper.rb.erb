@@ -42,8 +42,9 @@ RSpec.configure do |c|
   c.add_formatter('RSpecJUnitFormatter','<%= repo.tempdir %>/spec.xml')
 
   c.parser                = 'future'
-  c.formatter             = 'documentation'
-  c.formatter             = FailureCollector
+<% @formatters.each do |fm| -%>
+  c.formatter             = '<%= fm %>'
+<% end -%>
   c.trusted_server_facts  = true
   c.environmentpath       = '<%= environmentpath %>'
   c.module_path           = '<%= modulepath %>'
