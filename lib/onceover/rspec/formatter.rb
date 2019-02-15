@@ -18,7 +18,7 @@ class OnceoverFormatter
         @output << class_name("#{notification.group.description}:")
 
         # Calculate the padding required
-        padding = longest_group - role.length
+        padding = (longest_group - role.length) + 1
         # Create padding
         padding.times { @output << ' ' }
 
@@ -27,23 +27,23 @@ class OnceoverFormatter
       end
     else
       # If not then this will be a test for that role
-      @output << '🎁 '
+      @output << '? '
     end
   end
 
   def example_passed notification
-    @output << "\b\b\b"
-    @output << "🍺 "
+    @output << "\b\b"
+    @output << "#{green('P')} "
   end
 
   def example_failed notification
-    @output << "\b\b\b"
-    @output << "💩 "
+    @output << "\b\b"
+    @output << "#{red('F')} "
   end
 
   def example_pending notification
-    @output << "\b\b\b"
-    @output << "🤷 "
+    @output << "\b\b"
+    @output << "#{yellow('?')} "
   end
 
   def dump_failures notification
@@ -77,6 +77,10 @@ class OnceoverFormatter
 
   def red(text)
     RSpec::Core::Formatters::ConsoleCodes.wrap(text, :red)
+  end
+
+  def yellow(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :yellow)
   end
 
   def longest_group
