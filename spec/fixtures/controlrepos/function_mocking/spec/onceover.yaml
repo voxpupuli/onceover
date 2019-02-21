@@ -1,6 +1,6 @@
 # Classes to be tested
 classes:
-  - role::test_functions
+  - /role::/
 
 # Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
 # depending on whether you are running 'spec' or 'acceptance' tests
@@ -22,25 +22,29 @@ test_matrix:
       tests: 'spec'
 
 functions:
-  string:
-    type: rvalue
+  return_string:
     returns: string
-  number:
-    type: rvalue
+  return_number:
     returns: 400
-  boolean:
-    type: rvalue
+  return_boolean:
     returns: true
-  array:
-    type: rvalue
+  return_array:
     returns:
       - 1
       - 2
       - 3
-  hash:
-    type: rvalue
+  return_hash:
     returns:
       foo: bar
+  profile::fail_puppet:
+    returns:
+      hash: cool
+      yeah:
+        - arrays
+        - are
+        - great
+  profile::fail_ruby:
+    returns: "\r\n\t C:\\windows"
 
 opts:
   :debug: true

@@ -1,19 +1,19 @@
 # == Class: role::test_functions
 #
-class role::test_functions {
-  unless string('foo') =~ String {
+class role::test_data_return {
+  unless return_string() =~ String {
     fail('string() did not return a string')
   }
-  unless number('foo') =~ Numeric {
+  unless return_number('foo','bar') =~ Numeric {
     fail('string() did not return a string')
   }
-  unless boolean('foo') =~ Boolean {
+  unless return_boolean('foo') =~ Boolean {
     fail('string() did not return a string')
   }
-  unless array('foo') =~ Array {
+  unless return_array('foo') =~ Array {
     fail('string() did not return a string')
   }
-  unless hash('foo') =~ Hash {
+  unless return_hash('foo') =~ Hash {
     fail('string() did not return a string')
   }
 }

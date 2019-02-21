@@ -73,6 +73,11 @@ class Onceover
       @skip_r10k      = opts[:skip_r10k] ? true : false
       @force          = opts[:force] || false
 
+      # Validate the mock_functions
+      if @mock_functions && @mock_functions.any? { |name, details| details.has_key? 'type' }
+        logger.warn "The 'type' key for mocked functions is deprecated and will be ignored, please remove it."
+      end
+
       # Loop over all of the items in the test matrix and add those as test
       # objects to the list of tests
       config['test_matrix'].each do |test_hash|

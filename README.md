@@ -108,7 +108,6 @@ Why an array of hashes? Well, that is so that we can refer to the same node or n
 In the example below we have referred to `centos6a` and `centos7b` in all of our tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have *left the more specific references to last*. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two Centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
 
 **functions:** In this section we can add functions that we want to mock when running spec tests. Each function takes the following arguments:
-  - **type** *statement or rvalue*
   - **returns** *Optional: A value to return*
 
 **before and after conditions:** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
@@ -204,8 +203,9 @@ test_matrix:
 
 functions:
   query_resources:
-    type: rvalue
     returns: []
+  profile::custom_function:
+    returns: ["one", "two"]
 
 opts:
   :facts_dirs:
