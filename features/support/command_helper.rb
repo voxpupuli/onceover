@@ -18,6 +18,10 @@ class Command_Helper
     return @result.success?
   end
 
+  def exit_code
+    @result.exitstatus
+  end
+
   def generate_command
     controlrepo_param = @controlrepo ? "--path #{File.expand_path(@controlrepo.root_folder)}" : ''
     return "#{@executable} #{@command} #{controlrepo_param}"

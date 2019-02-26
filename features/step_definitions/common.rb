@@ -51,6 +51,10 @@ Then(/^I should not see any errors$/) do
   expect(@cmd.success?).to be true
 end
 
+Then(/^Onceover should exit (\d+)$/) do |code|
+  expect(@cmd.exit_code).to eq code.to_i
+end
+
 Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be false
   puts @cmd.output
