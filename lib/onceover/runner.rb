@@ -79,10 +79,10 @@ class Onceover
         #`bin/rake spec_standalone`
         if @config.opts[:parallel]
           logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
-          Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'parallel_spec').join
+          result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'parallel_spec').join
         else
           logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-          Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
+          result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
         end
         # TODO: Refactor this to be much nicer
         if @config.formatters.include? 'FailureCollector'
@@ -94,6 +94,9 @@ class Onceover
             puts 'No failures detected'
           end
         end
+
+        # Finally exit and preserve the exit code
+        exit result.status.exitstatus
       end
     end
 
@@ -104,8 +107,11 @@ class Onceover
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
         logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
-        Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'acceptance').join
+        result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'acceptance').join
       end
+
+      # Finally exit and preserve the exit code
+      exit result.status.exitstatus
     end
   end
 end
