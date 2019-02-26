@@ -58,6 +58,8 @@ Then(/^I see help for commands: "([^"]*)"$/) do |commands|
 end
 
 Then(/^I should not see any errors$/) do
+  require 'pry'
+  binding.pry
   puts @cmd.output unless @cmd.success?
   expect(@cmd.success?).to be true
 end
