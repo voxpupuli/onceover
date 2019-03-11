@@ -1,0 +1,12 @@
+<%= bold(role[:name]) %>: <%= red('failed') %>
+  errors:
+<% role[:errors].each do |error| -%>
+    <%= red(error[:text]) %>
+      file: <%= bold(error[:file]) %>
+<% if error[:line] -%>
+      line: <%= bold(error[:line]) %>
+<% end -%>
+<% if error[:column] -%>
+      column: <%= bold(error[:column]) %>
+<% end -%>
+<% end -%>

@@ -1,4 +1,4 @@
-require 'pry'
+require 'pathname'
 
 class OnceoverFormatter
   RSpec::Core::Formatters.register self, :example_group_started,
@@ -50,6 +50,8 @@ class OnceoverFormatter
   end
 
   def dump_failures notification
+    require 'onceover/controlrepo'
+
     # Group by role
     grouped = notification.failed_examples.group_by { |e| e.metadata[:example_group][:parent_example_group][:description]}
 
@@ -58,12 +60,16 @@ class OnceoverFormatter
       grouped[role] = failures.uniq { |f| f.metadata[:execution_result].exception.to_s }
     end
 
+    # Put some spacing before the results
+    @output << "\n\n\n"
+
     grouped.each do |role, failures|
-      @output << "\n\n\n"
-      @output << "#{role}: #{red('failed')}\n"
-      @output << "  errors:\n"
-      failures.each { |f| @output << "    #{red(f.metadata[:execution_result].exception.to_s)}\n"}
-      @output << "\n"
+      role = {
+        name: role,
+        errors: failures.map { |f| parse_errors(f.metadata[:execution_result].exception.to_s)}.flatten,
+      }
+
+      @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
   end
 
@@ -75,15 +81,46 @@ class OnceoverFormatter
       # Check if we car parse it
       if COMPILATION_ERROR_FORMAT.match?(compilation_error)
         scanned_errors = match.named_captures['error'].scan(COMPILATION_ERROR_FORMAT)
-        require 'pry'
-        binding.pry
+
+        # Delete any matches where there was no error text
+        scanned_errors.delete_if { |e| e.first.empty? }
+
+        scanned_errors.map do |error_matches|
+          {
+            text:   error_matches[0],
+            file:   calculate_relative_source(error_matches[1]),
+            line:   error_matches[2],
+            column: error_matches[3],
+          }
+        end
       else
         nil
       end
     else
-      # If the error cannot be parse return nil
+      # If the error cannot be parsed return nil
       nil
     end
+  end
+
+  # This method calculates where the original source file is relative to the
+  # user's current location. This is more compliacted than it sounds because
+  # if we are running from the root of the controlrepo and we have an error in:
+  #
+  # /Users/dylan/git/puppet_controlrepo/.onceover/etc/puppetlabs/code/environments/production/site/role/manifests/lb.pp
+  #
+  # We need that to end up pointing at the original source file not the cached
+  # one i.e.
+  #
+  # site/role/manifests/lb.pp
+  #
+  def calculate_relative_source(file)
+    file            = Pathname.new(file)
+    tempdir         = Pathname.new(RSpec.configuration.onceover_tempdir)
+    root            = Pathname.new(RSpec.configuration.onceover_root)
+    environmentpath = Pathname.new(RSpec.configuration.onceover_environmentpath)
+
+    # Calculate the full relative path
+    file.relative_path_from(tempdir + environmentpath + "production").to_s
   end
 
   private
@@ -93,16 +130,40 @@ class OnceoverFormatter
     RSpec::Core::Formatters::ConsoleCodes.wrap(text, :bold)
   end
 
+  def black(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :black)
+  end
+
   def red(text)
     RSpec::Core::Formatters::ConsoleCodes.wrap(text, :red)
+  end
+
+  def green(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :green)
   end
 
   def yellow(text)
     RSpec::Core::Formatters::ConsoleCodes.wrap(text, :yellow)
   end
 
-  def green(text)
-    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :green)
+  def blue(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :blue)
+  end
+
+  def magenta(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :magenta)
+  end
+
+  def cyan(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :cyan)
+  end
+
+  def white(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :white)
+  end
+
+  def bold(text)
+    RSpec::Core::Formatters::ConsoleCodes.wrap(text, :bold)
   end
 
   def longest_group
