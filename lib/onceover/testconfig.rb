@@ -53,7 +53,7 @@ class Onceover
       
       # Set dynamic defaults for format
       if opts[:format] == [:defaults]
-        @formatters = opts[:parallel] ? ['documentation', 'FailureCollector'] : ['documentation']
+        @formatters = opts[:parallel] ? ['documentation', 'FailureCollector'] : ['OnceoverFormatter']
       else
         @formatters = opts[:format]
       end
