@@ -189,34 +189,48 @@ class OnceoverFormatter
 
 end
 
-# class OnceoverFormatterParallel < OnceoverFormatter
-#   require 'yaml'
+class OnceoverFormatterParallel < OnceoverFormatter
+  require 'yaml'
 
-#   def example_group_started notification
-#     # Do nothing
-#   end
+  def example_group_started notification
+    # Do nothing
+  end
 
-#   def example_passed notification
-#     @output << green('P')
-#   end
+  def example_passed notification
+    @output << green('P')
+  end
 
-#   def example_failed notification
-#     @output << red('F')
-#   end
+  def example_failed notification
+    @output << red('F')
+  end
 
-#   def example_pending notification
-#     @output << yellow('?')
-#   end
+  def example_pending notification
+    @output << yellow('?')
+  end
 
-#   def dump_failures
-#     # TODO: This should write to a file and then get picked up and formatted by onceover itself
-#     # might need to use a module for the formatting
-#     require 'pry'
-#     binding.pry
-#     RSpec.configuration.onceover_tempdir
-#   end
+  def dump_failures
+    # Create a random string
+    require 'securerandom'
+    random_string = SecureRandom.hex
 
-# end
+    # Ensure that the folder exists
+    FileUtils.mkdir_p "#{RSpec.configuration.onceover_tempdir}/parallel"
+
+    # Dump the notification to a unique file
+    File.open("#{RSpec.configuration.onceover_tempdir}/parallel/results-#{random_string}", "w") do |file|
+      file.write(pets.to_yaml)
+    end
+  end
+
+  def self.read_results(directory)
+    # Read all yaml files
+    require 'pry'
+    binding.pry
+    # Delete them from the disk
+
+    # Merge data
+  end
+end
 
 class FailureCollector
   RSpec::Core::Formatters.register self, :dump_failures

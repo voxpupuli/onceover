@@ -84,15 +84,11 @@ class Onceover
           logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
           result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
         end
-        # TODO: Refactor this to be much nicer
-        if @config.formatters.include? 'FailureCollector'
-          puts '----------- Summary of failures -----------'
-          if File.exist?("#{@repo.tempdir}/failures.out") and ! File.zero?("#{@repo.tempdir}/failures.out")
-            logger.debug "Reading failures from #{@repo.tempdir}/failures.out"
-            puts File.read("#{@repo.tempdir}/failures.out")
-          else
-            puts 'No failures detected'
-          end
+
+        # Print a summary if we were running ion parallel
+        if @config.formatters.include? 'OnceoverFormatterParallel'
+          require 'onceover/rspec/formatters'
+          results = OnceoverFormatterParallel.read_results("#{repo.tempdir}/parallel")
         end
 
         # Finally exit and preserve the exit code
