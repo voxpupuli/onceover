@@ -28,3 +28,9 @@ Feature: Format errors nicely
     Then the error should parse successfully
     And it should find 1 errors
     And the parsed errors should contain the following keys: text
+
+  Scenario: Fail to parse an error and survive anyway
+    When Puppet throws the error: "Derp derp derp. This error is 💩"
+    Then the error should parse successfully
+    And it should find 1 errors
+    And the parsed errors should contain the following keys: text

@@ -2,7 +2,9 @@
   errors:
 <% role[:errors].each do |error| -%>
     <%= red(error[:text]) %>
+<% if error[:file] -%>
       file: <%= bold(error[:file]) %>
+<% end -%>
 <% if error[:line] -%>
       line: <%= bold(error[:line]) %>
 <% end -%>

@@ -106,11 +106,14 @@ class OnceoverFormatter
           }
         end
       else
-        nil
+        [{
+          text: raw_error,
+        }]
       end
     else
-      # If the error cannot be parsed return nil
-      nil
+      [{
+        text: raw_error,
+      }]
     end
   end
 
