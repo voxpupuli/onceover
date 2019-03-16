@@ -4,8 +4,9 @@ class OnceoverFormatter
   RSpec::Core::Formatters.register self, :example_group_started,
     :example_passed, :example_failed, :example_pending, :dump_failures#, :dump_summary
 
-  COMPILATION_ERROR        = %r{error during compilation: (?<error>.*)}
-  COMPILATION_ERROR_FORMAT = %r{(?<error>.*?)\s(at )?(\(file: (?<file>.*?), line: (?<line>\d+)(, column: (?<column>\d+))?\))(; )?}
+  COMPILATION_ERROR      = %r{error during compilation: (?<error>.*)}
+  ERROR_WITH_LOCATION    = %r{(?<error>.*?)\s(at )?(\((file: (?<file>.*?), )?line: (?<line>\d+)(, column: (?<column>\d+))?\))(; )?}
+  ERROR_WITHOUT_LOCATION = %r{(?<error>.*?)\son node}
 
   def initialize output
     @output        = output
@@ -77,10 +78,10 @@ class OnceoverFormatter
     # Check if the error is a compilation error
     match = COMPILATION_ERROR.match(raw_error)
     if match
-      compilation_error = match.named_captures['error']
+      compilation_error = match['error']
       # Check if we car parse it
-      if COMPILATION_ERROR_FORMAT.match?(compilation_error)
-        scanned_errors = match.named_captures['error'].scan(COMPILATION_ERROR_FORMAT)
+      if ERROR_WITH_LOCATION.match(compilation_error)
+        scanned_errors = match['error'].scan(ERROR_WITH_LOCATION)
 
         # Delete any matches where there was no error text
         scanned_errors.delete_if { |e| e.first.empty? }
@@ -91,6 +92,17 @@ class OnceoverFormatter
             file:   calculate_relative_source(error_matches[1]),
             line:   error_matches[2],
             column: error_matches[3],
+          }
+        end
+      elsif ERROR_WITHOUT_LOCATION.match(compilation_error)
+        scanned_errors = match['error'].scan(ERROR_WITHOUT_LOCATION)
+
+        # Delete any matches where there was no error text
+        scanned_errors.delete_if { |e| e.first.empty? }
+
+        scanned_errors.map do |error_matches|
+          {
+            text: error_matches[0],
           }
         end
       else
