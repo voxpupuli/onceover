@@ -126,6 +126,8 @@ class OnceoverFormatter
   # site/role/manifests/lb.pp
   #
   def calculate_relative_source(file)
+    return nil if file.nil?
+
     file            = Pathname.new(file)
     tempdir         = Pathname.new(RSpec.configuration.onceover_tempdir)
     root            = Pathname.new(RSpec.configuration.onceover_root)
