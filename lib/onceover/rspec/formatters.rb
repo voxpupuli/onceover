@@ -213,14 +213,17 @@ class OnceoverFormatterParallel < OnceoverFormatter
 
   def example_passed notification
     @output << green('P')
+    @output.flush
   end
 
   def example_failed notification
     @output << red('F')
+    @output.flush
   end
 
   def example_pending notification
     @output << yellow('?')
+    @output.flush
   end
 
   def dump_failures notification
