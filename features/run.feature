@@ -12,6 +12,11 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec"
     Then I should not see any errors
 
+  Scenario: Run correct spec tests in parallel
+    Given initialized control repo "basic"
+    When I run onceover command "run spec --parallel"
+    Then I should not see any errors
+
   Scenario: Using regexes to define tests
     Given initialized control repo "caching"
     When I run onceover command "run spec"

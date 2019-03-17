@@ -1,3 +1,4 @@
+require 'rspec'
 require 'pathname'
 
 class OnceoverFormatter
@@ -53,6 +54,21 @@ class OnceoverFormatter
   def dump_failures notification
     require 'onceover/controlrepo'
 
+    failures = extract_failures(notification)
+
+    # Put some spacing before the results
+    @output << "\n\n\n"
+
+    failures.each do |_name, role|
+      @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
+    end
+
+    @output << "\n"
+  end
+
+  # This method takes a notification and formats it into a hash that can be
+  # printed easily
+  def extract_failures notification
     # Group by role
     grouped = notification.failed_examples.group_by { |e| e.metadata[:example_group][:parent_example_group][:description]}
 
@@ -61,17 +77,15 @@ class OnceoverFormatter
       grouped[role] = failures.uniq { |f| f.metadata[:execution_result].exception.to_s }
     end
 
-    # Put some spacing before the results
-    @output << "\n\n\n"
-
+    # Extract the errors and remove all RSpec objects
     grouped.each do |role, failures|
-      role = {
+      grouped[role] = {
         name: role,
         errors: failures.map { |f| parse_errors(f.metadata[:execution_result].exception.to_s)}.flatten,
       }
-
-      @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
+
+    grouped
   end
 
   def parse_errors(raw_error)
@@ -140,8 +154,6 @@ class OnceoverFormatter
     file.relative_path_from(tempdir + environmentpath + "production").to_s
   end
 
-  private
-
   # Below are defined the styles for the output
   def class_name(text)
     RSpec::Core::Formatters::ConsoleCodes.wrap(text, :bold)
@@ -189,34 +201,69 @@ class OnceoverFormatter
 
 end
 
-# class OnceoverFormatterParallel < OnceoverFormatter
-#   require 'yaml'
+class OnceoverFormatterParallel < OnceoverFormatter
+  require 'yaml'
 
-#   def example_group_started notification
-#     # Do nothing
-#   end
+  RSpec::Core::Formatters.register self, :example_group_started,
+  :example_passed, :example_failed, :example_pending, :dump_failures
 
-#   def example_passed notification
-#     @output << green('P')
-#   end
+  def example_group_started notification
+    # Do nothing
+  end
 
-#   def example_failed notification
-#     @output << red('F')
-#   end
+  def example_passed notification
+    @output << green('P')
+    @output.flush
+  end
 
-#   def example_pending notification
-#     @output << yellow('?')
-#   end
+  def example_failed notification
+    @output << red('F')
+    @output.flush
+  end
 
-#   def dump_failures
-#     # TODO: This should write to a file and then get picked up and formatted by onceover itself
-#     # might need to use a module for the formatting
-#     require 'pry'
-#     binding.pry
-#     RSpec.configuration.onceover_tempdir
-#   end
+  def example_pending notification
+    @output << yellow('?')
+    @output.flush
+  end
 
-# end
+  def dump_failures notification
+    # Create a random string
+    require 'securerandom'
+    random_string = SecureRandom.hex
+
+    # Ensure that the folder exists
+    FileUtils.mkdir_p "#{RSpec.configuration.onceover_tempdir}/parallel"
+
+    # Dump the notification to a unique file
+    File.open("#{RSpec.configuration.onceover_tempdir}/parallel/results-#{random_string}.yaml", "w") do |file|
+      file.write(extract_failures(notification).to_yaml)
+    end
+  end
+
+  def output_results(directory)
+    require 'rspec/core/example'
+    # Read all yaml files
+    results = {}
+    files   = Dir["#{directory}/*.yaml"]
+
+    # Merge data
+    errors = files.reduce({}) do |errs, file|
+      # Read all files and merge them
+      errs.merge(YAML.load(File.read(file))) # rubocop:disable Security/YAMLLoad
+    end
+  
+    # Delete files from the disk
+    files.each { |f| File.delete(f) }
+
+    @output << "\n\n\n"
+
+    # Output errors
+    errors.each do |_name, role|
+      @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
+    end
+    @output << "\n"
+  end
+end
 
 class FailureCollector
   RSpec::Core::Formatters.register self, :dump_failures
