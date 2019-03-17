@@ -52,6 +52,12 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec" with class "role::test_new_functions"
     Then I should not see any errors
 
+  Scenario: Running tests that fail to compile
+    Given control repo "function_mocking"
+    When I run onceover command "run spec" with class "role::fail"
+    Then I should see message pattern "failed"
+    And Onceover should exit 1
+
   # This test is a full test using my controlrepo. It should remain at the end because it takes ages
   Scenario: Run advanced spec tests
     Given control repo "puppet_controlrepo"

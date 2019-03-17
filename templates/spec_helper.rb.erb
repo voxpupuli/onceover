@@ -14,13 +14,25 @@ end
 
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec_junit_formatter'
+require 'onceover/rspec/formatters'
 
 RSpec.configure do |c|
+  # Create onceover settings to be accessed by formatters
+  c.add_setting :onceover_tempdir
+  c.add_setting :onceover_root
+  c.add_setting :onceover_environmentpath
+
+  c.onceover_tempdir         = <%= repo.tempdir.inspect %>
+  c.onceover_root            = <%= repo.root.inspect %>
+  c.onceover_environmentpath = <%= repo.environmentpath.inspect %>
+
   # Also add JUnit output in case people want to use that
   c.add_formatter('RSpecJUnitFormatter','<%= repo.tempdir %>/spec.xml')
 
   c.parser                = 'future'
-  c.formatter             = 'documentation'
+<% @formatters.each do |fm| -%>
+  c.formatter             = '<%= fm %>'
+<% end -%>
   c.trusted_server_facts  = true
   c.environmentpath       = '<%= environmentpath %>'
   c.module_path           = '<%= modulepath %>'

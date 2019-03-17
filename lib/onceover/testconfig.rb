@@ -29,6 +29,7 @@ class Onceover
     attr_accessor :additional_excluded_dirs
     attr_accessor :force
     attr_accessor :strict_variables
+    attr_accessor :formatters
 
     def initialize(file, opts = {})
       begin
@@ -50,6 +51,13 @@ class Onceover
       @before_conditions = config['before']
       @after_conditions  = config['after']
       @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
+      
+      # Set dynamic defaults for format
+      if opts[:format] == [:defaults]
+        @formatters = opts[:parallel] ? ['documentation', 'FailureCollector'] : ['OnceoverFormatter']
+      else
+        @formatters = opts[:format]
+      end
 
       # Initialise all of the classes and nodes
       config['classes'].each { |clarse| Onceover::Class.new(clarse) } unless config['classes'] == nil

@@ -297,7 +297,7 @@ class Onceover
       threads.map(&:join)
       puppetfile_string = queue.pop
 
-      File.open(@puppetfile, 'w') {|f| f.write(puppetfile_string.join("\n")) }
+      File.open(@puppetfile, 'w') {|f| f.puts(puppetfile_string.join("\n")) }
       puts "#{'changed'.yellow} #{@puppetfile}"
     end
 
