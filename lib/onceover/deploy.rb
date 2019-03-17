@@ -1,7 +1,7 @@
 # handle local deployments (run r10k in .onceover dir)
 class Onceover
   class Deploy
-    def deploy_local(repo = Onceover::Controlrepo.new, opts = {})
+    def deploy_local(repo, config, opts = {})
       require 'onceover/controlrepo'
       require 'pathname'
 
@@ -28,7 +28,7 @@ class Onceover
       #
       # If there are more situations like this we can add them to this array as
       # full paths
-      excluded_dirs = []
+      excluded_dirs = config.additional_excluded_dirs.map { |excluded_dir| Pathname.new("#{repo.root}/#{excluded_dir}") }
       excluded_dirs << Pathname.new("#{repo.root}/.onceover")
       excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
 
