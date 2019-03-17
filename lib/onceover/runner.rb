@@ -88,7 +88,8 @@ class Onceover
         # Print a summary if we were running ion parallel
         if @config.formatters.include? 'OnceoverFormatterParallel'
           require 'onceover/rspec/formatters'
-          results = OnceoverFormatterParallel.read_results("#{repo.tempdir}/parallel")
+          formatter = OnceoverFormatterParallel.new(STDOUT)
+          formatter.output_results("#{repo.tempdir}/parallel")
         end
 
         # Finally exit and preserve the exit code
