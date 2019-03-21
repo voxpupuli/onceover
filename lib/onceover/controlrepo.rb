@@ -640,8 +640,12 @@ class Onceover
     def find_classname(filename)
       file = File.new(filename, "r")
       while (line = file.gets)
-        if line =~ /^class (\w+(?:::\w+)*)/
-          return $1
+        begin      
+          if line =~ /^class (\w+(?:::\w+)*)/
+            return $1
+          end
+        rescue ArgumentError => e
+          logger.error "ignoring invalid line in file: #{filename} (#{e.message}) - line: '#{line}'"
         end
       end
       return nil
