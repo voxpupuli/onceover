@@ -75,6 +75,12 @@ class Onceover
 
     def run_spec!
       Dir.chdir(@repo.tempdir) do
+        # Disable warnings unless we are running in debug mode
+        unless logger.level.zero?
+          previous_rubyopt = ENV['RUBYOPT']
+          ENV['RUBYOPT']   = '-W0'
+        end
+
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
         if @config.opts[:parallel]
@@ -85,7 +91,12 @@ class Onceover
           result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
         end
 
-        # Print a summary if we were running ion parallel
+        # Reset env to previous state if we modified it
+        unless logger.level.zero?
+          ENV['RUBYOPT'] = previous_rubyopt
+        end
+
+        # Print a summary if we were running in parallel
         if @config.formatters.include? 'OnceoverFormatterParallel'
           require 'onceover/rspec/formatters'
           formatter = OnceoverFormatterParallel.new(STDOUT)
