@@ -24,6 +24,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [Accessing Roles in a traditional RSpec test](#accessing-roles-in-a-traditional-rspec-test)
     - [Filtering](#filtering)
     - [Extra Configuration](#extra-configuration)
+    - [Ruby Warnings](#ruby-warnings)
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
 
@@ -43,7 +44,8 @@ Run your spec tests!
 
 `onceover run spec`
 
-**Hint:** Don't forget you can use Bundler to install onceover by adding this to your gemfile:
+**Hint:** Don't forget you can use Bundler to install onceover by adding this to your Gemfile:
+
 ```ruby
 gem 'onceover'
 ```
@@ -64,7 +66,7 @@ Run your spec tests!
 
 ## Overview
 
-This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running rspec-puppet tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
+This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running `rspec-puppet` tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
 
 This toolset requires some config before it can be used so definitely read that section before getting started.
 
@@ -111,7 +113,7 @@ In the example below we have referred to `centos6a` and `centos7b` in all of our
 
 - **returns** *Optional: A value to return*
 
-**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub functionx if the OS is windows, stub functiony if the fact java_installed is true. The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
+**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub function `x` if the OS is windows, stub function `y` if the fact java_installed is true. The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
 
 ```yaml
 before:
@@ -249,7 +251,7 @@ Would map to a node named `server2008r2` in `onceover.yaml`
 
 You can add trusted facts to the factsets by creating a new section called trusted:
 
-```
+```json
 {
   "name": "node.puppetlabs.net",
   "trusted": {
@@ -260,7 +262,6 @@ You can add trusted facts to the factsets by creating a new section called trust
     "aio_agent_build": "1.10.4",
     "aio_agent_version": "1.10.4",
     "architecture": "x86_64",
-
 ```
 
 Notice that the `extensions` part is implied. The first fact in that example translates to `$trusted['extensions']['pp_role']` in Puppet code.
@@ -304,7 +305,6 @@ If you are using the `hiera-eyaml` backend there are some modifications that you
   ```
 
 This means that for testing, hiera will just return the encrypted string for anything that is encrypted using eyaml. This usually isn't a problem for catalog compilation and will allow tests to pass.
-
 
 ## Spec testing
 
@@ -373,6 +373,7 @@ You can also mock out defined resources or types that you cannot gain access to 
 
   }
 ```
+
 or
 
 ```puppet
@@ -385,7 +386,6 @@ or
   ) {
   }
 ```
-
 
 [Resource collectors](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources_advanced.html#amending-attributes-with-a-collector) are likely to come in handy here too. They allow you to override values of resources that match given criteria. This way we can override things for the sake of testing without having to change the code.
 
@@ -419,7 +419,7 @@ This takes your Puppetfile and actually modifies all of the module versions in t
   1. Check out the Controlrepo
   2. Run onceover to get a passing baseline
   3. Update the Puppetfile with the latest versions of all modules
-  4. Run Onceover agan
+  4. Run Onceover again
   5. Create a pull request if all tests pass
 
 ### Overriding Onceover's Templates
@@ -541,6 +541,16 @@ repo.profile_regex = /.*/ # Tells the class how to find profiles, will be applie
 
 Note that you will need to call the `roles` and `profiles` methods on the object you just instantiated, not the main class e.g. `repo.roles` not Onceover::Controlrepo.roles
 
+### Ruby Warnings
+
+When running onceover with `--debug` you will see ruby warnings in your test output such as `warning: constant ::Fixnum is deprecated`. This is because when running without `--debug` onceover sets the `RUBYOPT` environment variable to `-W0` during the run. If you would like to run in debug mode but still want to suppress ruby warnings, simply run the following command before your tests:
+
+```shell
+export RUBYOPT='-W0'
+```
+
+It is also worth noting if you want to use `RUBYOPT` for some other reason when testing you will **need** to use `--debug` to stop it being clobbered by onceover.
+
 ### Rake tasks
 
 I have included a couple of little rake tasks to help get you started with testing your control repos. Set them up by adding this to your `Rakefile`
@@ -558,6 +568,7 @@ The tasks are as follows:
 This task will go though your Puppetfile, grab all of the modules in there and convert them into a `.fixtures.yml` file. (You only need this if you are writing your own custom spec tests) It will also take the `environment.conf` file into account, check to see if you have any relative pathed directories and also include them into the `.fixtures.yml` as symlinks. e.g. If your files look like this:
 
 **Puppetfile**
+
 ```ruby
 forge "http://forgeapi.puppetlabs.com"
 
@@ -567,6 +578,7 @@ mod "puppetlabs/apache", "1.5.0"
 ```
 
 **environment.conf**
+
 ```ini
 modulepath = site:modules:$basemodulepath
 environment_timeout = 0
