@@ -78,7 +78,7 @@ class Onceover
         # Disable warnings unless we are running in debug mode
         unless logger.level.zero?
           previous_rubyopt = ENV['RUBYOPT']
-          ENV['RUBYOPT']   = '-W0'
+          ENV['RUBYOPT']   = ENV['RUBYOPT'].to_s + ' -W0'
         end
 
         #`bundle install --binstubs`
