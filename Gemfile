@@ -17,3 +17,6 @@ end
 if File.exists?(File.join(Dir.home, '.gemfile'))
   eval(File.read(File.join(Dir.home, '.gemfile')), binding)
 end
+
+# R10k needs to be pinned to this until the next release after 3.1.1
+gem 'r10k', git: 'https://github.com/puppetlabs/r10k.git'
