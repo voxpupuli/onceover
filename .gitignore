@@ -13,3 +13,5 @@ tmp
 /.projections.json
 /tags
 
+.cucumber
+.vscode
