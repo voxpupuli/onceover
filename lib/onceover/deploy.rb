@@ -4,6 +4,8 @@ class Onceover
     def deploy_local(repo = Onceover::Controlrepo.new, opts = {})
       require 'onceover/controlrepo'
       require 'pathname'
+      require 'fileutils'
+      require 'json'
 
       logger.debug 'Deploying locally (R10K)...'
 
@@ -17,70 +19,61 @@ class Onceover
         FileUtils.mkdir_p(repo.tempdir)
       end
 
-      # We need to do the copy to a tempdir then move the tempdir to the
+      # Overall plan: Copy everything in control repo to a tempdir then move the tempdir to the
       # destination, just in case we get a recursive copy
-      # TODO: Improve this to save I/O
 
-      # We might need to exclude some files
-      #
-      # if we are using bundler to install gems below the controlrepo
-      # we don't want two copies so exclude those
-      #
-      # If there are more situations like this we can add them to this array as
-      # full paths
-      excluded_dirs = []
-      excluded_dirs << Pathname.new("#{repo.root}/.onceover")
-      excluded_dirs << Pathname.new(ENV['GEM_HOME']) if ENV['GEM_HOME']
+      # We need to exclude some files:
+      # * our own cache
+      # * stuff from git
+      # * stale puppet modules
+      # * random ruby gems (bundler/rvm?)
+      # * ...etc
+      excluded_dirs = [
+        File.join(repo.root, ".onceover"),
+        File.join(repo.root, ".git"),
+        File.join(repo.root, ".modules"),
+      ]
+      excluded_dirs << ENV['GEM_HOME'] if ENV['GEM_HOME']
 
-      #
       # A Local modules directory likely means that the user installed r10k folders into their local control repo
       # This conflicts with the step where onceover installs r10k after copying the control repo to the temporary
       # .onceover directory.  The following skips copying the modules folder, to not later cause an error.
-      #
-      if File.directory?("#{repo.root}/modules")
+      if File.directory?("modules")
         logger.warn "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
       end
-      excluded_dirs << Pathname.new("#{repo.root}/modules")
-
-      controlrepo_files = get_children_recursive(Pathname.new(repo.root))
-
-      # Exclude the files that should be skipped
-      controlrepo_files.delete_if do |path|
-        parents = [path]
-        path.ascend do |parent|
-          parents << parent
-        end
-        parents.any? { |x| excluded_dirs.include?(x) }
-      end
-
-      folders_to_copy = controlrepo_files.select { |x| x.directory? }
-      files_to_copy   = controlrepo_files.select { |x| x.file? }
 
       logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
-      logger.debug "Creating directories under #{temp_controlrepo}"
-      FileUtils.mkdir_p(folders_to_copy.map { |folder| "#{temp_controlrepo}/#{(folder.relative_path_from(Pathname(repo.root))).to_s}"})
+      # onceover stores a big list of all the relative paths it places within its cache directory
+      onceover_manifest = []
 
-      logger.debug "Copying files to #{temp_controlrepo}"
-      files_to_copy.each do |file|
-        FileUtils.cp(file,"#{temp_controlrepo}/#{(file.relative_path_from(Pathname(repo.root))).to_s}")
+      Find.find repo.root do |source|
+        # work out a relative path to this source, eg:
+        # /home/geoff/control-repo/foo/bar -> foo/bar
+        relative_source = Pathname.new(source).relative_path_from(Pathname.new(repo.root)).to_s
+
+        target = File.join(temp_controlrepo, relative_source)
+
+        # ignore the path "." which represents the root of our control repo
+        if relative_source != "."
+          # add to list of files copied to cache by onceover
+          onceover_manifest << relative_source
+
+          if File.directory? source
+            Find.prune if excluded_dirs.include? source
+            FileUtils.mkdir target
+          else
+            FileUtils.copy source, target
+          end
+        end
       end
-
       logger.debug "Writing manifest of copied controlrepo files"
-      require 'json'
-      # Create a manifest of all files that were in the original repo
-      manifest = controlrepo_files.map do |file|
-        # Make sure the paths are relative so they remain relevant when used later
-        file.relative_path_from(Pathname(repo.root)).to_s
-      end
-      # Write all but the first as this is the root and we don't care about that
-      File.write("#{temp_controlrepo}/.onceover_manifest.json",manifest[1..-1].to_json)
+      File.write("#{temp_controlrepo}/.onceover_manifest.json", onceover_manifest.to_json)
 
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
       # located in the Puppetfile. To accomplish that, we use git and find the current
       # branch name, then replace strings within the staged puppetfile, prior to copying.
-
       logger.debug "Checking current working branch"
       git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
 
@@ -91,7 +84,7 @@ class Onceover
       new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
       File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
 
-      # Remove all files written by the laste onceover run, but not the ones
+      # Remove all files written by the last onceover run, but not the ones
       # added by r10k, because that's what we are trying to cache but we don't
       # know what they are
       old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
@@ -133,20 +126,6 @@ class Onceover
 
       # Return repo.tempdir for use
       repo.tempdir
-    end
-
-    private
-
-    def get_children_recursive(pathname)
-      results = []
-      results << pathname
-      pathname.each_child do |child|
-        results << child
-        if child.directory?
-          results << get_children_recursive(child)
-        end
-      end
-      results.flatten
     end
   end
 end
