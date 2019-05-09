@@ -5,7 +5,6 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'thread'
-require 'onceover/beaker'
 require 'onceover/logger'
 include Onceover::Logger
 
@@ -452,8 +451,6 @@ class Onceover
       require 'colored'
 
       Onceover::Controlrepo.init_write_file(generate_onceover_yaml(repo), repo.onceover_yaml)
-      # [DEPRECATION] Writing nodesets is deprecated due to the removal of Beaker"
-      #Onceover::Controlrepo.init_write_file(generate_nodesets(repo),repo.nodeset_file)
       init_write_file(
         evaluate_template('pre_conditions_README.md.erb', binding),
         File.expand_path('./pre_conditions/README.md', repo.spec_dir)
@@ -491,55 +488,6 @@ class Onceover
     def self.generate_onceover_yaml(repo)
       # This will return a controlrepo.yaml that can be written to a file
       evaluate_template('controlrepo.yaml.erb', binding)
-    end
-
-    def self.generate_nodesets(repo)
-      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
-
-      require 'onceover/beaker'
-      require 'net/http'
-      require 'json'
-
-      hosts_hash = {}
-
-      repo.facts.each do |fact_set|
-        node_name = File.basename(repo.facts_files[repo.facts.index(fact_set)], '.json')
-        boxname   = Onceover::Beaker.facts_to_vagrant_box(fact_set)
-        platform  = Onceover::Beaker.facts_to_platform(fact_set)
-
-        logger.debug "Querying hashicorp API for Vagrant box that matches #{boxname}"
-
-        uri = URI("https://atlas.hashicorp.com:443/api/v1/box/#{boxname}")
-        request = Net::HTTP.new(uri.host, uri.port)
-        request.use_ssl = true
-        response = request.get(uri)
-
-        url = 'URL goes here'
-
-        if response.code == "404"
-          comment_out = true
-        else
-          comment_out = false
-          box_info = JSON.parse(response.body)
-          box_info['current_version']['providers'].each do |provider|
-            if provider['name'] == 'virtualbox'
-              url = provider['original_url']
-            end
-          end
-        end
-
-        # Add the resulting info to the hosts hash. This is what the
-        # template will output
-        hosts_hash[node_name] = {
-          :platform    => platform,
-          :boxname     => boxname,
-          :url         => url,
-          :comment_out => comment_out
-        }
-      end
-
-      # Use an ERB template
-      evaluate_template('nodeset.yaml.erb', binding)
     end
 
     def self.create_dirs_and_log(dir)
