@@ -33,9 +33,6 @@ class Onceover
       # Create spec_helper.rb
       @config.write_spec_helper("#{@repo.tempdir}/spec", @repo)
 
-      # Create spec_helper_accpetance.rb
-      @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec", @repo)
-
       # TODO: Remove all tests that do not match set tags
 
       if @mode.include?(:spec)

@@ -6,13 +6,11 @@ class Onceover
 
 
     attr_accessor :name
-    attr_accessor :beaker_node
     attr_accessor :fact_set
     attr_accessor :trusted_set
 
     def initialize(name)
       @name = name
-      @beaker_node = nil
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
