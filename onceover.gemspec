@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'r10k', '>=2.1.0'
   s.add_runtime_dependency 'puppet', '>=3.4.0'
   s.add_runtime_dependency 'git'
-  s.add_runtime_dependency 'cri', '>= 2.6'
+  s.add_runtime_dependency 'cri', '>= 2.6', '<= 2.15.5'
   s.add_runtime_dependency 'colored', '~> 1.2'
   s.add_runtime_dependency 'logging', '>= 2.0.0'
   s.add_runtime_dependency 'deep_merge', '>= 1.0.0'
