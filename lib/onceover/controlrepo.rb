@@ -399,7 +399,6 @@ class Onceover
     end
 
     def config
-      # Parse the file
       logger.debug "Reading #{@environment_conf}"
       env_conf = File.read(@environment_conf)
       env_conf = env_conf.split("\n")
@@ -410,7 +409,9 @@ class Onceover
       # Map the lines into a hash
       environment_config = {}
       env_conf.each do |line|
-        environment_config.merge!(Hash[*line.split('=').map { |s| s.strip}])
+        if matches = line.match(/^(\S+)\s*=(.*)$/)
+          environment_config[matches[1]] = matches[2].strip
+        end
       end
 
       # Finally, split the modulepath values and return
@@ -419,7 +420,8 @@ class Onceover
       rescue
         raise "modulepath was not found in environment.conf, don't know where to look for roles & profiles"
       end
-      return environment_config
+      
+      environment_config
     end
 
     def r10k_config_file

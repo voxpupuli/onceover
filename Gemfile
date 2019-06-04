@@ -4,6 +4,9 @@ gemspec
 
 gem 'pry-coolline', '> 0.0', '< 1.0.0'
 
+# Cri 2.15.6 broke r10k and they can't be used together
+gem 'cri', '<= 2.15.5'
+
 if ENV['PUPPET_VERSION']
   gem 'puppet', ENV['PUPPET_VERSION']
 end
