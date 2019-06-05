@@ -32,6 +32,7 @@ class Onceover
         File.join(repo.root, ".onceover"),
         File.join(repo.root, ".git"),
         File.join(repo.root, ".modules"),
+        File.join(repo.root, "vendor"),
       ]
       excluded_dirs << ENV['GEM_HOME'] if ENV['GEM_HOME']
 
