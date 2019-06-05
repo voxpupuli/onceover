@@ -156,18 +156,6 @@ class Onceover
       end
     end
 
-    def verify_acceptance_test(controlrepo, test)
-      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
-
-      require 'yaml'
-      nodeset = YAML.load_file(controlrepo.nodeset_file)
-      test.nodes.each do |node|
-        unless nodeset['HOSTS'].has_key?(node.name)
-          raise "Could not find nodeset for node: #{node.name}"
-        end
-      end
-    end
-
     def pre_condition
       # Read all the pre_conditions and return the string
       spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
@@ -184,18 +172,6 @@ class Onceover
       # Use an ERB template to write a spec test
       File.write("#{location}/#{test.to_s}_spec.rb",
         Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding))
-    end
-
-    def write_acceptance_tests(location, tests)
-      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
-
-      File.write("#{location}/acceptance_spec.rb",
-        Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb', binding))
-    end
-
-    def write_spec_helper_acceptance(location, repo)
-      File.write("#{location}/spec_helper_acceptance.rb",
-        Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb', binding))
     end
 
     def write_rakefile(location, pattern)
