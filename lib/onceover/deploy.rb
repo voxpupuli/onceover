@@ -120,6 +120,7 @@ class Onceover
             install_cmd = []
             install_cmd << "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             install_cmd << "--force" if force
+            install_cmd << "--config #{repo.r10k_config_file}" if repo.r10k_config_file
             install_cmd = install_cmd.join(' ')
             logger.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
