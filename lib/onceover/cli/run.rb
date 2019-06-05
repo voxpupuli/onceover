@@ -59,3 +59,4 @@ end
 
 # Register itself
 Onceover::CLI.command.add_command(Onceover::CLI::Run.command)
+Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Spec.command)
