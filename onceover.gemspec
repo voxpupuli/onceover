@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'table_print', '>= 1.0.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
-  s.add_runtime_dependency 'puppet_litmus', '>= 0.1.0'
 
   # Development
   s.add_development_dependency 'rubocop', '~> 0.49.0'
