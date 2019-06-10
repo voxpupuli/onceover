@@ -51,6 +51,11 @@ Then(/^I should not see any errors$/) do
   expect(@cmd.success?).to be true
 end
 
+Then(/^the config should contain "([^"]*)"$/) do |pattern|
+  pattern = Regexp.new(pattern)
+  expect(@repo.config_file_contents).to match(pattern)
+end
+
 Then(/^Onceover should exit (\d+)$/) do |code|
   expect(@cmd.exit_code).to eq code.to_i
 end
