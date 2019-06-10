@@ -71,5 +71,5 @@ Feature: Run rspec and acceptance test suites
   # This test is a full test using my controlrepo. It should remain at the end because it takes ages
   Scenario: Run advanced spec tests
     Given control repo "puppet_controlrepo"
-    When I run onceover command "run spec"
+    When I run onceover command "run spec -p"
     Then I should not see any errors
