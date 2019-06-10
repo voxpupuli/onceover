@@ -9,7 +9,9 @@ class Onceover
 
       logger.debug 'Deploying locally (R10K)...'
 
-      skip_r10k = opts[:skip_r10k] || false
+      # Only default to running r10k if there is a Puppetfile
+      skip_r10k_default = !(File.file?(repo.puppetfile))
+      skip_r10k = opts[:skip_r10k] || skip_r10k_default
       force     = opts[:force] || false
 
       if repo.tempdir == nil
@@ -79,11 +81,14 @@ class Onceover
       git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
 
       logger.debug "found #{git_branch} as current working branch"
-      puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
+      # Only try to modify Puppetfile if it exists
+      unless skip_r10k
+        puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
 
-      logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
-      new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
-      File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
+        logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
+        new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+        File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
+      end
 
       # Remove all files written by the last onceover run, but not the ones
       # added by r10k, because that's what we are trying to cache but we don't
