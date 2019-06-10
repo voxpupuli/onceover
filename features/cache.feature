@@ -14,6 +14,11 @@ Feature: Create and maintain a .onceover cache
     Then the cache should exist
     And the cache should contain all controlrepo files
 
+  Scenario: Runnone onnceover in the caching repo
+    Given control repo "caching"
+    When I run onceover command "run spec --classes role::webserver"
+    Then I should not see any errors
+
   Scenario: Creating a new file
     Given existing control repo "caching"
     When I create a file "example.txt"
