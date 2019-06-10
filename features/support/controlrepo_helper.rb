@@ -8,19 +8,27 @@ class ControlRepo_Helper
   end
 
   def root_folder
-    return @tmp_folder + @name + '/'
+    @tmp_folder + @name + '/'
   end
 
   def puppetfile
-    return root_folder + "Puppetfile"
+    root_folder + "Puppetfile"
   end
 
   def onceover_temp_root_folder
-    return root_folder + '.onceover/etc/puppetlabs/code/environments/production/'
+    root_folder + '.onceover/etc/puppetlabs/code/environments/production/'
   end
 
   def onceover_temp_puppetfile
-    return onceover_temp_root_folder + "Puppetfile"
+    onceover_temp_root_folder + "Puppetfile"
+  end
+
+  def config_file
+    root_folder + 'spec/onceover.yaml'
+  end
+
+  def config_file_contents
+    File.read(config_file)
   end
 
   def add_line_to_puppetfile( line )

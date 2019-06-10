@@ -18,8 +18,8 @@ class Onceover
       begin
         facts_file_index = Onceover::Controlrepo.facts_files.index {|facts_file|
           File.basename(facts_file, '.json') == name
-        }
-        @fact_set = Onceover::Controlrepo.facts[facts_file_index]
+        }  
+        @fact_set = Onceover::Node.clean_facts(Onceover::Controlrepo.facts[facts_file_index])
         @trusted_set = Onceover::Controlrepo.trusted_facts[facts_file_index]
       rescue TypeError
         @fact_set = nil
@@ -46,6 +46,12 @@ class Onceover
 
     def self.all
       @@all
+    end
+
+    # This method ensures that all facts are valid and clean anoything that we can't handle
+    def self.clean_facts(factset)
+      factset.delete('environment')
+      factset
     end
   end
 end
