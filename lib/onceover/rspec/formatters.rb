@@ -93,12 +93,15 @@ class OnceoverFormatter
     # The only difference between these failures should be the factsets that it
     # failed on. Extract that list then just use the first failure for the rest
     # of the data as it should be the same
-    metadata          = fails.keys[0].metadata
+    metadata          = fails[0].metadata
     raw_error         = metadata[:execution_result].exception.to_s
     factsets          = fails.map { |f| f.metadata[:example_group][:description].gsub('using fact set ','') }
-    result            = parse_errors(raw_error)
-    result[:factsets] = factsets
-    result
+    results           = parse_errors(raw_error)
+    # Add the details of the factsets tio each result
+    results.map do |r|
+      r[:factsets] = factsets
+      r
+    end
   end
 
   # Parses information out of a string error
