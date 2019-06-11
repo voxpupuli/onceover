@@ -81,14 +81,17 @@ class OnceoverFormatter
     grouped.each do |role, failures|
       grouped[role] = {
         name: role,
-        errors: failures.map { |f| parse_errors(f.metadata[:execution_result].exception.to_s)}.flatten,
+        errors: failures.map { |f| parse_errors(f.metadata)}.flatten,
       }
     end
 
     grouped
   end
 
-  def parse_errors(raw_error)
+  def parse_errors(metadata)
+    raw_error = metadata[:execution_result].exception.to_s
+    factset   = metadata[:example_group][:description].gsub('using fact set ','')
+
     # Check if the error is a compilation error
     match = COMPILATION_ERROR.match(raw_error)
     if match
@@ -106,6 +109,7 @@ class OnceoverFormatter
             file:   calculate_relative_source(error_matches[1]),
             line:   error_matches[2],
             column: error_matches[3],
+            factset: factset,
           }
         end
       elsif ERROR_WITHOUT_LOCATION.match(compilation_error)
@@ -117,16 +121,19 @@ class OnceoverFormatter
         scanned_errors.map do |error_matches|
           {
             text: error_matches[0],
+            factset: factset,
           }
         end
       else
         [{
           text: raw_error,
+          factset: factset,
         }]
       end
     else
       [{
         text: raw_error,
+        factset: factset,
       }]
     end
   end
