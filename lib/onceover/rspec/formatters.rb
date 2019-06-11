@@ -81,21 +81,28 @@ class OnceoverFormatter
     grouped.each do |role, failures|
       grouped[role] = {
         name: role,
-        errors: failures.map { |_description, fails| parse_errors(fails)}.flatten,
+        errors: failures.map { |_description, fails| extract_failure_data(fails)}.flatten,
       }
     end
 
     grouped
   end
 
-  def parse_errors(fails)
+  # Extaracts data out of RSpec failres
+  def extract_failure_data(fails)
     # The only difference between these failures should be the factsets that it
     # failed on. Extract that list then just use the first failure for the rest
     # of the data as it should be the same
-    metadata  = fails[0].metadata
-    raw_error = metadata[:execution_result].exception.to_s
-    factsets  = fails.map { |f| f.metadata[:example_group][:description].gsub('using fact set ','') }
+    metadata          = fails.keys[0].metadata
+    raw_error         = metadata[:execution_result].exception.to_s
+    factsets          = fails.map { |f| f.metadata[:example_group][:description].gsub('using fact set ','') }
+    result            = parse_errors(raw_error)
+    result[:factsets] = factsets
+    result
+  end
 
+  # Parses information out of a string error
+  def parse_errors(raw_error)
     # Check if the error is a compilation error
     match = COMPILATION_ERROR.match(raw_error)
     if match
@@ -113,7 +120,6 @@ class OnceoverFormatter
             file:   calculate_relative_source(error_matches[1]),
             line:   error_matches[2],
             column: error_matches[3],
-            factsets: factsets,
           }
         end
       elsif ERROR_WITHOUT_LOCATION.match(compilation_error)
@@ -125,19 +131,16 @@ class OnceoverFormatter
         scanned_errors.map do |error_matches|
           {
             text: error_matches[0],
-            factsets: factsets,
           }
         end
       else
         [{
           text: raw_error,
-          factsets: factsets,
         }]
       end
     else
       [{
         text: raw_error,
-        factsets: factsets,
       }]
     end
   end
