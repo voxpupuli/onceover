@@ -104,7 +104,7 @@ class Onceover
 
       @onceover_yaml = ENV['ONCEOVER_YAML'] || opts[:onceover_yaml] || File.expand_path("#{@root}/spec/onceover.yaml")
 
-      if File.exists?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
+      if File.exist?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
         opts.merge!(_data.fetch('opts',{})||{})
       end
       opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path, @root)}
@@ -475,7 +475,7 @@ class Onceover
 
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore', repo.root)
-      if File.exists? gitignore_path
+      if File.exist? gitignore_path
         gitignore_content = (File.open(gitignore_path, 'r') {|f| f.read }).split("\n")
         message = "#{'changed'.green}"
       else
@@ -567,7 +567,7 @@ class Onceover
 
     def self.init_write_file(contents, out_file)
       create_dirs_and_log(File.dirname(out_file))
-      if File.exists?(out_file)
+      if File.exist?(out_file)
         puts "#{'skipped'.yellow} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s} #{'(exists)'.yellow}"
       else
         File.open(out_file,'w') {|f| f.write(contents)}
