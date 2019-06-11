@@ -59,7 +59,7 @@ class OnceoverFormatter
     # Put some spacing before the results
     @output << "\n\n\n"
 
-    failures.each do |_name, role|
+    failures.each do |name, errors|
       @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
 
@@ -79,10 +79,7 @@ class OnceoverFormatter
 
     # Extract the errors and remove all RSpec objects
     grouped.each do |role, failures|
-      grouped[role] = {
-        name: role,
-        errors: failures.map { |_description, fails| extract_failure_data(fails)}.flatten,
-      }
+      grouped[role] = failures.map { |_description, fails| extract_failure_data(fails)}.flatten
     end
 
     grouped
@@ -264,9 +261,9 @@ class OnceoverFormatterParallel < OnceoverFormatter
     files   = Dir["#{directory}/*.yaml"]
 
     # Merge data
-    errors = files.reduce({}) do |errs, file|
+    roles = files.reduce({}) do |errs, file|
       # Read all files and merge them
-      errs.merge(YAML.load(File.read(file))) # rubocop:disable Security/YAMLLoad
+      errs.merge(YAML.load(File.read(file))) {|key, oldval, newval| [oldval, newval].flatten }# rubocop:disable Security/YAMLLoad
     end
   
     # Delete files from the disk
@@ -275,7 +272,7 @@ class OnceoverFormatterParallel < OnceoverFormatter
     @output << "\n\n\n"
 
     # Output errors
-    errors.each do |_name, role|
+    roles.each do |name, errors|
       @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
     @output << "\n"
