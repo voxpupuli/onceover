@@ -74,23 +74,27 @@ class OnceoverFormatter
 
     # Further group by error
     grouped.each do |role, failures|
-      grouped[role] = failures.uniq { |f| f.metadata[:execution_result].exception.to_s }
+      grouped[role] = failures.group_by { |f| f.metadata[:execution_result].exception.to_s }
     end
 
     # Extract the errors and remove all RSpec objects
     grouped.each do |role, failures|
       grouped[role] = {
         name: role,
-        errors: failures.map { |f| parse_errors(f.metadata)}.flatten,
+        errors: failures.map { |_description, fails| parse_errors(fails)}.flatten,
       }
     end
 
     grouped
   end
 
-  def parse_errors(metadata)
+  def parse_errors(fails)
+    # The only difference between these failures should be the factsets that it
+    # failed on. Extract that list then just use the first failure for the rest
+    # of the data as it should be the same
+    metadata  = fails[0].metadata
     raw_error = metadata[:execution_result].exception.to_s
-    factset   = metadata[:example_group][:description].gsub('using fact set ','')
+    factsets  = fails.map { |f| f.metadata[:example_group][:description].gsub('using fact set ','') }
 
     # Check if the error is a compilation error
     match = COMPILATION_ERROR.match(raw_error)
@@ -109,7 +113,7 @@ class OnceoverFormatter
             file:   calculate_relative_source(error_matches[1]),
             line:   error_matches[2],
             column: error_matches[3],
-            factset: factset,
+            factsets: factsets,
           }
         end
       elsif ERROR_WITHOUT_LOCATION.match(compilation_error)
@@ -121,19 +125,19 @@ class OnceoverFormatter
         scanned_errors.map do |error_matches|
           {
             text: error_matches[0],
-            factset: factset,
+            factsets: factsets,
           }
         end
       else
         [{
           text: raw_error,
-          factset: factset,
+          factsets: factsets,
         }]
       end
     else
       [{
         text: raw_error,
-        factset: factset,
+        factsets: factsets,
       }]
     end
   end

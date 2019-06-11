@@ -11,7 +11,7 @@
 <% if error[:column] -%>
       column: <%= bold(error[:column]) %>
 <% end -%>
-<% if error[:factset] -%>
-      factset: <%= bold(error[:factset]) %>
+<% if error[:factsets] -%>
+      factsets: <%= bold(error[:factsets].join(', ')) %>
 <% end -%>
 <% end -%>
