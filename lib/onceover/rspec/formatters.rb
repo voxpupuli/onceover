@@ -59,7 +59,7 @@ class OnceoverFormatter
     # Put some spacing before the results
     @output << "\n\n\n"
 
-    failures.each do |_name, role|
+    failures.each do |name, errors|
       @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
 
@@ -74,20 +74,34 @@ class OnceoverFormatter
 
     # Further group by error
     grouped.each do |role, failures|
-      grouped[role] = failures.uniq { |f| f.metadata[:execution_result].exception.to_s }
+      grouped[role] = failures.group_by { |f| f.metadata[:execution_result].exception.to_s }
     end
 
     # Extract the errors and remove all RSpec objects
     grouped.each do |role, failures|
-      grouped[role] = {
-        name: role,
-        errors: failures.map { |f| parse_errors(f.metadata[:execution_result].exception.to_s)}.flatten,
-      }
+      grouped[role] = failures.map { |_description, fails| extract_failure_data(fails)}.flatten
     end
 
     grouped
   end
 
+  # Extaracts data out of RSpec failres
+  def extract_failure_data(fails)
+    # The only difference between these failures should be the factsets that it
+    # failed on. Extract that list then just use the first failure for the rest
+    # of the data as it should be the same
+    metadata          = fails[0].metadata
+    raw_error         = metadata[:execution_result].exception.to_s
+    factsets          = fails.map { |f| f.metadata[:example_group][:description].gsub('using fact set ','') }
+    results           = parse_errors(raw_error)
+    # Add the details of the factsets tio each result
+    results.map do |r|
+      r[:factsets] = factsets
+      r
+    end
+  end
+
+  # Parses information out of a string error
   def parse_errors(raw_error)
     # Check if the error is a compilation error
     match = COMPILATION_ERROR.match(raw_error)
@@ -247,9 +261,9 @@ class OnceoverFormatterParallel < OnceoverFormatter
     files   = Dir["#{directory}/*.yaml"]
 
     # Merge data
-    errors = files.reduce({}) do |errs, file|
+    roles = files.reduce({}) do |errs, file|
       # Read all files and merge them
-      errs.merge(YAML.load(File.read(file))) # rubocop:disable Security/YAMLLoad
+      errs.merge(YAML.load(File.read(file))) {|key, oldval, newval| [oldval, newval].flatten }# rubocop:disable Security/YAMLLoad
     end
   
     # Delete files from the disk
@@ -258,7 +272,7 @@ class OnceoverFormatterParallel < OnceoverFormatter
     @output << "\n\n\n"
 
     # Output errors
-    errors.each do |_name, role|
+    roles.each do |name, errors|
       @output << Onceover::Controlrepo.evaluate_template('error_summary.yaml.erb', binding)
     end
     @output << "\n"
