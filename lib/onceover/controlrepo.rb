@@ -1,10 +1,10 @@
 require 'r10k/puppetfile'
 require 'erb'
-require 'json'
 require 'yaml'
 require 'find'
 require 'pathname'
 require 'thread'
+require 'multi_json'
 require 'onceover/beaker'
 require 'onceover/logger'
 include Onceover::Logger
@@ -499,8 +499,8 @@ class Onceover
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       require 'onceover/beaker'
+      require 'multi_json'
       require 'net/http'
-      require 'json'
 
       hosts_hash = {}
 
@@ -522,7 +522,7 @@ class Onceover
           comment_out = true
         else
           comment_out = false
-          box_info = JSON.parse(response.body)
+          box_info = MultiJson.load(response.body)
           box_info['current_version']['providers'].each do |provider|
             if provider['name'] == 'virtualbox'
               url = provider['original_url']
@@ -596,8 +596,8 @@ class Onceover
     def read_facts(facts_file)
       file = File.read(facts_file)
       begin
-        result = JSON.parse(file)
-      rescue JSON::ParserError
+        result = MultiJson.load(file)
+      rescue MultiJson::ParseError
         raise "Could not parse the file #{facts_file}, check that it is valid JSON and that the encoding is correct"
       end
       result

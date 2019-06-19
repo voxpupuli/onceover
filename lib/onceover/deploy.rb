@@ -5,7 +5,7 @@ class Onceover
       require 'onceover/controlrepo'
       require 'pathname'
       require 'fileutils'
-      require 'json'
+      require 'multi_json'
 
       logger.debug 'Deploying locally (R10K)...'
 
@@ -96,7 +96,7 @@ class Onceover
       old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
       if File.exist? old_manifest_path
         logger.debug "Found manifest from previous run, parsing..."
-        old_manifest = JSON.parse(File.read(old_manifest_path))
+        old_manifest = MultiJson.load(File.read(old_manifest_path))
         logger.debug "Removing #{old_manifest.count} files"
         old_manifest.reverse.each do |file|
           FileUtils.rm_f(File.join("#{repo.tempdir}/#{repo.environmentpath}/production/",file))
