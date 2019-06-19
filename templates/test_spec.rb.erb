@@ -29,6 +29,20 @@ describe "<%= cls.name %>" do
     end
 <% end -%>
 
+    before :each do
+      # Curtrently there is some code within Puppet that will try to execute
+      # commands when compiling a catalog even though it shouldn't. One example is
+      # the groups attribute of the user resource on AIX. If we are running on
+      # Windows but pretending to be UNIX this will definitely fail so we need to
+      # mock it (or vice versa)
+      # Details:
+      # https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/execution.rb#L191
+      expected_null_file = Puppet::Util::Platform.windows? ? 'NUL' : '/dev/null'
+      unless File.exist? expected_null_file
+        Puppet::Util::Execution.stubs(:execute).raises(Puppet::ExecutionFailure.new("Onceover caused this"))
+      end
+    end
+
 <% if @after_conditions -%>
     after :each do
 <% @after_conditions.each do |function| -%>
