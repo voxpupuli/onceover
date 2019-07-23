@@ -1,6 +1,5 @@
 require 'r10k/puppetfile'
 require 'erb'
-require 'json'
 require 'yaml'
 require 'find'
 require 'pathname'
@@ -102,7 +101,7 @@ class Onceover
 
       @onceover_yaml = ENV['ONCEOVER_YAML'] || opts[:onceover_yaml] || File.expand_path("#{@root}/spec/onceover.yaml")
 
-      if File.exists?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
+      if File.exist?(@onceover_yaml) && _data = YAML.load_file(@onceover_yaml)
         opts.merge!(_data.fetch('opts',{})||{})
       end
       opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path, @root)}
@@ -395,7 +394,6 @@ class Onceover
     end
 
     def config
-      # Parse the file
       logger.debug "Reading #{@environment_conf}"
       env_conf = File.read(@environment_conf)
       env_conf = env_conf.split("\n")
@@ -406,7 +404,9 @@ class Onceover
       # Map the lines into a hash
       environment_config = {}
       env_conf.each do |line|
-        environment_config.merge!(Hash[*line.split('=').map { |s| s.strip}])
+        if matches = line.match(/^(\S+)\s*=(.*)$/)
+          environment_config[matches[1]] = matches[2].strip
+        end
       end
 
       # Finally, split the modulepath values and return
@@ -415,7 +415,8 @@ class Onceover
       rescue
         raise "modulepath was not found in environment.conf, don't know where to look for roles & profiles"
       end
-      return environment_config
+      
+      environment_config
     end
 
     def r10k_config_file
@@ -467,7 +468,7 @@ class Onceover
 
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore', repo.root)
-      if File.exists? gitignore_path
+      if File.exist? gitignore_path
         gitignore_content = (File.open(gitignore_path, 'r') {|f| f.read }).split("\n")
         message = "#{'changed'.green}"
       else
@@ -510,7 +511,7 @@ class Onceover
 
     def self.init_write_file(contents, out_file)
       create_dirs_and_log(File.dirname(out_file))
-      if File.exists?(out_file)
+      if File.exist?(out_file)
         puts "#{'skipped'.yellow} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s} #{'(exists)'.yellow}"
       else
         File.open(out_file,'w') {|f| f.write(contents)}
@@ -539,8 +540,8 @@ class Onceover
     def read_facts(facts_file)
       file = File.read(facts_file)
       begin
-        result = JSON.parse(file)
-      rescue JSON::ParserError
+        result = MultiJson.load(file)
+      rescue MultiJson::ParseError
         raise "Could not parse the file #{facts_file}, check that it is valid JSON and that the encoding is correct"
       end
       result

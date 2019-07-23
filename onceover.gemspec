@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "onceover"
-  s.version     = "3.13.0"
+  s.version     = "3.14.1"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'rake', '>= 10.0.0'
-  s.add_runtime_dependency 'json', '>= 1.8.2'
+  s.add_runtime_dependency 'multi_json', '~> 1.10'
   s.add_runtime_dependency 'backticks', '>= 1.0.2'
   s.add_runtime_dependency 'rspec-puppet', ">= 2.4.0"
   s.add_runtime_dependency 'parallel_tests', ">= 2.0.0"
