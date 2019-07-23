@@ -8,19 +8,28 @@ class Onceover
     attr_accessor :name
     attr_accessor :fact_set
     attr_accessor :trusted_set
+    attr_accessor :provisioner
+    attr_accessor :image
+    attr_accessor :params
 
-    def initialize(name)
-      @name = name
+    def initialize(details)
+      # If it's a string assume it has no options
+      details = {details => {}} if details.is_a? String
+
+      @name        = details.keys.first
+      @provisioner = details[@name]['provisioner']
+      @image       = details[@name]['image']
+      @params      = details[@name]['params']
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
         facts_file_index = Onceover::Controlrepo.facts_files.index {|facts_file|
-          File.basename(facts_file, '.json') == name
+          File.basename(facts_file, '.json') == @name
         }  
-        @fact_set = Onceover::Node.clean_facts(Onceover::Controlrepo.facts[facts_file_index])
+        @fact_set    = Onceover::Node.clean_facts(Onceover::Controlrepo.facts[facts_file_index])
         @trusted_set = Onceover::Controlrepo.trusted_facts[facts_file_index]
       rescue TypeError
-        @fact_set = nil
+        @fact_set    = nil
         @trusted_set = nil
       end
 

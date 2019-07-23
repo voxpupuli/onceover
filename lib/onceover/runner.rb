@@ -35,11 +35,9 @@ class Onceover
       # TODO: Remove all tests that do not match set tags
 
       if @mode.include?(:spec)
-        # Verify all of the spec tests
-        @config.spec_tests.each { |test| @config.verify_spec_test(@repo, test) }
-
         # Deduplicate and write the tests (Spec and Acceptance)
         @config.run_filters(Onceover::Test.deduplicate(@config.spec_tests)).each do |test|
+          @config.verify_spec_test(@repo, test)
           @config.write_spec_test("#{@repo.tempdir}/spec/classes", test)
         end
       end

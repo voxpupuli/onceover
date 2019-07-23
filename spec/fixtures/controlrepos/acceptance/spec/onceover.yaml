@@ -7,16 +7,29 @@ nodes:
       image: centos:7
       params:
         param_a: foo
+  - Name-Doesnt-Map:
+      provisioner: docker
+      image: centos:8
+  - Windows_Server-2012r2-64
   - Debian-6.0.10-64:
       provisioner: docker
       image: debian:6
   - Ubuntu-14.04-64:
       provisioner: docker
       image: ubuntu:14.04
-      
+
 
 node_groups:
-
+  spec_nodes:
+    - CentOS-7.0-64
+    - Windows_Server-2012r2-64
+    - Debian-6.0.10-64
+    - Ubuntu-14.04-64
+  acceptance_nodes:
+    - CentOS-7.0-64
+    - Name-Doesnt-Map
+    - Debian-6.0.10-64
+    - Ubuntu-14.04-64
 
 class_groups:
 
@@ -25,4 +38,17 @@ test_matrix:
   # Main spec tests for all CentOS roles
   - all_nodes:
       classes: 'all_classes'
-      tests: 'all'
+      tests: 'all_tests'
+      tags:
+        - all
+  - spec_nodes:
+      classes: 'all_classes'
+      tests: 'spec'
+      tags:
+        - spec
+  - acceptance_nodes:
+      classes: 'all_classes'
+      tests: 'acceptance'
+      tags:
+        - acceptance
+
