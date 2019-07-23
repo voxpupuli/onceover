@@ -53,6 +53,26 @@ This includes deploying using r10k and running all custom tests.
           end
         end
       end
+
+      class Acceptance
+        def self.command
+          @cmd ||= Cri::Command.define do
+            name 'acceptance'
+            usage 'acceptance'
+            summary 'Runs acceptance tests'
+
+            run do |opts, args, cmd|
+              repo   = Onceover::Controlrepo.new(opts)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts), :acceptance)
+              require 'pry'
+              binding.pry
+              warn "This is in the process of being re-implemeted, the CLI doesn't work yet..."
+              # runner.prepare!
+              # runner.run_acceptance!
+            end
+          end
+        end
+      end
     end
   end
 end
@@ -60,3 +80,4 @@ end
 # Register itself
 Onceover::CLI.command.add_command(Onceover::CLI::Run.command)
 Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Spec.command)
+Onceover::CLI::Run.command.add_command(Onceover::CLI::Run::Acceptance.command)
