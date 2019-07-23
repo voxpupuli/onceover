@@ -22,7 +22,6 @@ class Onceover
 
       # Create the other directories we need
       FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
-      FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")
 
       # Copy our entire spec directory over
       FileUtils.cp_r("#{@repo.spec_dir}", "#{@repo.tempdir}")
@@ -43,15 +42,6 @@ class Onceover
         @config.run_filters(Onceover::Test.deduplicate(@config.spec_tests)).each do |test|
           @config.write_spec_test("#{@repo.tempdir}/spec/classes", test)
         end
-      end
-
-      if @mode.include?(:acceptance)
-        # Verify all of the acceptance tests
-        @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo, test) }
-
-        # Write them out
-        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",
-          @config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests)))
       end
 
       # Parse the current hiera config, modify, and write it to the temp dir
@@ -106,17 +96,7 @@ class Onceover
     end
 
     def run_acceptance!
-      warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
-
-      Dir.chdir(@repo.tempdir) do
-        #`bundle install --binstubs`
-        #`bin/rake spec_standalone`
-        logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
-        result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'acceptance').join
-      end
-
-      # Finally exit and preserve the exit code
-      exit result.status.exitstatus
+      warn "This does nothing! Acceptance testing coming soon..."
     end
   end
 end

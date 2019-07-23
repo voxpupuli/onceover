@@ -23,7 +23,6 @@ class Onceover
     attr_accessor :profile_regex
     attr_accessor :spec_dir
     attr_accessor :temp_modulepath
-    attr_accessor :nodeset_file
     attr_accessor :manifest
     attr_accessor :tempdir
     attr_accessor :onceover_yaml
@@ -118,7 +117,6 @@ class Onceover
       _facts_files      = opts[:facts_files]      || _facts_dirs.map{|d| File.join(d, '*.json')}
       @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
 
-      @nodeset_file     = opts[:nodeset_file]     || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml', @root)
       @role_regex       = opts[:role_regex]       ?  Regexp.new(opts[:role_regex]) : /role[s]?:{2}/
       @profile_regex    = opts[:profile_regex]    ?  Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
       @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
@@ -139,7 +137,6 @@ class Onceover
       #{'facts_dir'.green}        #{@facts_dir}
       #{'spec_dir'.green}         #{@spec_dir}
       #{'facts_files'.green}      #{@facts_files}
-      #{'nodeset_file'.green}     #{@nodeset_file}
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
       #{'onceover.yaml'.green}    #{@onceover_yaml}
