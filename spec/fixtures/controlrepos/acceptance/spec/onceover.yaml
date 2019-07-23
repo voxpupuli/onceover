@@ -1,0 +1,28 @@
+classes:
+  - '/role::/'
+
+nodes:
+  - CentOS-7.0-64:
+      provisioner: docker
+      image: centos:7
+      params:
+        param_a: foo
+  - Debian-6.0.10-64:
+      provisioner: docker
+      image: debian:6
+  - Ubuntu-14.04-64:
+      provisioner: docker
+      image: ubuntu:14.04
+      
+
+node_groups:
+
+
+class_groups:
+
+
+test_matrix:
+  # Main spec tests for all CentOS roles
+  - all_nodes:
+      classes: 'all_classes'
+      tests: 'all'
