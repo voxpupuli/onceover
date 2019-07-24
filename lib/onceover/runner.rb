@@ -103,7 +103,9 @@ class Onceover
       )
       bolt   = Onceover::Bolt.new(@repo, litmus)
 
+      # Loop Over each role and create the nodes
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
+        # Loop over each node and create it
         platform_tests.each do |platform_test|    
           node = platform_test.nodes.first
           nodes << node
@@ -115,14 +117,14 @@ class Onceover
             bolt.run_task(task['name'], node, task['parameters'])
           end
         end
+
+        # Install the Puppet agent on all nodes
+        log.info "Installing the Puppet agent on all nodes"
+        bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
+
+        # Finally destroy all
+        nodes.each { |n| litmus.down(n) }
       end
-
-      # Install the Puppet agent
-      log.info "Installing the Puppet agent on all nodes"
-      bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
-
-      # Finally destroy all
-      nodes.each { |n| litmus.down(n) }
     end
 
     private
