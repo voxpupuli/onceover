@@ -22,6 +22,15 @@ class Onceover
       log_results(super(task_name, targets, params, config: config, inventory: @litmus.inventory))
     end
 
+    def apply_manifest(manifest, nodes, opts)
+      nodes   = [nodes].flatten # Convert to array
+      targets = find_targets(@litmus.inventory, nodes.map { |n| n.litmus_name })
+      require 'pry'
+      binding.pry
+
+      super(apply_manifest(manifest, targets, *opts))
+    end
+
     private
 
     def log_results(results)
