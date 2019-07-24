@@ -11,6 +11,7 @@ class Onceover
     attr_accessor :provisioner
     attr_accessor :image
     attr_accessor :params
+    attr_accessor :inventory_object
 
     def initialize(details)
       # If it's a string assume it has no options

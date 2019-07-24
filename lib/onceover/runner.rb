@@ -103,8 +103,7 @@ class Onceover
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
         platform_tests.each do |platform_test|    
           node   = platform_test.nodes.first
-          log.debug "Provisioning #{node.name} using litmus"
-          # litmus.up(node)
+          litmus.up(node)
         end
       end
     end
