@@ -15,3 +15,12 @@ mod 'apache',
 #mod 'apache',
 #  :git    => 'https://github.com/puppetlabs/puppetlabs-apache',
 #  :branch => 'docs_experiment'
+
+mod 'facts',
+  :git => 'git://github.com/puppetlabs/puppetlabs-facts.git'
+
+mod 'puppet_agent',
+  :git => 'git://github.com/puppetlabs/puppetlabs-puppet_agent.git'
+
+mod 'provision',
+  :git => 'git://github.com/puppetlabs/provision.git'

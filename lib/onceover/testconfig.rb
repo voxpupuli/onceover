@@ -55,7 +55,7 @@ class Onceover
       if opts[:format] == [:defaults]
         @formatters = opts[:parallel] ? ['OnceoverFormatterParallel'] : ['OnceoverFormatter']
       else
-        @formatters = opts[:format]
+        @formatters = opts[:format] || []
       end
 
       # Initialise all of the classes and nodes

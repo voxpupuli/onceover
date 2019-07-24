@@ -9,11 +9,11 @@ nodes:
         param_a: foo
   - Name-Doesnt-Map:
       provisioner: docker
-      image: centos:8
+      image: centos:6
   - Windows_Server-2012r2-64
   - Debian-6.0.10-64:
       provisioner: docker
-      image: debian:6
+      image: debian:8
   - Ubuntu-14.04-64:
       provisioner: docker
       image: ubuntu:14.04

@@ -4,6 +4,7 @@ gemspec
 
 gem 'pry-coolline', '> 0.0', '< 1.0.0'
 gem 'pry-byebug'
+gem 'puppet_litmus'
 
 if ENV['PUPPET_VERSION']
   gem 'puppet', ENV['PUPPET_VERSION']

@@ -94,7 +94,35 @@ class Onceover
     end
 
     def run_acceptance!
-      warn "This does nothing! Acceptance testing coming soon..."
+      require 'onceover/litmus'
+
+      litmus = Onceover::Litmus.new(
+        root: @repo.tempdir,
+      )
+
+      with_each_role(@config.acceptance_tests) do |_role, platform_tests|
+        platform_tests.each do |platform_test|    
+          node   = platform_test.nodes.first
+          logger.debug "Provisioning #{node.name} using litmus"
+          # litmus.up(node)
+        end
+      end
+    end
+
+    private
+
+    # Accepts a block with two parameters: the role name and the tests for that role
+    # Loops over a block
+    def with_each_role(tests)
+      # Get all the tests
+      tests = @config.run_filters(Onceover::Test.deduplicate(tests))
+
+      # Group by role
+      tests = tests.group_by { |t| t.classes.first.name }
+      
+      tests.each do |role_name, role_tests|
+        yield(role_name, role_tests)
+      end
     end
   end
 end
