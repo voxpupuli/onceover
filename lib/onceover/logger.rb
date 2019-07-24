@@ -22,14 +22,21 @@ class Onceover
     )
 
     # Create the logger and set the initial settings
+    Logging.logger['Onceover']
     Logging.logger['Onceover'].appenders = 'onceover'
 
+      # "log" is now the used logger, this is provided for backward compatibility
     def logger
       Logging.logger['Onceover']
     end
 
     def log
       Logging.logger['Onceover']
+    end
+
+    def log_reset_appenders!
+      Logging.logger['Onceover'].appenders = []
+      Logging.logger['Onceover'].appenders = 'onceover'
     end
   end
 end

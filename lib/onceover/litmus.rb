@@ -12,6 +12,9 @@ class Onceover
 
       log.debug "Telling rake to load the ganerated Rakefile at: #{@rakefile}"
       load_rakefile(@rakefile)
+
+      # Loading the Rakefile causes iessues with logging that need to be reset
+      log_reset_appenders!
     end
 
     def up(node)
