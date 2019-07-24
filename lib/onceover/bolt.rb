@@ -22,6 +22,8 @@ class Onceover
       log_results(super(task_name, targets, params, config: config, inventory: @litmus.inventory))
     end
 
+    private
+
     def log_results(results)
       results.each do |result|
         log.debug "#{result['object']} complete, results:"
