@@ -2,6 +2,15 @@ classes:
   - '/role::/'
 
 nodes:
+  - Debian-6.0.10-64:
+      provisioner: docker
+      image: debian:8
+      # Tasks (as in bolt tasks) to run after the install
+      post-build-tasks:
+        - name: package
+          parameters:
+            action: install
+            name: curl
   - CentOS-7.0-64:
       provisioner: docker
       image: centos:7
@@ -11,9 +20,6 @@ nodes:
       provisioner: docker
       image: centos:6
   - Windows_Server-2012r2-64
-  - Debian-6.0.10-64:
-      provisioner: docker
-      image: debian:8
   - Ubuntu-14.04-64:
       provisioner: docker
       image: ubuntu:14.04

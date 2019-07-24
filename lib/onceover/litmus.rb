@@ -63,17 +63,21 @@ class Onceover
     end
 
     def inventory
+      YAML.safe_load(File.read("#{@root}/inventory.yaml"))
+    end
+
+    def bolt_inventory
       require 'yaml'
       require 'bolt'
 
-      Bolt::Inventory.new(YAML.safe_load(File.read("#{@root}/inventory.yaml")))
+      ::Bolt::Inventory.new(inventory)
     end
 
     def inventory_diff
       # Capture the nodes before and after
-      before_nodes = extract_all_nodes(inventory)
+      before_nodes = extract_all_nodes(bolt_inventory)
       yield
-      after_nodes = extract_all_nodes(inventory)
+      after_nodes = extract_all_nodes(bolt_inventory)
  
       # Remove all old values
       before_nodes.each do |name, details|
@@ -93,10 +97,10 @@ class Onceover
     end
 
     # Extracts a flat list of nodes from an inventory
-    def extract_all_nodes(inventory)
+    def extract_all_nodes(bolt_inventory)
       nodes = {}
 
-      inventory.collect_groups.each do |name, group|
+      bolt_inventory.collect_groups.each do |name, group|
         nodes.merge!(group.nodes)
       end
 

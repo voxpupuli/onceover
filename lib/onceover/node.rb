@@ -12,15 +12,17 @@ class Onceover
     attr_accessor :image
     attr_accessor :params
     attr_accessor :inventory_object
+    attr_accessor :post_build_tasks
 
     def initialize(details)
       # If it's a string assume it has no options
       details = {details => {}} if details.is_a? String
 
-      @name        = details.keys.first
-      @provisioner = details[@name]['provisioner']
-      @image       = details[@name]['image']
-      @params      = details[@name]['params'] || {}
+      @name             = details.keys.first
+      @provisioner      = details[@name]['provisioner']
+      @image            = details[@name]['image']
+      @params           = details[@name]['params'] || {}
+      @post_build_tasks = details[@name]['post-build-tasks'] || []
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
