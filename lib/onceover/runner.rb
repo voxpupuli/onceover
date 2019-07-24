@@ -95,11 +95,13 @@ class Onceover
 
     def run_acceptance!
       require 'onceover/litmus'
-
+      require 'onceover/bolt'
+ 
       nodes  = [] # Used to track all nodes
       litmus = Onceover::Litmus.new(
         root: @repo.tempdir,
       )
+      bolt   = Onceover::Bolt.new(@repo, litmus)
 
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
         platform_tests.each do |platform_test|    
@@ -108,7 +110,10 @@ class Onceover
           litmus.up(node)
 
           log.debug "Running post-build tasks..."
-          # TODO: Implement this
+          node.post_build_tasks.each do |task|
+            log.debug "Running task #{task['name']} on #{node.litmus_name} with params #{task['parameters']}"
+            bolt.run_task(task['name'], node, task['parameters'])
+          end
         end
       end
 

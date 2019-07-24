@@ -24,3 +24,5 @@ mod 'puppet_agent',
 
 mod 'provision',
   :git => 'git://github.com/puppetlabs/provision.git'
+
+mod 'puppetlabs-package', '0.6.0'
