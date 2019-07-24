@@ -122,7 +122,7 @@ class Onceover
       $temp_modulepath  = nil
       @manifest         = opts[:manifest]         || config['manifest'] ? File.expand_path(config['manifest'], @root) : nil
       @opts             = opts
-      logger.level = :debug if @opts[:debug]
+      log.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
     end
 
@@ -151,7 +151,7 @@ class Onceover
     end
 
     def classes
-      logger.debug('scanning for classes specified in onceover.yaml')
+      log.debug('scanning for classes specified in onceover.yaml')
 
       # Get all of the possible places for puppet code and look for classes
       code_dirs = self.config['modulepath']
@@ -178,7 +178,7 @@ class Onceover
     def facts(filter = nil, key = 'values')
       # Returns an array facts hashes
       all_facts = []
-      logger.debug "Reading factsets"
+      log.debug "Reading factsets"
       @facts_files.each do |file|
         all_facts << read_facts(file)[key]
       end
@@ -207,9 +207,9 @@ class Onceover
       require 'r10k/puppetfile'
 
       # Load up the Puppetfile using R10k
-      logger.debug "Reading puppetfile from #{@root}"
+      log.debug "Reading puppetfile from #{@root}"
       puppetfile = R10K::Puppetfile.new(@root)
-      logger.debug "Loading modules from Puppetfile"
+      log.debug "Loading modules from Puppetfile"
       puppetfile.load!
 
       output_array = []
@@ -217,7 +217,7 @@ class Onceover
       puppetfile.modules.each do |mod|
         threads << Thread.new do
           return_hash = {}
-          logger.debug "Loading data for #{mod.full_name}"
+          log.debug "Loading data for #{mod.full_name}"
           return_hash[:full_name] = mod.full_name
           if mod.is_a?(R10K::Module::Forge)
             return_hash[:current_version] = mod.expected_version
@@ -276,7 +276,7 @@ class Onceover
       puppetfile.modules.keep_if {|m| m.is_a?(R10K::Module::Forge)}
       puppetfile.modules.each do |mod|
         threads << Thread.new do
-          logger.debug "Getting latest version of #{mod.full_name}"
+          log.debug "Getting latest version of #{mod.full_name}"
           latest_version = mod.v3_module.current_release.version
 
           # Get the data off the queue, or wait if something else is using it
@@ -308,7 +308,7 @@ class Onceover
       repositories  = []
 
       modules.each do |mod|
-        logger.debug "Converting #{mod.to_s} to .fixtures.yml format"
+        log.debug "Converting #{mod.to_s} to .fixtures.yml format"
         # This logic could probably be cleaned up. A lot.
         if mod.is_a? R10K::Module::Forge
           if mod.expected_version.is_a?(Hash)
@@ -375,7 +375,7 @@ class Onceover
       begin
         YAML.load_file(hiera_config_file)
       rescue TypeError
-        puts "WARNING: Could not find hiera config file, continuing"
+        log.warn "Could not find hiera config file, continuing"
         nil
       end
     end
@@ -394,7 +394,7 @@ class Onceover
     end
 
     def config
-      logger.debug "Reading #{@environment_conf}"
+      log.debug "Reading #{@environment_conf}"
       env_conf = File.read(@environment_conf)
       env_conf = env_conf.split("\n")
 
@@ -498,7 +498,7 @@ class Onceover
     end
 
     def self.evaluate_template(template_name, bind)
-      logger.debug "Evaluating template #{template_name}"
+      log.debug "Evaluating template #{template_name}"
       template_dir = File.expand_path('../../templates', File.dirname(__FILE__))
       if File.file?(File.expand_path("./spec/templates/#{template_name}", @root))
         puts "Using Custom #{template_name}"
@@ -574,7 +574,7 @@ class Onceover
     def get_classes(dir)
       classes = []
       # Recurse over all the pp files under the dir we are given
-      logger.debug "Searching puppet code for roles and profiles"
+      log.debug "Searching puppet code for roles and profiles"
       Dir["#{dir}/**/*.pp"].each do |manifest|
         classname = find_classname(manifest)
         # Add it to the array as long as it is not nil
@@ -591,7 +591,7 @@ class Onceover
             return $1
           end
         rescue ArgumentError => e
-          logger.error "ignoring invalid line in file: #{filename} (#{e.message}) - line: '#{line}'"
+          log.error "ignoring invalid line in file: #{filename} (#{e.message}) - line: '#{line}'"
         end
       end
       return nil

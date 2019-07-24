@@ -47,7 +47,7 @@ class Onceover
           return node
         end
       end
-      logger.warn "Node #{node_name} not found"
+      log.warn "Node #{node_name} not found"
       nil
     end
 

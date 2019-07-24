@@ -66,7 +66,7 @@ This includes deploying using r10k and running all custom tests.
             run do |opts, args, cmd|
               # Set up logging
               require 'onceover/logger'
-              logger.level = :debug if opts[:debug]
+              log.level = :debug if opts[:debug]
 
               # Check the dependencies
               require 'onceover/litmus'
@@ -78,7 +78,7 @@ This includes deploying using r10k and running all custom tests.
               runner.prepare!
 
               runner.run_acceptance!
-              logger.info "This is in the process of being re-implemeted, the CLI doesn't work yet..."
+              log.info "This is in the process of being re-implemeted, the CLI doesn't work yet..."
             end
           end
         end
