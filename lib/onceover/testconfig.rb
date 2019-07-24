@@ -55,7 +55,7 @@ class Onceover
       if opts[:format] == [:defaults]
         @formatters = opts[:parallel] ? ['OnceoverFormatterParallel'] : ['OnceoverFormatter']
       else
-        @formatters = opts[:format]
+        @formatters = opts[:format] || []
       end
 
       # Initialise all of the classes and nodes
@@ -81,7 +81,7 @@ class Onceover
 
       # Validate the mock_functions
       if @mock_functions && @mock_functions.any? { |name, details| details.has_key? 'type' }
-        logger.warn "The 'type' key for mocked functions is deprecated and will be ignored, please remove it."
+        log.warn "The 'type' key for mocked functions is deprecated and will be ignored, please remove it."
       end
 
       # Loop over all of the items in the test matrix and add those as test
@@ -117,19 +117,19 @@ class Onceover
       # take nodes, classes or groups
 
       # We want to supress warnings for this bit
-      old_level = logger.level
-      logger.level = :error
+      old_level = log.level
+      log.level = :error
       if Onceover::Group.find(thing)
-        logger.level = old_level
+        log.level = old_level
         return Onceover::Group.find(thing).members
       elsif Onceover::Class.find(thing)
-        logger.level = old_level
+        log.level = old_level
         return [Onceover::Class.find(thing)]
       elsif Onceover::Node.find(thing)
-        logger.level = old_level
+        log.level = old_level
         return [Onceover::Node.find(thing)]
       else
-        logger.level = old_level
+        log.level = old_level
         raise "Could not find #{thing} in list of classes, nodes or groups"
       end
     end
@@ -161,7 +161,7 @@ class Onceover
       spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
       puppetcode = []
       Dir["#{spec_dir}/pre_conditions/*.pp"].each do |condition_file|
-        logger.debug "Reading pre_conditions from #{condition_file}"
+        log.debug "Reading pre_conditions from #{condition_file}"
         puppetcode << File.read(condition_file)
       end
       return nil if puppetcode.count.zero?
@@ -203,14 +203,14 @@ class Onceover
     end
 
     def create_fixtures_symlinks(repo)
-      logger.debug "Creating fixtures symlinks"
+      log.debug "Creating fixtures symlinks"
       FileUtils.rm_rf("#{repo.tempdir}/spec/fixtures/modules")
       FileUtils.mkdir_p("#{repo.tempdir}/spec/fixtures/modules")
       repo.temp_modulepath.split(':').each do |path|
         Dir["#{path}/*"].each do |mod|
           modulename = File.basename(mod)
           link = "#{repo.tempdir}/spec/fixtures/modules/#{modulename}"
-          logger.debug "Symlinking #{mod} to #{link}"
+          log.debug "Symlinking #{mod} to #{link}"
           unless File.symlink?(link)
             # Ruby only sets File::ALT_SEPARATOR on Windows and Rubys standard library
             # uses this to check for Windows

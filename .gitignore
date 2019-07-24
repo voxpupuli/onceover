@@ -13,6 +13,7 @@ tmp
 /.projections.json
 /tags
 
+.onceover
 .cucumber
 .vscode
 .idea

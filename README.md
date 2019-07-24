@@ -129,7 +129,7 @@ after:
 opts:
   :facts_dirs:        # Remember: `opts` keys are symbols!
     - 'spec/factsets' # Limit factsets to files in this repository
-  :debug: true        # set the `logger.level` to debug
+  :debug: true        # set the `log.level` to debug
 ```
 
 ```yaml

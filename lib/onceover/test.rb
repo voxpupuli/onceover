@@ -23,9 +23,11 @@ class Onceover
 
       @nodes   = []
       @classes = []
+      @tags    = []
       @test_config = test_config
       @test_config.delete('classes') # remove classes from the config
-      @tags = @test_config['tags']
+      @tags << @test_config['tags']
+      @tags.flatten!
 
       # Make sure that tags are an array
       @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']
@@ -95,6 +97,7 @@ class Onceover
         test.nodes.each do |node|
           test.classes.each do |cls|
             combo = {node => cls}
+
             if combinations.member?(combo)
 
               # Find the right test object:
@@ -109,6 +112,11 @@ class Onceover
 
               # Merge the non-default options right on in there
               relevant_test.test_config.deep_merge!(test.test_config)
+
+              # Also merge the tags
+              relevant_test.tags << test.tags
+              relevant_test.tags.flatten!
+              relevant_test.tags.uniq!
             else
               combinations << combo
               new_tests << Onceover::Test.new(node, cls, test.test_config)

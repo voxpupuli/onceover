@@ -7,7 +7,7 @@ class Onceover
       require 'fileutils'
       require 'multi_json'
 
-      logger.debug 'Deploying locally (R10K)...'
+      log.debug 'Deploying locally (R10K)...'
 
       # Only default to running r10k if there is a Puppetfile
       skip_r10k_default = !(File.file?(repo.puppetfile))
@@ -17,7 +17,7 @@ class Onceover
       if repo.tempdir == nil
         repo.tempdir = Dir.mktmpdir('r10k')
       else
-        logger.debug "Creating #{repo.tempdir}"
+        log.debug "Creating #{repo.tempdir}"
         FileUtils.mkdir_p(repo.tempdir)
       end
 
@@ -42,10 +42,10 @@ class Onceover
       # This conflicts with the step where onceover installs r10k after copying the control repo to the temporary
       # .onceover directory.  The following skips copying the modules folder, to not later cause an error.
       if File.directory?("modules")
-        logger.warn "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
+        log.warn "Found modules directory in your controlrepo, skipping the copy of this directory.  If you installed modules locally using r10k, this warning is normal, if you have created modules in a local modules directory, onceover does not support testing these files, please rename this directory to conform with Puppet best practices, as this folder will conflict with Puppet's native installation of modules."
       end
 
-      logger.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
+      log.debug "Creating temp dir as a staging directory for copying the controlrepo to #{repo.tempdir}"
       temp_controlrepo = Dir.mktmpdir('controlrepo')
 
       # onceover stores a big list of all the relative paths it places within its cache directory
@@ -71,21 +71,21 @@ class Onceover
           end
         end
       end
-      logger.debug "Writing manifest of copied controlrepo files"
+      log.debug "Writing manifest of copied controlrepo files"
       File.write("#{temp_controlrepo}/.onceover_manifest.json", onceover_manifest.to_json)
 
       # When using puppetfile vs deploy with r10k, we want to respect the :control_branch
       # located in the Puppetfile. To accomplish that, we use git and find the current
       # branch name, then replace strings within the staged puppetfile, prior to copying.
-      logger.debug "Checking current working branch"
+      log.debug "Checking current working branch"
       git_branch = `git rev-parse --abbrev-ref HEAD`.chomp
 
-      logger.debug "found #{git_branch} as current working branch"
+      log.debug "found #{git_branch} as current working branch"
       # Only try to modify Puppetfile if it exists
       unless skip_r10k
         puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
 
-        logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
+        log.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
         new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
         File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
       end
@@ -95,16 +95,16 @@ class Onceover
       # know what they are
       old_manifest_path = "#{repo.tempdir}/#{repo.environmentpath}/production/.onceover_manifest.json"
       if File.exist? old_manifest_path
-        logger.debug "Found manifest from previous run, parsing..."
+        log.debug "Found manifest from previous run, parsing..."
         old_manifest = MultiJson.load(File.read(old_manifest_path))
-        logger.debug "Removing #{old_manifest.count} files"
+        log.debug "Removing #{old_manifest.count} files"
         old_manifest.reverse.each do |file|
           FileUtils.rm_f(File.join("#{repo.tempdir}/#{repo.environmentpath}/production/",file))
         end
       end
       FileUtils.mkdir_p("#{repo.tempdir}/#{repo.environmentpath}")
 
-      logger.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
+      log.debug "Copying #{temp_controlrepo} to #{repo.tempdir}/#{repo.environmentpath}/production"
       FileUtils.cp_r("#{temp_controlrepo}/.", "#{repo.tempdir}/#{repo.environmentpath}/production")
       FileUtils.rm_rf(temp_controlrepo)
 
@@ -121,7 +121,7 @@ class Onceover
             install_cmd << "r10k puppetfile install --verbose --color --puppetfile #{repo.puppetfile}"
             install_cmd << "--force" if force
             install_cmd = install_cmd.join(' ')
-            logger.debug "Running #{install_cmd} from #{prod_dir}"
+            log.debug "Running #{install_cmd} from #{prod_dir}"
             system(install_cmd)
             raise 'r10k could not install all required modules' unless $?.success?
           end

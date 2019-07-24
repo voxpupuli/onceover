@@ -61,14 +61,24 @@ This includes deploying using r10k and running all custom tests.
             usage 'acceptance'
             summary 'Runs acceptance tests'
 
+            optional :r, :retain, 'Which nodes to retain: none, failed or all', default: 'none'
+
             run do |opts, args, cmd|
-              repo   = Onceover::Controlrepo.new(opts)
-              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml,opts), :acceptance)
-              require 'pry'
-              binding.pry
-              warn "This is in the process of being re-implemeted, the CLI doesn't work yet..."
-              # runner.prepare!
-              # runner.run_acceptance!
+              # Set up logging
+              require 'onceover/logger'
+              log.level = :debug if opts[:debug]
+
+              # Check the dependencies
+              require 'onceover/litmus'
+              Onceover::Litmus.require!
+
+              repo = Onceover::Controlrepo.new(opts)
+              Onceover::Deploy.new.deploy_local(repo, opts)
+              runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :acceptance)
+              runner.prepare!
+
+              runner.run_acceptance!
+              log.info "This is in the process of being re-implemeted, the CLI doesn't work yet..."
             end
           end
         end
