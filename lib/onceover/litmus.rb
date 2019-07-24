@@ -17,12 +17,16 @@ class Onceover
       log_reset_appenders!
     end
 
+    # Creates a node, this should also set the litmus details within the node object
+    # and return the object itself
     def up(node)
       log.debug "Provisioning #{node.name} using litmus"
 
       cd do
-        Rake::Task['litmus:provision'].invoke(node.provisioner, node.image)
-        Rake::Task['litmus:provision'].reenable
+        node.inventory_object = inventory_diff do
+          Rake::Task['litmus:provision'].invoke(node.provisioner, node.image)
+          Rake::Task['litmus:provision'].reenable
+        end
       end
     end
 
@@ -49,6 +53,27 @@ class Onceover
       end
     end
 
+    def inventory
+      require 'yaml'
+      require 'bolt'
+
+      Bolt::Inventory.new(YAML.safe_load(File.read("#{@root}/inventory.yaml")))
+    end
+
+    def inventory_diff
+      # Capture the nodes before and after
+      before_nodes = extract_all_nodes(inventory)
+      yield
+      after_nodes = extract_all_nodes(inventory)
+ 
+      # Remove all old values
+      before_nodes.each do |name, details|
+        after_nodes.delete(name)
+      end
+
+      after_nodes
+    end
+
     private
 
     def load_rakefile(file)
@@ -56,6 +81,17 @@ class Onceover
       return nil if Rake::Task.tasks.any? { |t| t.name == 'litmus:provision'}
 
       Rake.load_rakefile(file)
+    end
+
+    # Extracts a flat list of nodes from an inventory
+    def extract_all_nodes(inventory)
+      nodes = {}
+
+      inventory.collect_groups.each do |name, group|
+        nodes.merge!(group.nodes)
+      end
+
+      nodes
     end
   end
 end
