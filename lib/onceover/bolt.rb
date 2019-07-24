@@ -18,7 +18,22 @@ class Onceover
       targets = find_targets(@litmus.inventory, nodes.map { |n| n.litmus_name })
       config  = { 'modulepath' => @modulepath }
 
-      super(task_name, targets, params, config: config, inventory: @litmus.inventory)
+      log.debug "Running task '#{task_name}' on #{targets} with params: #{params}"
+      log_results(super(task_name, targets, params, config: config, inventory: @litmus.inventory))
+    end
+
+    def log_results(results)
+      results.each do |result|
+        log.debug "#{result['object']} complete, results:"
+        log.debug "#{result['node']}: #{result['status']}"
+        unless result['status'] == 'success'
+          log.error "Task failed!"
+          result.each { |k,v| log.error "#{k}: #{v}" unless k == 'result' }
+          log.error result['result']['_output']
+
+          raise "Task failed!"
+        end
+      end
     end
   end
 end

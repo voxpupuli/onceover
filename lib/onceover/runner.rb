@@ -111,11 +111,15 @@ class Onceover
 
           log.debug "Running post-build tasks..."
           node.post_build_tasks.each do |task|
-            log.debug "Running task #{task['name']} on #{node.litmus_name} with params #{task['parameters']}"
+            log.info "Running task '#{task['name']}' on #{node.litmus_name}"
             bolt.run_task(task['name'], node, task['parameters'])
           end
         end
       end
+
+      # Install the Puppet agent
+      log.info "Installing the Puppet agent on all nodes"
+      bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
 
       # Finally destroy all
       nodes.each { |n| litmus.down(n) }
