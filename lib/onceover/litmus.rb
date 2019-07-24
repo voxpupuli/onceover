@@ -30,6 +30,15 @@ class Onceover
       end
     end
 
+    def down(node)
+      log.debug "Destroying #{node.name} using litmus"
+
+      cd do
+        Rake::Task['litmus:tear_down'].invoke(node.litmus_name)
+        Rake::Task['litmus:tear_down'].reenable
+      end
+    end
+
     # Chnages to the correct doretory for running all commands
     def cd
       Dir.chdir(@root) do
