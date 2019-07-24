@@ -38,6 +38,10 @@ class Onceover
 
     end
 
+    def litmus_name
+      inventory_object.keys.first
+    end
+
     def self.find(node_name)
       @@all.each do |node|
         if node_name.is_a?(Onceover::Node)

@@ -96,16 +96,24 @@ class Onceover
     def run_acceptance!
       require 'onceover/litmus'
 
+      nodes  = [] # Used to track all nodes
       litmus = Onceover::Litmus.new(
         root: @repo.tempdir,
       )
 
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
         platform_tests.each do |platform_test|    
-          node   = platform_test.nodes.first
+          node = platform_test.nodes.first
+          nodes << node
           litmus.up(node)
+
+          log.debug "Running post-build tasks..."
+          # TODO: Implement this
         end
       end
+
+      # Finally destroy all
+      nodes.each { |n| litmus.down(n) }
     end
 
     private
