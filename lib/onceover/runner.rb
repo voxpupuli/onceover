@@ -61,7 +61,7 @@ class Onceover
     def run_spec!
       Dir.chdir(@repo.tempdir) do
         # Disable warnings unless we are running in debug mode
-        unless logger.level.zero?
+        unless log.level.zero?
           previous_rubyopt = ENV['RUBYOPT']
           ENV['RUBYOPT']   = ENV['RUBYOPT'].to_s + ' -W0'
         end
@@ -69,15 +69,15 @@ class Onceover
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
         if @config.opts[:parallel]
-          logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
+          log.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
           result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'parallel_spec').join
         else
-          logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
+          log.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
           result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
         end
 
         # Reset env to previous state if we modified it
-        unless logger.level.zero?
+        unless log.level.zero?
           ENV['RUBYOPT'] = previous_rubyopt
         end
 
@@ -103,7 +103,7 @@ class Onceover
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
         platform_tests.each do |platform_test|    
           node   = platform_test.nodes.first
-          logger.debug "Provisioning #{node.name} using litmus"
+          log.debug "Provisioning #{node.name} using litmus"
           # litmus.up(node)
         end
       end

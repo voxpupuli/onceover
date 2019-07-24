@@ -33,7 +33,7 @@ class Onceover
           end
         end
       end
-      logger.warn "Class #{class_name} not found"
+      log.warn "Class #{class_name} not found"
       nil
     end
 
