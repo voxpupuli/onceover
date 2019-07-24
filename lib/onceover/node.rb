@@ -19,7 +19,7 @@ class Onceover
       @name        = details.keys.first
       @provisioner = details[@name]['provisioner']
       @image       = details[@name]['image']
-      @params      = details[@name]['params']
+      @params      = details[@name]['params'] || {}
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
