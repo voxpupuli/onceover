@@ -96,6 +96,7 @@ class Onceover
     def run_acceptance!
       require 'onceover/bolt'
       require 'onceover/provisioner'
+      require 'onceover/runner/acceptance'
  
       nodes       = [] # Used to track all nodes
       bolt        = Onceover::Bolt.new(
@@ -106,37 +107,23 @@ class Onceover
         root: @repo.tempdir,
         bolt: bolt,
       )
+      acceptance  = Onceover::Runner::Acceptance.new(bolt, provisioner)
 
       # Loop Over each role and create the nodes
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
-        nodes = platform_tests.map { |t| t.nodes.first }
+        acceptance.provision!(platform_tests)
 
-        # Loop over each node and create it
-        nodes.each do |node|
-          provisioner.up!(node)
+        acceptance.post_build_tasks!(platform_tests)
 
-          log.debug "Running post-build tasks..."
-          node.post_build_tasks.each do |task|
-            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
-            bolt.run_task(task['name'], node, task['parameters'])
-          end
-        end
+        acceptance.agent_install!(platform_tests)
 
-        # Install the Puppet agent on all nodes
-        log.info "Installing the Puppet agent on all nodes"
-        bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
+        acceptance.post_install_tasks!(platform_tests)
 
-        # Run all the post-install tasks
-        log.debug "Running post-install tasks..."
-        nodes.each do |node|
-          node.post_install_tasks.each do |task|
-            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
-            bolt.run_task(task['name'], node, task['parameters'])
-          end
-        end
+        acceptance.code!(platform_tests)
 
-        # Finally destroy all
-        nodes.each { |n| provisioner.down!(n) }
+        acceptance.run!(platform_tests)
+
+        acceptance.tear_down!(platform_tests)
       end
     end
 
