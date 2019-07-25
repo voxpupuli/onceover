@@ -7,9 +7,11 @@ begin
   log.debug "Loading Bolt"
   require 'bolt'
   require 'bolt_spec/run'
+  require 'puppet_litmus' # This is bacuse the provision task requires it
 rescue LoadError => e
-  log.error "Something went wrong loading Bolt, probably Bolt was not detected. Please add the following line to your Gemfile:"
+  log.error "Something went wrong when loading, probably Bolt or Litmus was not detected. Please add the following lines to your Gemfile:"
   log.error "gem 'bolt'"
+  log.error "gem 'puppet_litmus'"
   log.error "Note that this requires Puppet >= 6 and will cause dependency issues if you are using an older version of Puppet"
   throw e
 end
