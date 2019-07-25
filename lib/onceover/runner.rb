@@ -94,14 +94,18 @@ class Onceover
     end
 
     def run_acceptance!
-      require 'onceover/litmus'
       require 'onceover/bolt'
+      require 'onceover/provisioner'
  
-      nodes  = [] # Used to track all nodes
-      litmus = Onceover::Litmus.new(
-        root: @repo.tempdir,
+      nodes       = [] # Used to track all nodes
+      bolt        = Onceover::Bolt.new(
+        repo:           @repo,
+        inventory_file: "#{@repo.tempdir}/inventory.yaml",
       )
-      bolt   = Onceover::Bolt.new(@repo, litmus)
+      provisioner = Onceover::Provisioner.new(
+        root: @repo.tempdir,
+        bolt: bolt,
+      )
 
       # Loop Over each role and create the nodes
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
@@ -109,11 +113,11 @@ class Onceover
         platform_tests.each do |platform_test|    
           node = platform_test.nodes.first
           nodes << node
-          litmus.up(node)
+          provisioner.up!(node)
 
           log.debug "Running post-build tasks..."
           node.post_build_tasks.each do |task|
-            log.info "Running task '#{task['name']}' on #{node.litmus_name}"
+            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
             bolt.run_task(task['name'], node, task['parameters'])
           end
         end
@@ -123,7 +127,7 @@ class Onceover
         bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
 
         # Finally destroy all
-        nodes.each { |n| litmus.down(n) }
+        nodes.each { |n| provisioner.down!(n) }
       end
     end
 

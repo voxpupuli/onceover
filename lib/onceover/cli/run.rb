@@ -68,10 +68,6 @@ This includes deploying using r10k and running all custom tests.
               require 'onceover/logger'
               log.level = :debug if opts[:debug]
 
-              # Check the dependencies
-              require 'onceover/litmus'
-              Onceover::Litmus.require!
-
               repo = Onceover::Controlrepo.new(opts)
               Onceover::Deploy.new.deploy_local(repo, opts)
               runner = Onceover::Runner.new(repo,Onceover::TestConfig.new(repo.onceover_yaml, opts), :acceptance)

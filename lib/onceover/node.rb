@@ -9,10 +9,11 @@ class Onceover
     attr_accessor :fact_set
     attr_accessor :trusted_set
     attr_accessor :provisioner
-    attr_accessor :image
+    attr_accessor :platform
     attr_accessor :params
     attr_accessor :inventory_object
     attr_accessor :post_build_tasks
+    attr_accessor :provision_params
 
     def initialize(details)
       # If it's a string assume it has no options
@@ -20,9 +21,16 @@ class Onceover
 
       @name             = details.keys.first
       @provisioner      = details[@name]['provisioner']
-      @image            = details[@name]['image']
-      @params           = details[@name]['params'] || {}
+      @platform         = details[@name]['platform']
       @post_build_tasks = details[@name]['post-build-tasks'] || []
+
+      # Remove used settings
+      details[@name].delete('provisioner')
+      details[@name].delete('platform')
+      details[@name].delete('post-build-tasks')
+
+      # Store all other as parameters to the provision task
+      @provision_params = details[@name]
 
       # If we can't find the factset it will fail, so just catch that error and ignore it
       begin
@@ -40,8 +48,8 @@ class Onceover
 
     end
 
-    def litmus_name
-      inventory_object.keys.first
+    def inventory_name
+      inventory_object ? inventory_object['name'] : nil
     end
 
     def self.find(node_name)
