@@ -109,10 +109,10 @@ class Onceover
 
       # Loop Over each role and create the nodes
       with_each_role(@config.acceptance_tests) do |_role, platform_tests|
+        nodes = platform_tests.map { |t| t.nodes.first }
+
         # Loop over each node and create it
-        platform_tests.each do |platform_test|    
-          node = platform_test.nodes.first
-          nodes << node
+        nodes.each do |node|
           provisioner.up!(node)
 
           log.debug "Running post-build tasks..."
@@ -125,6 +125,15 @@ class Onceover
         # Install the Puppet agent on all nodes
         log.info "Installing the Puppet agent on all nodes"
         bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
+
+        # Run all the post-install tasks
+        log.debug "Running post-install tasks..."
+        nodes.each do |node|
+          node.post_install_tasks.each do |task|
+            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
+            bolt.run_task(task['name'], node, task['parameters'])
+          end
+        end
 
         # Finally destroy all
         nodes.each { |n| provisioner.down!(n) }

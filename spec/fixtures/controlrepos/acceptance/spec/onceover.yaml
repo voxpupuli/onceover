@@ -3,24 +3,35 @@ classes:
 
 nodes:
   - Debian-6.0.10-64:
-      provisioner: docker
+      provisioner: docker_exp
       platform: debian:8
       # Tasks (as in bolt tasks) to run after the install
       post-build-tasks:
+        - name: exec
+          parameters:
+            command: apt-get update
         - name: package
           parameters:
             action: install
             name: curl
   - CentOS-7.0-64:
-      provisioner: docker_exp
+      provisioner: docker
       platform: centos:7
   - Name-Doesnt-Map:
-      provisioner: docker
+      provisioner: docker_exp
       platform: centos:6
   - Windows_Server-2012r2-64
   - Ubuntu-14.04-64:
-      provisioner: docker
+      provisioner: docker_exp
       platform: ubuntu:14.04
+      post-build-tasks:
+        - name: exec
+          parameters:
+            command: apt-get update
+        - name: package
+          parameters:
+            action: install
+            name: curl
 
 
 node_groups:

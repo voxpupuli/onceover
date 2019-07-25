@@ -13,21 +13,24 @@ class Onceover
     attr_accessor :params
     attr_accessor :inventory_object
     attr_accessor :post_build_tasks
+    attr_accessor :post_install_tasks
     attr_accessor :provision_params
 
     def initialize(details)
       # If it's a string assume it has no options
       details = {details => {}} if details.is_a? String
 
-      @name             = details.keys.first
-      @provisioner      = details[@name]['provisioner']
-      @platform         = details[@name]['platform']
-      @post_build_tasks = details[@name]['post-build-tasks'] || []
+      @name               = details.keys.first
+      @provisioner        = details[@name]['provisioner']
+      @platform           = details[@name]['platform']
+      @post_build_tasks   = details[@name]['post-build-tasks'] || []
+      @post_install_tasks = details[@name]['post-install-tasks'] || []
 
       # Remove used settings
       details[@name].delete('provisioner')
       details[@name].delete('platform')
       details[@name].delete('post-build-tasks')
+      details[@name].delete('post-install-tasks')
 
       # Store all other as parameters to the provision task
       @provision_params = details[@name]
