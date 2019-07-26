@@ -18,7 +18,6 @@ class Onceover
       def initialize(bolt, provisioner)
         @bolt        = bolt
         @provisioner = provisioner
-        @mutex       = Mutex.new
       end
 
       def provision!(tests)
