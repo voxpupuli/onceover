@@ -94,6 +94,7 @@ class Onceover
     end
 
     def run_acceptance!
+      require 'tty-spinner'
       require 'onceover/bolt'
       require 'onceover/provisioner'
       require 'onceover/runner/acceptance'
@@ -108,23 +109,46 @@ class Onceover
         bolt: bolt,
       )
       acceptance  = Onceover::Runner::Acceptance.new(bolt, provisioner)
+      
+      all_node_spinners = []
+      all_role_spinners = []
 
-      # Loop Over each role and create the nodes
-      with_each_role(@config.acceptance_tests) do |_role, platform_tests|
-        acceptance.provision!(platform_tests)
+      puts ""
 
-        acceptance.post_build_tasks!(platform_tests)
+      # Loop over each role and create the spinners
+      with_each_role(@config.acceptance_tests) do |role, platform_tests|
+        role_spinner = TTY::Spinner::Multi.new("[:spinner] #{role}")
+        all_role_spinners << role_spinner
+        all_role_spinners.flatten!
 
-        acceptance.agent_install!(platform_tests)
-
-        acceptance.post_install_tasks!(platform_tests)
-
-        acceptance.code!(platform_tests)
-
-        acceptance.run!(platform_tests)
-
-        acceptance.tear_down!(platform_tests)
+        node_spinners = platform_tests.map do |t|
+          role_spinner.register("[:spinner] #{role} on #{t.nodes.first.name} :stage") do |spinner|
+            spinner.update(stage: 'Starting')
+            spinner.update(stage: 'Provisioning')
+            acceptance.provision!(t)
+            spinner.update(stage: 'Post-Build')
+            acceptance.post_build_tasks!(t)
+            spinner.update(stage: 'Agent Install')
+            acceptance.agent_install!(t)
+            spinner.update(stage: 'Post-Install')
+            acceptance.post_install_tasks!(t)
+            spinner.update(stage: 'Code Deploy')
+            acceptance.code!(t)
+            spinner.update(stage: 'Puppet Run')
+            acceptance.run!(t)
+            spinner.update(stage: 'Tear Down')
+            acceptance.tear_down!(t)
+            spinner.update(stage: 'Done')
+            spinner.success
+          end
+        end
+        
+        all_node_spinners << node_spinners
+        all_node_spinners.flatten!
       end
+
+      logger.appenders = []
+      all_role_spinners.each(&:auto_spin)
     end
 
     private
