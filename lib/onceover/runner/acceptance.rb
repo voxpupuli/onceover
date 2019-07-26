@@ -18,6 +18,7 @@ class Onceover
       def initialize(bolt, provisioner)
         @bolt        = bolt
         @provisioner = provisioner
+        @mutex       = Mutex.new
       end
 
       def provision!(tests)
@@ -71,6 +72,8 @@ class Onceover
       private
 
       def each_test(tests)
+        tests = [tests].flatten # Convert to array
+
         tests.each do |test|
           role = test.classes.first
           node = test.nodes.first
@@ -80,6 +83,8 @@ class Onceover
       end
 
       def all_nodes(tests)
+        tests = [tests].flatten # Convert to array
+
         tests.map { |t| t.nodes.first }
       end
     end

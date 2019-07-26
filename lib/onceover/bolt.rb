@@ -28,6 +28,7 @@ class Onceover
       @repo           = opts[:repo]
       @inventory_file = opts[:inventory_file]
       @modulepath     = @repo.temp_modulepath
+      @mutex          = Mutex.new
     end
 
     def run_task(task_name, nodes, params)
@@ -37,7 +38,9 @@ class Onceover
       config     = { 'modulepath' => @modulepath }
 
       log.debug "Running task '#{task_name}' on #{targets} with params: #{params}"
-      log_results(super(task_name, targets, params, config: config, inventory: inventory))
+      @mutex.synchronize do
+        log_results(super(task_name, targets, params, config: config, inventory: inventory))
+      end
     end
 
     def apply_manifest(manifest, nodes, opts)
