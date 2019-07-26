@@ -29,6 +29,18 @@ class Onceover
       @inventory_file = opts[:inventory_file]
       @modulepath     = @repo.temp_modulepath
       @mutex          = Mutex.new
+
+      # LAST UPDATE
+      #
+      # The last point I got to was getting the spinners and threading working.
+      # It's all working but we have to use the mutex above to avoid weird
+      # threading issues and essentiall lock it to one bolt thing at a time.
+      # Ideally probbaly the best thing to do is refactor the
+      # Onceover::Runner::Acceptance into a plan and then just have a
+      # lightweight runner that calls bolt at the command line or similar.
+      #
+      # This will reduce the loading, make it easier to contribute to and
+      # debug, and be more in line with where Litmus is going.
     end
 
     def run_task(task_name, nodes, params)
