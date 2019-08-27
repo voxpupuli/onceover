@@ -18,11 +18,11 @@ plan onceover::acceptance::up (
   # Extract the name
   $node_name = $return.first['node']['name']
 
-  # Re-parse trhe inventory
-  onceover::reload_inventory()
+  $target_params = onceover::node_to_target($return.first['node'])
+  $new_target    = Target.new($target_params['uri'], $target_params['options'])
 
-  # Get the new target OBJECT
-  $new_target = get_targets($node_name)[0]
+  # Save the provisioned name
+  $new_target.set_var('provision_name', $node_name)
 
   return $new_target
 }
