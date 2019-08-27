@@ -15,20 +15,14 @@ plan onceover::acceptance::up (
     'action'    => 'provision',
   )
 
-  # Move into target format
-  $node_details  = $return.first['node']
-  $target_params = {
-    'uri'     => $node_details['name'],
-    'options' => $node_details['config']
-  }
+  # Extract the name
+  $node_name = $return.first['node']['name']
 
-  # Create the new target object
-  $new_target = Target.new($target_params)
+  # Re-parse trhe inventory
+  onceover::reload_inventory()
 
-  # Add the facts if they exist
-  if $node_details['facts'] {
-    $new_target.add_facts($node_details['facts'])
-  }
+  # Get the new target OBJECT
+  $new_target = get_targets($node_name)[0]
 
   return $new_target
 }

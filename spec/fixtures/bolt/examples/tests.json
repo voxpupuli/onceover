@@ -1,0 +1,24 @@
+{
+    "tests": [{
+        "node": {
+            "name": "Debian-6.0.10-64",
+            "platform": "debian:8",
+            "provisioner": "docker_exp",
+            "post-build-tasks": [{
+                    "name": "exec",
+                    "parameters": {
+                        "command": "apt-get update"
+                    }
+                },
+                {
+                    "name": "package",
+                    "parameters": {
+                        "action": "install",
+                        "name": "curl"
+                    }
+                }
+            ]
+        },
+        "class": "foo"
+    }]
+}
