@@ -17,3 +17,6 @@ tmp
 .cucumber
 .vscode
 .idea
+
+# Fixtures Caches
+spec/fixtures/bolt/modules

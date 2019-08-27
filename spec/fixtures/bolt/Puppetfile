@@ -1,0 +1,9 @@
+# Dependencies
+mod 'puppetlabs-stdlib', '6.0.0'
+
+mod 'puppetlabs/provision',
+  git: 'https://github.com/dylanratcliffe/provision.git',
+  branch: 'return_node_object'
+
+# Debugging
+mod 'nwops-debug', :latest
