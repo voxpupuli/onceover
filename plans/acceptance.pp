@@ -18,8 +18,8 @@
 plan onceover::acceptance (
   Onceover::Tests $tests,
 ) {
-  # Provision
-  $tests.each |$test| {
+  # Provision targets
+  $targets = $tests.map |$test| {
     $target = run_plan('onceover::acceptance::up',
       'platform'       => $test['node']['platform'],
       'provisioner'    => $test['node']['provisioner'],
@@ -30,10 +30,13 @@ plan onceover::acceptance (
     $vars.each |$k, $v| {
       $target.set_var($k, $v)
     }
+
+    # Return the target
+    $target
   }
 
   # Post-build tasks
-  get_targets('all').each |$target| {
+  $targets.each |$target| {
     # Loop over all of the targets and execute any post-build tasks they might have
     run_plan('onceover::acceptance::post_build', {
       'node' => $target,
@@ -47,13 +50,13 @@ plan onceover::acceptance (
     default => 'puppet5'
   }
 
-  run_task('puppet_agent::install', get_targets('all'), {
+  run_task('puppet_agent::install', $targets, {
     'version'    => onceover::puppet_version(),
     'collection' => $collection,
   })
 
   # Post-install tasks
-  get_targets('all').each |$target| {
+  $targets.each |$target| {
     # Loop over all of the targets and execute any post-install tasks they might have
     run_plan('onceover::acceptance::post_install', {
       'node' => $target,
@@ -67,4 +70,10 @@ plan onceover::acceptance (
   # 2nd Puppet run
 
   # Tear down
+  $targets.each |$target| {
+    # Loop over all of the targets and execute any post-install tasks they might have
+    run_plan('onceover::acceptance::down', {
+      'target' => $target,
+    })
+  }
 }
