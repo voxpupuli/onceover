@@ -4,8 +4,8 @@ type Onceover::Tests = Array[Struct[{
     'factset'            => Optional[Hash],
     'platform'           => String,
     'provisioner'        => String,
-    'post-build-tasks'   => Optional[Onceover::Task],
-    'post-install-tasks' => Optional[Onceover::Task],
+    'post-build-tasks'   => Optional[Array[Onceover::Task]],
+    'post-install-tasks' => Optional[Array[Onceover::Task]],
   }],
   'class' => String,
 }]]

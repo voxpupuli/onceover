@@ -21,19 +21,25 @@ plan onceover::acceptance (
   # Provision
   $tests.each |$test| {
     $target = run_plan('onceover::acceptance::up',
-      'inventory_file' => 'inventory.yaml',
-      'node_name'      => $test['node']['name'],
       'platform'       => $test['node']['platform'],
       'provisioner'    => $test['node']['provisioner'],
     )
 
-    $target.add_to_group($test)
-    $target.set_var({
-      'test' => $test
-    })
+    # Save all of the details into the node itself
+    $vars = $test['node'].merge({ 'class' => $test['class'] })
+    $vars.each |$k, $v| {
+      $target.set_var($k, $v)
+    }
   }
 
   # Post-build tasks
+  get_targets('all').each |$target| {
+    debug::break()
+    # Loop over all of the targets and execute any post-build tasks they might have
+    run_plan('onceover::acceptance::post_build', {
+      'node' => $target,
+    })
+  }
 
   # Agent install
 
