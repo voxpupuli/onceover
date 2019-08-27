@@ -34,7 +34,6 @@ plan onceover::acceptance (
 
   # Post-build tasks
   get_targets('all').each |$target| {
-    debug::break()
     # Loop over all of the targets and execute any post-build tasks they might have
     run_plan('onceover::acceptance::post_build', {
       'node' => $target,
@@ -42,8 +41,24 @@ plan onceover::acceptance (
   }
 
   # Agent install
+  $collection = onceover::puppet_version() ? {
+    /^6/    => 'puppet6',
+    /^5/    => 'puppet5',
+    default => 'puppet5'
+  }
+
+  run_task('puppet_agent::install', get_targets('all'), {
+    'version'    => onceover::puppet_version(),
+    'collection' => $collection,
+  })
 
   # Post-install tasks
+  get_targets('all').each |$target| {
+    # Loop over all of the targets and execute any post-install tasks they might have
+    run_plan('onceover::acceptance::post_install', {
+      'node' => $target,
+    })
+  }
 
   # Code setup
 
