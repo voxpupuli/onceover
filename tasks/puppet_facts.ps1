@@ -1,0 +1,1 @@
+& 'C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat' facts

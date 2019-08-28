@@ -1,0 +1,13 @@
+{
+    "description": "Gets a Puppet setting",
+    "parameters": {
+        "setting": {
+            "type": "String",
+            "description": "The name of the setting to retrieve"
+        }
+    },
+    "input_method": "stdin",
+    "implementations": [
+        { "name": "get_setting.rb", "requirements": ["puppet-agent"] }
+    ]
+}

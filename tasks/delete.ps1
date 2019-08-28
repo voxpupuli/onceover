@@ -1,0 +1,1 @@
+Remove-Item -Path $env:PT_path -Recurse -Force
