@@ -15,8 +15,13 @@
 #   - Puppet run         (parallel)
 #   - 2nd Puppet run     (parallel)
 #   - Tear down          (serial)
+#
+# It is assumed that the tests that are passed to this plan are already
+# deduplicated and represent a single class on a single node
+#
 plan onceover::acceptance (
   Onceover::Tests $tests,
+  String          $cache_location,
 ) {
   # Provision targets
   $targets = $tests.map |$test| {
@@ -55,6 +60,9 @@ plan onceover::acceptance (
     'collection' => $collection,
   })
 
+  # Ensure that the feature is set
+  $targets.each |$t| { set_feature($t, 'puppet-agent', true) }
+
   # Post-install tasks
   $targets.each |$target| {
     # Loop over all of the targets and execute any post-install tasks they might have
@@ -64,6 +72,11 @@ plan onceover::acceptance (
   }
 
   # Code setup
+  run_plan('onceover::acceptance::controlrepo_setup', {
+    'targets'        => $targets,
+    'cache_location' => $cache_location,
+    'tests'          => $tests,
+  })
 
   # Puppet run
 

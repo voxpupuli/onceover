@@ -1,0 +1,13 @@
+{
+    "description": "Sets facts using external facts",
+    "parameters": {
+        "facts": {
+            "type": "Hash",
+            "description": "A hash of facts and values to set"
+        }
+    },
+    "input_method": "stdin",
+    "implementations": [
+        { "name": "set_facts.rb", "requirements": ["puppet-agent"] }
+    ]
+}
