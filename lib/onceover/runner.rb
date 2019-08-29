@@ -94,8 +94,10 @@ class Onceover
     end
 
     def run_acceptance!
+      require 'tty-spinner'
       require 'onceover/bolt'
       require 'onceover/provisioner'
+      require 'onceover/runner/acceptance'
  
       nodes       = [] # Used to track all nodes
       bolt        = Onceover::Bolt.new(
@@ -106,38 +108,47 @@ class Onceover
         root: @repo.tempdir,
         bolt: bolt,
       )
+      acceptance  = Onceover::Runner::Acceptance.new(bolt, provisioner)
+      
+      all_node_spinners = []
+      all_role_spinners = []
 
-      # Loop Over each role and create the nodes
-      with_each_role(@config.acceptance_tests) do |_role, platform_tests|
-        nodes = platform_tests.map { |t| t.nodes.first }
+      puts ""
 
-        # Loop over each node and create it
-        nodes.each do |node|
-          provisioner.up!(node)
+      # Loop over each role and create the spinners
+      with_each_role(@config.acceptance_tests) do |role, platform_tests|
+        role_spinner = TTY::Spinner::Multi.new("[:spinner] #{role}")
+        all_role_spinners << role_spinner
+        all_role_spinners.flatten!
 
-          log.debug "Running post-build tasks..."
-          node.post_build_tasks.each do |task|
-            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
-            bolt.run_task(task['name'], node, task['parameters'])
+        node_spinners = platform_tests.map do |t|
+          role_spinner.register("[:spinner] #{role} on #{t.nodes.first.name} :stage") do |spinner|
+            spinner.update(stage: 'Starting')
+            spinner.update(stage: 'Provisioning')
+            acceptance.provision!(t)
+            spinner.update(stage: 'Post-Build')
+            acceptance.post_build_tasks!(t)
+            spinner.update(stage: 'Agent Install')
+            acceptance.agent_install!(t)
+            spinner.update(stage: 'Post-Install')
+            acceptance.post_install_tasks!(t)
+            spinner.update(stage: 'Code Deploy')
+            acceptance.code!(t)
+            spinner.update(stage: 'Puppet Run')
+            acceptance.run!(t)
+            spinner.update(stage: 'Tear Down')
+            acceptance.tear_down!(t)
+            spinner.update(stage: 'Done')
+            spinner.success
           end
         end
-
-        # Install the Puppet agent on all nodes
-        log.info "Installing the Puppet agent on all nodes"
-        bolt.run_task('puppet_agent::install', nodes, { 'version' => Puppet.version })
-
-        # Run all the post-install tasks
-        log.debug "Running post-install tasks..."
-        nodes.each do |node|
-          node.post_install_tasks.each do |task|
-            log.info "Running task '#{task['name']}' on #{node.inventory_name}"
-            bolt.run_task(task['name'], node, task['parameters'])
-          end
-        end
-
-        # Finally destroy all
-        nodes.each { |n| provisioner.down!(n) }
+        
+        all_node_spinners << node_spinners
+        all_node_spinners.flatten!
       end
+
+      logger.appenders = []
+      all_role_spinners.each(&:auto_spin)
     end
 
     private

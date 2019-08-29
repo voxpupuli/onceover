@@ -1,0 +1,14 @@
+{
+    "description": "Deletes a file or folder",
+    "parameters": {
+        "path": {
+            "type": "String",
+            "description": "The file or folder to delete"
+        }
+    },
+    "input_method": "environment",
+    "implementations": [
+        { "name": "delete.sh", "requirements": ["shell"] },
+        { "name": "delete.ps1", "requirements": ["powershell"] }
+    ]
+}

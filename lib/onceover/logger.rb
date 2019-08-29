@@ -24,6 +24,7 @@ class Onceover
     # Create the logger and set the initial settings
     Logging.logger['Onceover']
     Logging.logger['Onceover'].appenders = 'onceover'
+    Logging.logger['Onceover'].level     = :info
 
       # "log" is now the used logger, this is provided for backward compatibility
     def logger

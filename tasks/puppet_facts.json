@@ -1,0 +1,9 @@
+{
+    "description": "Gets puppet facts from the command line",
+    "parameters": {},
+    "input_method": "environment",
+    "implementations": [
+        { "name": "puppet_facts.sh", "requirements": ["shell"] },
+        { "name": "puppet_facts.ps1", "requirements": ["powershell"] }
+    ]
+}

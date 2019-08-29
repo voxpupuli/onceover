@@ -1,0 +1,14 @@
+{
+    "description": "Create a folder",
+    "parameters": {
+        "path": {
+            "type": "String",
+            "description": "The folder to create"
+        }
+    },
+    "input_method": "environment",
+    "implementations": [
+        { "name": "mkdir_p.sh", "requirements": ["shell"] },
+        { "name": "mkdir_p.ps1", "requirements": ["powershell"] }
+    ]
+}

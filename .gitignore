@@ -8,6 +8,7 @@ Gemfile.local
 /.bin
 /.ruby-version
 tmp
+vendor
 
 # Vim
 /.projections.json
@@ -17,3 +18,9 @@ tmp
 .cucumber
 .vscode
 .idea
+
+# Fixtures Caches
+spec/fixtures/bolt/modules
+spec/fixtures/bolt/inventory.yaml
+.rerun.json
+.vagrant
