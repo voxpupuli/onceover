@@ -6,19 +6,22 @@ cache:
     - 'spec/fixtures/puppet_controlrepo/.onceover' # Onceover cache
 
 script: bundle exec rake full_tests
-bundler_args: --path vendor/bundle
 
 matrix:
   include:
     # 2016.x -> 2017.2
     - rvm: 2.1.9
       env: PUPPET_VERSION="~>4.0"
+      bundler_args: --path vendor/bundle --without accepatance
     
     # 2017.3 -> 2018.1
     - rvm: 2.4.4
       env: PUPPET_VERSION="~>5.0"
+      bundler_args: --path vendor/bundle --without accepatance
     
     # 2019.0 -> now
     - rvm: 2.5.1
       env: PUPPET_VERSION="~>6.0"
+      bundler_args: --path vendor/bundle
+      
     
