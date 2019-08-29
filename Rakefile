@@ -35,7 +35,7 @@ task :syntax do
   paths = ['lib', 'spec/onceover', 'features']
   require 'find'
   Find.find(*paths) do |path|
-    next unless path =~ /\.rb$/
+    next unless /\.rb$/.match?(path)
     if windows?
       sh "ruby -cw #{path} > NUL"
     else
