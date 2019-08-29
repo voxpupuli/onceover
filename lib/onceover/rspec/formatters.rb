@@ -108,7 +108,7 @@ class OnceoverFormatter
     if match
       compilation_error = match['error']
       # Check if we car parse it
-      if ERROR_WITH_LOCATION.match?(compilation_error)
+      if ERROR_WITH_LOCATION.match(compilation_error)
         scanned_errors = match['error'].scan(ERROR_WITH_LOCATION)
 
         # Delete any matches where there was no error text
@@ -122,7 +122,7 @@ class OnceoverFormatter
             column: error_matches[3],
           }
         end
-      elsif ERROR_WITHOUT_LOCATION.match?(compilation_error)
+      elsif ERROR_WITHOUT_LOCATION.match(compilation_error)
         scanned_errors = match['error'].scan(ERROR_WITHOUT_LOCATION)
 
         # Delete any matches where there was no error text

@@ -105,7 +105,7 @@ class Onceover
         opts.merge!(_data.fetch('opts',{})||{})
       end
       opts.fetch(:facts_dir,'').sub!(%r{^[^/.].+} ){|path| File.expand_path(path, @root)}
-      opts.fetch(:facts_files,[]).map!{|path| %r{^[/.]}.match?(path) ? path : File.expand_path(path, @root)}
+      opts.fetch(:facts_files,[]).map!{|path| path =~ %r{^[/.]} ? path : File.expand_path(path, @root)}
 
       @environmentpath  = opts[:environmentpath]  || 'etc/puppetlabs/code/environments'
       @puppetfile       = opts[:puppetfile]       || File.expand_path('./Puppetfile', @root)
