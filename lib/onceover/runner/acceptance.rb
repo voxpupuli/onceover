@@ -53,13 +53,9 @@ class Onceover
         end
       end
 
-      def code!(tests)
+      def code!(tests) end
 
-      end
-
-      def run!(tests)
-
-      end
+      def run!(tests) end
 
       def tear_down!(tests)
         log.debug "Running destroying all nodes..."
