@@ -38,7 +38,7 @@ plan onceover::acceptance::controlrepo_setup (
   $tests.each |$test| {
     $test.onceover::on_test_target($targets) |$target| {
       # Get the current facts
-      $current_facts = run_task('onceover::puppet_facts', $target).first.value['values']
+      $current_facts = run_plan('onceover::puppet_facts', 'target' => $target)
       $desired_facts = $test['node']['factset']['values']
 
       # Ensure that the external facts dir exists
