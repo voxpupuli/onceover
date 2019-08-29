@@ -17,7 +17,17 @@ RSpec::Core::RakeTask.new(:acceptance) do |t|
   t.rspec_opts = '--pattern spec/acceptance/**/*_spec.rb'
 end
 
-Cucumber::Rake::Task.new
+Cucumber::Rake::Task.new(:cucumber) do |t|
+  require 'puppet'
+  current = SemanticPuppet::Version.parse(Puppet.version)
+  six     = SemanticPuppet::Version.parse('6.0.0')
+
+  if current >= six
+    tags = '--tags ~@acceptance'
+  end
+  
+  t.cucumber_opts = "--format pretty #{tags}"
+end
 
 task default: :full_tests
 
