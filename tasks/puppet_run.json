@@ -1,0 +1,14 @@
+{
+    "description": "Runs Puppet",
+    "parameters": {
+        "role": {
+            "type": "String",
+            "description": "The role to classify the server with"
+        }
+    },
+    "input_method": "environment",
+    "implementations": [
+        { "name": "puppet_run.sh", "requirements": ["shell"] },
+        { "name": "puppet_run.ps1", "requirements": ["powershell"] }
+    ]
+}

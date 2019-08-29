@@ -362,7 +362,7 @@
                 "expiration": "2015-09-23T02:26:02.690130706+00:00"
             }
         },
-        "class": "foo"
+        "class": "postgresql::server"
     }],
     "cache_location": "/Users/dylan/git/puppet_controlrepo/.onceover/etc/puppetlabs/code/environments/production"
 }

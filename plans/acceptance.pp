@@ -79,8 +79,21 @@ plan onceover::acceptance (
   })
 
   # Puppet run
+  $tests.each |$test| {
+    $report = run_plan('onceover::acceptance::run', {
+      'targets' => $targets,
+      'test'    => $test,
+    })
+  }
 
   # 2nd Puppet run
+  $tests.each |$test| {
+    $report = run_plan('onceover::acceptance::run', {
+      'targets' => $targets,
+      'test'    => $test,
+      'fail_on' => 'changes'
+    })
+  }
 
   # Tear down
   $targets.each |$target| {
