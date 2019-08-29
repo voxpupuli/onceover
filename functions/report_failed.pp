@@ -8,7 +8,11 @@ function onceover::report_failed (
   if $target {
     if $target.facts['virtual'] == 'docker' {
       $ignore_resources = { 'resource_type' => 'Service' }
+    } else {
+      $ignore_resources = undef
     }
+  } else {
+    $ignore_resources = undef
   }
 
 

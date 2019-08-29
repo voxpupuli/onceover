@@ -8,9 +8,14 @@
 # })
 #
 function onceover::filter_resources (
-  Hash $resource_statuses,
-  Hash $filter,
+  Hash           $resource_statuses,
+  Optional[Hash] $filter,
 ) {
+  # If there is no filter then don't do anything
+  if $filter == undef {
+    return $resource_statuses
+  }
+
   # Filter all of the resources
   $filtered = $resource_statuses.values.map |$resource_status| {
     $matches_filter = $filter.keys.onceover::all |$key| {

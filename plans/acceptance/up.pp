@@ -18,8 +18,15 @@ plan onceover::acceptance::up (
   # Extract the name
   $node_name = $return.first['node']['name']
 
-  $target_params = onceover::node_to_target($return.first['node'])
-  $new_target    = Target.new($target_params['uri'], $target_params['options'])
+  # This is currently not working, will resort to inventroy reload until this if fixed:
+  # https://github.com/puppetlabs/bolt/issues/1125
+  # $target_params = onceover::node_to_target($return.first['node'])
+  # $new_target    = Target.new($target_params['uri'], $target_params['options'])
+
+  onceover::reload_inventory()
+
+  # Get the target
+  $new_target = get_targets($node_name)[0]
 
   # Save the provisioned name
   $new_target.set_var('provision_name', $node_name)

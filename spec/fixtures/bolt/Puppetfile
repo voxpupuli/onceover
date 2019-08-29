@@ -3,7 +3,7 @@ mod 'puppetlabs-stdlib', :latest
 
 mod 'puppetlabs/provision',
   git: 'https://github.com/dylanratcliffe/provision.git',
-  branch: 'return_node_object'
+  branch: 'vagrant_dir_fix'
 
 mod 'facts',
   :git => 'git://github.com/puppetlabs/puppetlabs-facts.git'

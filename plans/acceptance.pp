@@ -32,6 +32,7 @@ plan onceover::acceptance (
 
     # Save all of the details into the node itself
     $vars = $test['node'].merge({ 'class' => $test['class'] })
+
     $vars.each |$k, $v| {
       $target.set_var($k, $v)
     }
