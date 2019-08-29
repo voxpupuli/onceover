@@ -8,6 +8,7 @@ Gemfile.local
 /.bin
 /.ruby-version
 tmp
+vendor
 
 # Vim
 /.projections.json
