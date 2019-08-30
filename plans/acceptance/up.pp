@@ -22,8 +22,7 @@ plan onceover::acceptance::up (
   # https://github.com/puppetlabs/bolt/issues/1125
   # $target_params = onceover::node_to_target($return.first['node'])
   # $new_target    = Target.new($target_params['uri'], $target_params['options'])
-
-  onceover::reload_inventory()
+  onceover::reload_inventory($inventory_path)
 
   # Get the target
   $new_target = get_targets($node_name)[0]

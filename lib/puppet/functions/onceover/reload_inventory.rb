@@ -8,10 +8,10 @@
 #
 Puppet::Functions.create_function(:'onceover::reload_inventory') do
   dispatch :reload do
-    # No parameters
+    optional_param 'String', :inventory_path
   end
 
-  def reload()
+  def reload(inventory_path)
     require 'bolt/inventory'
 
     # Find the current inventroy object
@@ -19,7 +19,7 @@ Puppet::Functions.create_function(:'onceover::reload_inventory') do
 
     # Work out where that file is on disk using horrible hacks
     config         = old_inventory.instance_variable_get(:@config)
-    inventory_file = config.inventoryfile || config.boltdir.inventory_file
+    inventory_file = config.inventoryfile || "#{inventory_path}/inventory.yaml"
 
     # Re-initialise a new object
     new_inventory  = Bolt::Inventory.new(YAML.safe_load(File.read(inventory_file)))

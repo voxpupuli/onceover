@@ -85,6 +85,24 @@ class Onceover
       "#{class_msg}_on_#{node_msg}"
     end
 
+    def to_bolt
+      raise 'to_bolt can only be called on a dedupliacted test' if classes.count > 1 or nodes.count > 1
+
+      node = nodes[0]
+
+      {
+        'node' => {
+          'name'               => node.name,
+          'factset'            => node.fact_set,
+          'platform'           => node.platform,
+          'provisioner'        => node.provisioner,
+          'post-build-tasks'   => node.post_build_tasks,
+          'post-install-tasks' => node.post_install_tasks,
+        },
+        'class' => classes[0].name,
+      }
+    end
+
     def self.deduplicate(tests)
       require 'deep_merge'
       # This should take an array of tests and remove any duplicates from them

@@ -97,21 +97,19 @@ class Onceover
       require 'tty-spinner'
       require 'onceover/bolt'
       require 'onceover/provisioner'
-      require 'onceover/runner/acceptance'
+      require 'fileutils'
  
-      nodes       = [] # Used to track all nodes
-      bolt        = Onceover::Bolt.new(
-        repo:           @repo,
-        inventory_file: "#{@repo.tempdir}/inventory.yaml",
-      )
-      provisioner = Onceover::Provisioner.new(
-        root: @repo.tempdir,
-        bolt: bolt,
-      )
-      acceptance  = Onceover::Runner::Acceptance.new(bolt, provisioner)
-      
       all_node_spinners = []
       all_role_spinners = []
+      results           = {}
+      
+      # Calculate all of the bolt options
+      onceover_module_path = File.expand_path('../../..',  __dir__)
+      bolt_opts = {
+        'format'     => 'json',
+        'modulepath' => "#{@repo.temp_modulepath}:#{onceover_module_path}",
+        'boltdir'    => File.join(@repo.tempdir, @repo.environmentpath, 'production'),
+      }
 
       puts ""
 
@@ -122,24 +120,40 @@ class Onceover
         all_role_spinners.flatten!
 
         node_spinners = platform_tests.map do |t|
-          role_spinner.register("[:spinner] #{role} on #{t.nodes.first.name} :stage") do |spinner|
-            spinner.update(stage: 'Starting')
-            spinner.update(stage: 'Provisioning')
-            acceptance.provision!(t)
-            spinner.update(stage: 'Post-Build')
-            acceptance.post_build_tasks!(t)
-            spinner.update(stage: 'Agent Install')
-            acceptance.agent_install!(t)
-            spinner.update(stage: 'Post-Install')
-            acceptance.post_install_tasks!(t)
-            spinner.update(stage: 'Code Deploy')
-            acceptance.code!(t)
-            spinner.update(stage: 'Puppet Run')
-            acceptance.run!(t)
-            spinner.update(stage: 'Tear Down')
-            acceptance.tear_down!(t)
+          role_spinner.register("[:spinner] #{t.nodes.first.name} :stage") do |spinner|
+            spinner.update(stage: 'Preparing')
+            prod_dir       = File.join(@repo.tempdir, @repo.environmentpath, 'production')
+            inventory_path = File.join(@repo.tempdir, "bolt_#{t.to_s}")
+            inventory_file = File.join(@repo.tempdir, @repo.environmentpath, 'production', 'inventory.yaml')
+
+            plan_params = {
+              'tests'          => [t.to_bolt],
+              'cache_location' => prod_dir,
+              'inventory_path' => inventory_path,
+            }
+
+            # Create Bolt cache
+            FileUtils.mkdir_p(inventory_path)
+
+            # Write the plan params for debugging
+            File.write(File.join(@repo.tempdir, "bolt_#{t.to_s}", "plan_params.json"), plan_params.to_json)
+
+            # Copy in the inventory file if it exists
+            if File.file?(inventory_file)
+              FileUtils.cp(inventory_file, inventory_path)
+            end
+
+            spinner.update(stage: 'Running')
+            result = JSON.parse(Onceover::BoltCLI.run_plan('onceover::acceptance', plan_params, bolt_opts))
             spinner.update(stage: 'Done')
-            spinner.success
+
+            results[t] = result
+
+            if result['result'] == 'success'
+              spinner.success
+            else
+              spinner.error
+            end
           end
         end
         
@@ -149,6 +163,9 @@ class Onceover
 
       logger.appenders = []
       all_role_spinners.each(&:auto_spin)
+      require 'pry'
+      binding.pry
+      echo foo
     end
 
     private
