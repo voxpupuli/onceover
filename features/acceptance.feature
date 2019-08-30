@@ -23,9 +23,7 @@ Feature: Run onceover's acceptance tests
     Then I should not see any errors
     And I should see message pattern "role::example"
 
-  # Scenario: Run accpetance tests
-  #   Given control repo "acceptance"
-  #   When I run onceover command "run acceptance --tags acceptance"
-  #   Then I should not see any errors
-  #   And I should see message pattern "role::example"
-
+  Scenario: Run accpetance tests
+    Given control repo "acceptance"
+    When I run onceover command "run acceptance --tags acceptance"
+    Then I should not see any errors

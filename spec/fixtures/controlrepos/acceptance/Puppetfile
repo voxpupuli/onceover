@@ -3,9 +3,6 @@ forge "http://forge.puppetlabs.com"
 # I want to download some modules to check if r10k feature in Onceover works correctly.
 #
 
-# Versions should be updated to be the latest at the time you start
-mod "puppetlabs/stdlib",      '4.11.0'
-
 # Modules from Git
 # Examples: https://github.com/puppetlabs/r10k/blob/master/doc/puppetfile.mkd#examples
 mod 'apache',
@@ -16,14 +13,21 @@ mod 'apache',
 #  :git    => 'https://github.com/puppetlabs/puppetlabs-apache',
 #  :branch => 'docs_experiment'
 
+# Dependencies
+mod 'puppetlabs-stdlib', :latest
+
+mod 'puppetlabs/provision',
+  git: 'https://github.com/dylanratcliffe/provision.git',
+  branch: 'acceptance'
+
 mod 'facts',
   :git => 'git://github.com/puppetlabs/puppetlabs-facts.git'
 
 mod 'puppet_agent',
   :git => 'git://github.com/puppetlabs/puppetlabs-puppet_agent.git'
 
-mod 'provision',
-  :git => 'git://github.com/puppetlabs/provision.git'
+mod 'puppetlabs-package', :latest
+mod 'puppetlabs-exec', :latest
 
-mod 'puppetlabs-package', '0.6.0'
-mod 'puppetlabs-exec', '0.4.0'
+# Debugging
+mod 'nwops-debug', :latest
