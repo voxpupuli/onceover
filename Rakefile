@@ -22,7 +22,7 @@ Cucumber::Rake::Task.new(:cucumber) do |t|
   current = SemanticPuppet::Version.parse(Puppet.version)
   six     = SemanticPuppet::Version.parse('6.0.0')
 
-  if current >= six
+  if current <= six
     tags = '--tags ~@acceptance'
   end
   
