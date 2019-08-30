@@ -163,9 +163,14 @@ class Onceover
 
       logger.appenders = []
       all_role_spinners.each(&:auto_spin)
-      require 'pry'
-      binding.pry
-      echo foo
+
+      # I will need to make this better...
+      # TODO: Aggregate all inventory files into one
+      # TODO: Add more configurable behaviour around what to do if nodes fail
+      # TODO: Make the plan *much* more configurable
+      results.values.each do |val|
+        puts JSON.pretty_generate(val) unless val['result'] == 'success'
+      end
     end
 
     private
