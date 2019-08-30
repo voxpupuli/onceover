@@ -151,4 +151,39 @@ class Onceover
       end
     end
   end
+
+  class BoltCLI
+    require 'tempfile'
+    require 'json'
+
+    attr_reader :working_dir
+
+    COMMAND_PREFIX = ENV['BUNDLE_GEMFILE'] ? 'bundle exec' : ''
+
+    def self.run_plan(name, params = {}, opts = {})
+      # Write parameters file
+      params_path = Tempfile.new('bolt-params')
+      params_path.write(params.to_json)
+      params_path.close
+      options = Onceover::BoltCLI.opts_to_params(opts)
+
+      command = "#{COMMAND_PREFIX} bolt plan run #{name} --params @'#{params_path.path}' #{options}"
+
+      # puts "\n\n\n\n#{command}\n\n\n\n"
+      `#{command}`
+    end
+
+    private
+
+    def self.opts_to_params(opts)
+      params = ""
+
+      opts.each do |name, value|
+        value = nil if value == true
+        params << "--#{name} #{value} "
+      end
+
+      params
+    end
+  end
 end

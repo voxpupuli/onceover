@@ -22,12 +22,14 @@
 plan onceover::acceptance (
   Onceover::Tests $tests,
   String          $cache_location,
+  String          $inventory_path = '.',
 ) {
   # Provision targets
   $targets = $tests.map |$test| {
     $target = run_plan('onceover::acceptance::up',
       'platform'       => $test['node']['platform'],
       'provisioner'    => $test['node']['provisioner'],
+      'inventory_path' => $inventory_path,
     )
 
     # Save all of the details into the node itself
@@ -100,7 +102,17 @@ plan onceover::acceptance (
   $targets.each |$target| {
     # Loop over all of the targets and execute any post-install tasks they might have
     run_plan('onceover::acceptance::down', {
-      'target' => $target,
+      'target'         => $target,
+      'inventory_path' => $inventory_path,
     })
   }
+
+  $return_value = {
+    'tests'          => $tests,
+    'cache_location' => $cache_location,
+    'targets'        => $targets,
+    'result'         => 'success',
+  }
+
+  return $return_value
 }
