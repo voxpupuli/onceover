@@ -34,24 +34,27 @@ plan onceover::acceptance::controlrepo_setup (
     upload_file($cache_location, $destination, $target, "Upload code cache to ${destination}")
   }
 
+  # Only try to mock the facts if we were actually told to, and there are facts to mock
   if $mock_facts {
     # Loop over each test and mock the facts that we need
     $tests.each |$test| {
-      $test.onceover::on_test_target($targets) |$target| {
-        # Get the current facts
-        $current_facts = run_plan('onceover::puppet_facts', 'target' => $target)
-        $desired_facts = $test['node']['factset']
+      if $test['node']['factset'] {
+        $test.onceover::on_test_target($targets) |$target| {
+          # Get the current facts
+          $current_facts = run_plan('onceover::puppet_facts', 'target' => $target)
+          $desired_facts = $test['node']['factset']
 
-        # Ensure that the external facts dir exists
-        $external_facts_dir = run_task('onceover::get_setting', $target, {
-          'setting' => 'pluginfactdest',
-        }).first.value['value']
-        run_task('onceover::mkdir_p', $target, 'path' => $external_facts_dir)
+          # Ensure that the external facts dir exists
+          $external_facts_dir = run_task('onceover::get_setting', $target, {
+            'setting' => 'pluginfactdest',
+          }).first.value['value']
+          run_task('onceover::mkdir_p', $target, 'path' => $external_facts_dir)
 
-        # Make sure the desired facts are there
-        run_task('onceover::set_facts', $target, {
-          'facts' => ($desired_facts - $current_facts),
-        })
+          # Make sure the desired facts are there
+          run_task('onceover::set_facts', $target, {
+            'facts' => ($desired_facts - $current_facts),
+          })
+        }
       }
     }
   }
