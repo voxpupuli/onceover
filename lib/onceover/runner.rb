@@ -99,13 +99,13 @@ class Onceover
       require 'onceover/provisioner'
       require 'fileutils'
  
-      all_node_spinners = []
-      all_role_spinners = []
-      results           = {}
+      top_spinner = TTY::Spinner::Multi.new("Acceptance Tests")
+      spinners    = []
+      results     = {}
 
       # Set up a queue of mutexes for locking Bolt to a given number of copies
       @bolt_locks       = Queue.new
-      bolt_concurrency  = 2
+      bolt_concurrency  = 6
       bolt_concurrency.times do
         @bolt_locks << Mutex.new
       end
@@ -128,12 +128,8 @@ class Onceover
 
       # Loop over each role and create the spinners
       with_each_role(final_tests) do |role, platform_tests|
-        role_spinner = TTY::Spinner::Multi.new("[:spinner] #{role}")
-        all_role_spinners << role_spinner
-        all_role_spinners.flatten!
-
-        node_spinners = platform_tests.map do |t|
-          role_spinner.register("[:spinner] #{t.nodes.first.name} :stage") do |spinner|
+        spinners << platform_tests.map do |t|
+          top_spinner.register("[:spinner] #{t.classes.first.name} on #{t.nodes.first.name} :stage", format: :dots) do |spinner|
             spinner.update(stage: 'Preparing'.yellow)
             prod_dir       = File.join(@repo.tempdir, @repo.environmentpath, 'production')
             inventory_path = File.join(@repo.tempdir, "bolt_#{t.to_s}")
@@ -181,12 +177,11 @@ class Onceover
             end
           end
         end
-        
-        all_node_spinners << node_spinners
-        all_node_spinners.flatten!
       end
 
-      all_role_spinners.each(&:auto_spin)
+      spinners.flatten!
+
+      top_spinner.auto_spin
   
       # I will need to make this better...
       # TODO: Aggregate all inventory files into one
