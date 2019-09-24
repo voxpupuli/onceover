@@ -156,6 +156,14 @@ class Onceover
       end
     end
 
+    def verify_acceptance_test(controlrepo, test)
+      test.nodes.each do |node|
+        if node.provisioner.nil? or node.platform.nil?
+          raise "Node #{node.name} must have both a platform and a provisioner"
+        end
+      end
+    end
+
     def pre_condition
       # Read all the pre_conditions and return the string
       spec_dir = Onceover::Controlrepo.new(@opts).spec_dir
