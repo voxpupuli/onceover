@@ -155,6 +155,7 @@ class Onceover
   class BoltCLI
     require 'tempfile'
     require 'json'
+    require 'open3'
 
     attr_reader :working_dir
 
@@ -170,7 +171,8 @@ class Onceover
       command = "#{COMMAND_PREFIX} bolt plan run #{name} --params @'#{params_path.path}' #{options}"
 
       # puts "\n\n\n\n#{command}\n\n\n\n"
-      `#{command}`
+      stdout, stderr, status = Open3.capture3(command)
+      return stdout
     end
 
     private
