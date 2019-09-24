@@ -102,6 +102,13 @@ class Onceover
       all_node_spinners = []
       all_role_spinners = []
       results           = {}
+
+      # Set up a queue of mutexes for locking Bolt to a given number of copies
+      @bolt_locks       = Queue.new
+      bolt_concurrency  = 2
+      bolt_concurrency.times do
+        @bolt_locks << Mutex.new
+      end
       
       # Calculate all of the bolt options
       onceover_module_path = File.expand_path('../../..',  __dir__)
@@ -127,7 +134,7 @@ class Onceover
 
         node_spinners = platform_tests.map do |t|
           role_spinner.register("[:spinner] #{t.nodes.first.name} :stage") do |spinner|
-            spinner.update(stage: 'Preparing')
+            spinner.update(stage: 'Preparing'.yellow)
             prod_dir       = File.join(@repo.tempdir, @repo.environmentpath, 'production')
             inventory_path = File.join(@repo.tempdir, "bolt_#{t.to_s}")
             inventory_file = File.join(@repo.tempdir, @repo.environmentpath, 'production', 'inventory.yaml')
@@ -149,15 +156,27 @@ class Onceover
               FileUtils.cp(inventory_file, inventory_path)
             end
 
-            spinner.update(stage: 'Running')
+            spinner.update(stage: 'Waiting'.yellow)
+            # Wait until we can get a lock
+            bolt_lock = @bolt_locks.shift
+
+            # Lock it to be safe
+            bolt_lock.lock
+
+            spinner.update(stage: 'Running'.blue)
             result = JSON.parse(Onceover::BoltCLI.run_plan('onceover::acceptance', plan_params, bolt_opts))
-            spinner.update(stage: 'Done')
+
+            # Unlock and give back the lock
+            bolt_lock.unlock
+            @bolt_locks << bolt_lock
 
             results[t] = result
 
             if result['result'] == 'success'
+              spinner.update(stage: 'Pass'.green)
               spinner.success
             else
+              spinner.update(stage: 'Fail'.red)
               spinner.error
             end
           end
@@ -167,9 +186,8 @@ class Onceover
         all_node_spinners.flatten!
       end
 
-      logger.appenders = []
       all_role_spinners.each(&:auto_spin)
-
+  
       # I will need to make this better...
       # TODO: Aggregate all inventory files into one
       # TODO: Add more configurable behaviour around what to do if nodes fail
