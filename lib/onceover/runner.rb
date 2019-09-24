@@ -111,10 +111,16 @@ class Onceover
         'boltdir'    => File.join(@repo.tempdir, @repo.environmentpath, 'production'),
       }
 
+      # Verify all acceptance tests and fail early
+      final_tests = @config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests))
+      final_tests.each do |test|
+        @config.verify_acceptance_test(@repo, test)
+      end
+
       puts ""
 
       # Loop over each role and create the spinners
-      with_each_role(@config.acceptance_tests) do |role, platform_tests|
+      with_each_role(final_tests) do |role, platform_tests|
         role_spinner = TTY::Spinner::Multi.new("[:spinner] #{role}")
         all_role_spinners << role_spinner
         all_role_spinners.flatten!
