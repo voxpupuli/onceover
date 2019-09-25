@@ -105,7 +105,7 @@ class Onceover
 
       # Set up a queue of mutexes for locking Bolt to a given number of copies
       @bolt_locks       = Queue.new
-      bolt_concurrency  = 6
+      bolt_concurrency  = repo.opts[:parallel]
       bolt_concurrency.times do
         @bolt_locks << Mutex.new
       end

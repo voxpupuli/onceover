@@ -5,6 +5,7 @@ require 'onceover/runner'
 require 'onceover/testconfig'
 require 'onceover/logger'
 require 'onceover/deploy'
+require 'facter'
 
 class Onceover
   class CLI
@@ -61,7 +62,8 @@ This includes deploying using r10k and running all custom tests.
             usage 'acceptance'
             summary 'Runs acceptance tests'
 
-            optional :r, :retain, 'Which nodes to retain: none, failed or all', default: 'none'
+            optional :r, :retain,   'Which nodes to retain: none, failed or all', default: 'none'
+            optional :p, :parallel, 'How many nodes to run in parallel',          default: Facter.value('processors')['count']
 
             run do |opts, args, cmd|
               # Set up logging
@@ -74,7 +76,6 @@ This includes deploying using r10k and running all custom tests.
               runner.prepare!
 
               runner.run_acceptance!
-              log.info "This is in the process of being re-implemeted, the CLI doesn't work yet..."
             end
           end
         end
