@@ -1,0 +1,88 @@
+# Let's mockup a onceover format!  It should:
+#
+#   - test a site's role clasess
+#     - against the site's relevant nodes/factsets _for that role_
+#   - read nodes (factsets) from files or PuppetDB
+#
+# But it still should be easy:
+#
+#   - to configure
+#   - to maintain
+#   - to read
+
+# Classes that can be tested
+#
+# (This list of regexps/strings filters classes found under `class_sources`)
+classes:
+  - /^role::*/
+
+# Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
+# depending on whether you are running 'spec' or 'acceptance' tests
+#
+# Filters nodes to consider from `opts[:node_sources]`
+nodes:
+  # RedHat nodes with any name and factsets less than 20d old
+  - facts:
+      os.family: /RedHat/
+    factset:
+      name: /^.*/
+      timestamp: '< 20d'
+  # backwards-compatible, looks for 'spec/factsets/adserverrole.windows-2016.json'
+  - adserverrole.windows-2016
+
+# `class_nodes` works like `node_groups`, but the name of the group IS the class
+class_nodes: # works like 'node_groups',
+ all_roles:
+   role::adserver:
+     - adserverrole.windows-2016
+   role::alerting_service:
+     - alertingservicerole.ubuntu-14.04
+     - alertingservicerole.ubuntu-16.04
+   role::appservices:
+     - appservicesrole.windows-2012-r2
+  webserver_roles:
+    - facts:
+    - classes:
+
+
+
+opts:
+  # Where to look for or match `classess`
+  :class_sources:
+
+    # (default backend, source for classic onceover `classes` behavior)
+    # Provides classes from Puppet manifests on the filesytem
+    :files:
+      :enabled: true
+      :paths:
+        - 'site-modules/roles/manifests/**/*.pp'
+        - 'site/**/*.pp'
+
+    # Provides classes from PuppetDB that match criteria from `classes`
+    :puppetdb:
+      :enabled: true
+
+  :node_sources:
+
+     # (default backend, classic onceover factsets/ directories)
+     # nodes' facts are read in from factset files, typically in spec/facsets/*.json
+     :files:
+       :enabled: false
+       :paths:
+         - 'spec/factsets/*.json'  # (default)
+
+     # Provides nodes (factsets) from PuppetDB that:
+     # - match criteria defined in `nodes`
+     # - are limited to nodes with resources that match `classes`
+     #
+     # Uses opts[:puppetdb]
+     :puppetdb:
+       :enabled: true
+
+   # Connection info for puppetdb sources
+   :puppetdb:
+     :url: http://puppetdb01.domain.tld:8080
+     :ca_file: /path/to/cacert.pem
+     :cert: /path/to/cacert.pem
+     :key: /path/to/cacert.pem
+     :verify_mode: OpenSSL::SSL::VERIFY_PEER
