@@ -39,7 +39,7 @@ describe "<%= cls.name %>" do
       # https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/execution.rb#L191
       expected_null_file = Puppet::Util::Platform.windows? ? 'NUL' : '/dev/null'
       unless File.exist? expected_null_file
-        Puppet::Util::Execution.stubs(:execute).raises(Puppet::ExecutionFailure.new("Onceover caused this"))
+        allow(Puppet::Util::Execution).to receive(:execute).and_raise(Puppet::ExecutionFailure.new("Onceover caused this"))
       end
     end
 
