@@ -1,15 +1,5 @@
-# Yes it's strange that we have to call `RSpec.configure` more than once. The
-# reason we are doing this is to silence the incredibly annoying warning:
-#
-# puppetlabs_spec_helper: defaults `mock_with` to `:mocha`
-#
-# In order to do this we have configure the
-# mocking, THEN require puppetlabs_spec_helper.
-#
-# Yes, I know. Someone buy me a 🍺 for fixing this.
-#
 RSpec.configure do |c|
-  c.mock_with :mocha
+  c.mock_with :rspec
 end
 
 require 'puppetlabs_spec_helper/module_spec_helper'
