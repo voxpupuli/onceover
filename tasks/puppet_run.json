@@ -10,5 +10,6 @@
     "implementations": [
         { "name": "puppet_run.sh", "requirements": ["shell"] },
         { "name": "puppet_run.ps1", "requirements": ["powershell"] }
-    ]
+    ],
+    "files": ["onceover/files/run_details.rb"]
 }

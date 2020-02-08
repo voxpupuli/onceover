@@ -61,7 +61,8 @@ This includes deploying using r10k and running all custom tests.
             usage 'acceptance'
             summary 'Runs acceptance tests'
 
-            optional :r, :retain, 'Which nodes to retain: none, failed or all', default: 'none'
+            optional :r, :retain,   'Which nodes to retain: none, failed or all', default: 'none'
+            optional :p, :parallel, 'How many nodes to run in parallel',          default: 4
 
             run do |opts, args, cmd|
               # Set up logging

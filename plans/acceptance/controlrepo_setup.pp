@@ -25,13 +25,16 @@ plan onceover::acceptance::controlrepo_setup (
 
     $target.set_var('environmentpath', $result.first.value['value'])
 
-    $destination = "${target.vars['environmentpath']}/production"
+    $destination = $target.vars['environmentpath']
 
     # Delete anything that already exists
     run_task('onceover::delete', $target, 'path' => $destination)
 
     # Copy the code to the correct location
     upload_file($cache_location, $destination, $target, "Upload code cache to ${destination}")
+
+    # If the system is Windows then we need to fix the environmentpath to use semicolons instead of colons for example
+    run_task('onceover::post_deploy', $target)
   }
 
   # Only try to mock the facts if we were actually told to, and there are facts to mock

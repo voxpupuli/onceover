@@ -105,7 +105,7 @@ class Onceover
 
       # Set up a queue of mutexes for locking Bolt to a given number of copies
       @bolt_locks       = Queue.new
-      bolt_concurrency  = 6
+      bolt_concurrency  = repo.opts[:parallel].to_i
       bolt_concurrency.times do
         @bolt_locks << Mutex.new
       end
@@ -131,7 +131,7 @@ class Onceover
         spinners << platform_tests.map do |t|
           top_spinner.register("[:spinner] #{t.classes.first.name} on #{t.nodes.first.name} :stage", format: :dots) do |spinner|
             spinner.update(stage: 'Preparing'.yellow)
-            prod_dir       = File.join(@repo.tempdir, @repo.environmentpath, 'production')
+            prod_dir       = File.join(@repo.tempdir, @repo.environmentpath)
             inventory_path = File.join(@repo.tempdir, "bolt_#{t.to_s}")
             inventory_file = File.join(@repo.tempdir, @repo.environmentpath, 'production', 'inventory.yaml')
 

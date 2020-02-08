@@ -1,0 +1,8 @@
+{
+    "description": "Fixes issues with environment.conf on Windows i.e. semicolons and removes the config_version",
+    "input_method": "environment",
+    "implementations": [
+        { "name": "post_deploy.sh", "requirements": ["shell"] },
+        { "name": "post_deploy.ps1", "requirements": ["powershell"] }
+    ]
+}

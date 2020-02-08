@@ -101,7 +101,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 ```yaml
   - {nodes_to_test}: # The name of a node or node group
       classes: '{classes_to_test}' # the name of a class or
-      tests: '{all_tests|acceptance|spec}' # acceptance deprecated/broken, set to spec
+      tests: '{all_tests|acceptance|spec}' # acceptance or spec tests
       {valid_option}: {value} # Check the doco for available options
 ```
 
@@ -130,10 +130,7 @@ opts:
   :facts_dirs:        # Remember: `opts` keys are symbols!
     - 'spec/factsets' # Limit factsets to files in this repository
   :debug: true        # set the `log.level` to debug
-```
 
-```yaml
-opts:
   # profiles include a legacy module named `site::`
   :profile_regex: '^(profile|site)::'
 
