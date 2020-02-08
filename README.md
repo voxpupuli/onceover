@@ -233,7 +233,7 @@ This gem comes with a few pre-canned factsets. These are listed under the `nodes
 
 `spec/factsets/*.json`
 
-Factsets are used by the controlrepo gem to generate spec tests, which compile a given class against a certain set of facts. To create these factsets all we need to do is log onto a real machine that has puppet installed and run:
+Factsets are used by the onceover gem to generate spec tests, which compile a given class against a certain set of facts. To create these factsets all we need to do is log onto a real machine that has puppet installed and run:
 
 `puppet facts`
 
