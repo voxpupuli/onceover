@@ -52,10 +52,10 @@ class Onceover
       @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
       
       # Set dynamic defaults for format
-      if opts[:format] == [:defaults]
+      if Array(opts[:format]) == [:defaults]
         @formatters = opts[:parallel] ? ['OnceoverFormatterParallel'] : ['OnceoverFormatter']
       else
-        @formatters = opts[:format]
+        @formatters = Array(opts[:format])
       end
 
       # Initialise all of the classes and nodes
