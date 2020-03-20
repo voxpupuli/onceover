@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec', '>= 3.0.0'
   s.add_runtime_dependency 'r10k', '>=2.1.0'
   s.add_runtime_dependency 'puppet', '>=3.4.0'
+  s.add_runtime_dependency 'facter', '< 4.0.0'
   s.add_runtime_dependency 'git'
   s.add_runtime_dependency 'cri', '>= 2.6'
   s.add_runtime_dependency 'colored', '~> 1.2'
