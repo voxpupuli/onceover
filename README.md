@@ -231,6 +231,13 @@ It's important to note that in order to reference a group using the *include/exc
 
 One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter. **NOTE:** Custom spec tests will always be run as they are not subject to tags
 
+**include_spec_files** *Default: [**/*]*
+
+Glob to select additionnal files to be run during `onceover` spec tests.
+
+Default is to select all files located in the repo spec directory, usually `spec/`.
+If you have some RSpec tests that depend on a different RSpec configuration than `onceover` or want, for example, to have a different job in your CI to run your own unit tests, you can use this option to select which spec files to run during `onceover` spec tests.
+
 ### factsets
 
 This gem comes with a few pre-canned factsets. These are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`. You can also add your own factsets by putting them in:

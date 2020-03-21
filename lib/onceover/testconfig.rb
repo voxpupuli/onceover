@@ -50,6 +50,7 @@ class Onceover
       @before_conditions = config['before'] || []
       @after_conditions  = config['after']
       @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
+      @included_specs    = [config['include_spec_files'] || ['**/*']].flatten
       
       # Set dynamic defaults for format
       if Array(opts[:format]) == [:defaults]
@@ -234,6 +235,19 @@ class Onceover
         "#{location}/spec_helper.rb",
         Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb', binding)
       )
+    end
+
+    def copy_spec_files(repo)
+      source_files = @included_specs.map { |glob| Dir.glob "#{repo.spec_dir}/#{glob}" }.flatten.uniq
+      source_files.each do |source_file|
+        target_file = File.join(repo.tempdir, 'spec', source_file.delete_prefix(repo.spec_dir))
+        if File.directory?(source_file)
+          FileUtils.cp_r source_file, target_file unless File.exists? target_file
+        else
+          FileUtils.mkdir_p File.dirname target_file
+          FileUtils.cp source_file, target_file
+        end
+      end
     end
 
     def create_fixtures_symlinks(repo)
