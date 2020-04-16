@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
 
   # Development
-  s.add_development_dependency 'rubocop', '~> 0.49.0'
+  s.add_development_dependency 'rubocop', '~> 0.49'
   s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
   s.add_development_dependency 'pry', '~> 0.10.0'
   s.add_development_dependency 'cucumber', '~> 2.0'

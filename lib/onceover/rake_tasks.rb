@@ -11,6 +11,7 @@ task :generate_fixtures do
   if File.exist?(File.expand_path('./.fixtures.yml', repo.root))
     raise ".fixtures.yml already exits, we won't overwrite because we are scared"
   end
+
   File.write(File.expand_path('./.fixtures.yml', repo.root), repo.fixtures)
 end
 

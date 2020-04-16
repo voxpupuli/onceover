@@ -53,8 +53,10 @@ class Onceover
         @config.acceptance_tests.each { |test| @config.verify_acceptance_test(@repo, test) }
 
         # Write them out
-        @config.write_acceptance_tests("#{@repo.tempdir}/spec/acceptance",
-          @config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests)))
+        @config.write_acceptance_tests(
+          "#{@repo.tempdir}/spec/acceptance",
+          @config.run_filters(Onceover::Test.deduplicate(@config.acceptance_tests))
+        )
       end
 
       # Parse the current hiera config, modify, and write it to the temp dir

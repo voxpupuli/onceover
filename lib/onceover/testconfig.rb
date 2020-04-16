@@ -104,12 +104,12 @@ class Onceover
     def to_s
       require 'colored'
 
-      <<-END.gsub(/^\s{4}/,'')
+      <<-TESTCONF.gsub(/^\s{4}/,'')
       #{'classes'.green}      #{@classes.map{|c|c.name}}
       #{'nodes'.green}        #{@nodes.map{|n|n.name}}
       #{'class_groups'.green} #{@class_groups}
       #{'node_groups'.green}  #{@node_groups.map{|g|g.name}}
-      END
+      TESTCONF
     end
 
     def self.find_list(thing)
@@ -177,30 +177,38 @@ class Onceover
         puppetcode << File.read(condition_file)
       end
       return nil if puppetcode.count.zero?
+
       puppetcode.join("\n")
     end
 
     def write_spec_test(location, test)
       # Use an ERB template to write a spec test
-      File.write("#{location}/#{test.to_s}_spec.rb",
-        Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding))
+      File.write(
+        "#{location}/#{test.to_s}_spec.rb",
+        Onceover::Controlrepo.evaluate_template('test_spec.rb.erb', binding)
+      )
     end
 
     def write_acceptance_tests(location, tests)
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
-      File.write("#{location}/acceptance_spec.rb",
+      File.write(
+        "#{location}/acceptance_spec.rb",
         Onceover::Controlrepo.evaluate_template('acceptance_test_spec.rb.erb', binding))
     end
 
     def write_spec_helper_acceptance(location, repo)
-      File.write("#{location}/spec_helper_acceptance.rb",
-        Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb', binding))
+      File.write(
+        "#{location}/spec_helper_acceptance.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper_acceptance.rb.erb', binding)
+      )
     end
 
     def write_rakefile(location, pattern)
-      File.write("#{location}/Rakefile",
-        Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb', binding))
+      File.write(
+        "#{location}/Rakefile",
+        Onceover::Controlrepo.evaluate_template('testconfig_Rakefile.erb', binding)
+      )
     end
 
     def write_spec_helper(location, repo)
@@ -222,8 +230,10 @@ class Onceover
       repo.temp_modulepath = modulepath
 
       # Use an ERB template to write a spec test
-      File.write("#{location}/spec_helper.rb",
-        Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb', binding))
+      File.write(
+        "#{location}/spec_helper.rb",
+        Onceover::Controlrepo.evaluate_template('spec_helper.rb.erb', binding)
+      )
     end
 
     def create_fixtures_symlinks(repo)
