@@ -27,6 +27,11 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec"
     Then I should see message pattern "apache::params"
 
+  Scenario: Checking that r10k config works
+    Given initialized control repo "caching"
+    When I run onceover command "run spec --debug"
+    Then I should see message pattern "r10k.yaml"
+
   Scenario: Run spec tests with misspelled module in Puppetfile
     Given initialized control repo "basic"
     And in Puppetfile is misspelled module's name

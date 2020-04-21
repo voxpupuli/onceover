@@ -3,7 +3,6 @@ require 'erb'
 require 'yaml'
 require 'find'
 require 'pathname'
-require 'thread'
 require 'multi_json'
 require 'onceover/beaker'
 require 'onceover/logger'
@@ -115,7 +114,7 @@ class Onceover
       @environment_conf = opts[:environment_conf] || File.expand_path('./environment.conf', @root)
       @spec_dir         = opts[:spec_dir]         || File.expand_path('./spec', @root)
       @facts_dir        = opts[:facts_dir]        || File.expand_path('factsets', @spec_dir)
-      _facts_dirs       = [@facts_dir, File.expand_path('../../../factsets', __FILE__)]
+      _facts_dirs       = [@facts_dir, File.expand_path('../../factsets', __dir__)]
       _facts_files      = opts[:facts_files]      || _facts_dirs.map{|d| File.join(d, '*.json')}
       @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
 
@@ -134,7 +133,7 @@ class Onceover
     def to_s
       require 'colored'
 
-      <<-END.gsub(/^\s{4}/,'')
+      <<-REPO.gsub(/^\s{4}/,'')
       #{'puppetfile'.green}       #{@puppetfile}
       #{'environment_conf'.green} #{@environment_conf}
       #{'facts_dir'.green}        #{@facts_dir}
@@ -144,7 +143,7 @@ class Onceover
       #{'roles'.green}            #{roles}
       #{'profiles'.green}         #{profiles}
       #{'onceover.yaml'.green}    #{@onceover_yaml}
-      END
+      REPO
     end
 
     def roles
@@ -190,6 +189,7 @@ class Onceover
       if filter
         # Allow us to pass a hash of facts to filter by
         raise "Filter param must be a hash" unless filter.is_a?(Hash)
+
         all_facts.keep_if do |hash|
           matches = []
           filter.each do |filter_fact,value|
@@ -254,13 +254,15 @@ class Onceover
 
       threads.map(&:join)
 
-      tp output_array,
+      tp(
+        output_array,
         {:full_name       => {:display_name => "Full Name"}},
         {:current_version => {:display_name => "Current Version"}},
         {:latest_version  => {:display_name => "Latest Version"}},
         {:out_of_date     => {:display_name => "Out of Date?"}},
         {:endorsement     => {:display_name => "Endorsement"}},
         {:superseded_by   => {:display_name => "Superseded by"}}
+      )
     end
 
     def update_puppetfile
@@ -305,6 +307,7 @@ class Onceover
       # Load up the Puppetfile using R10k
       puppetfile = R10K::Puppetfile.new(@root)
       fail 'Could not load Puppetfile' unless puppetfile.load
+
       modules = puppetfile.modules
 
       # Iterate over everything and seperate it out for the sake of readability
@@ -395,6 +398,7 @@ class Onceover
       possibe_datadirs = Dir["#{@root}/*/"]
       possibe_datadirs.keep_if { |dir| dir =~ /hiera(?:.*data)?/i }
       raise "There were too many directories that looked like hiera data: #{possibe_datadirs}" if possibe_datadirs.count > 1
+
       File.expand_path(possibe_datadirs[0])
     end
 
@@ -417,7 +421,7 @@ class Onceover
       # Finally, split the modulepath values and return
       begin
         environment_config['modulepath'] = environment_config['modulepath'].split(':')
-      rescue
+      rescue StandardError
         raise "modulepath was not found in environment.conf, don't know where to look for roles & profiles"
       end
       

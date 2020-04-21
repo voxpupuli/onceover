@@ -1,16 +1,16 @@
 AllCops:
   Include:
-    - 'lib/**/*.rb'
-    - 'ext/**/*.rb'
+    - "lib/**/*.rb"
+    - "ext/**/*.rb"
   Exclude:
-    - '**/*.erb'
-    - 'acceptance/**/*'
-    - 'autotest/**/*'
-    - 'spec/**/*'
-    - 'tasks/**/*'
-    - 'vendor/**/*'
+    - "**/*.erb"
+    - "acceptance/**/*"
+    - "autotest/**/*"
+    - "spec/**/*"
+    - "tasks/**/*"
+    - "vendor/**/*"
 
-Lint/ConditionPosition:
+Layout/ConditionPosition:
   Enabled: true
 
 Lint/ElseLayout:
@@ -27,11 +27,7 @@ Lint/EnsureReturn:
   Enabled: false
 
 # MAYBE useful - errors when rescue {} happens.
-Lint/HandleExceptions:
-  Enabled: false
-
-# MAYBE useful - catches while 1
-Lint/LiteralInCondition:
+Lint/SuppressedException:
   Enabled: false
 
 Lint/ShadowingOuterLocalVariable:
@@ -40,7 +36,6 @@ Lint/ShadowingOuterLocalVariable:
 # Can catch complicated strings.
 Lint/LiteralInInterpolation:
   Enabled: true
-
 
 # DISABLED really useless. Detects return as last statement.
 Style/RedundantReturn:
@@ -97,15 +92,15 @@ Security/Eval:
   Enabled: false
 
 # DISABLED
-Lint/BlockAlignment:
+Layout/BlockAlignment:
   Enabled: false
 
 # DISABLED
-Lint/DefEndAlignment:
+Layout/DefEndAlignment:
   Enabled: false
 
 # DISABLED
-Lint/EndAlignment:
+Layout/EndAlignment:
   Enabled: false
 
 # DISABLED
@@ -123,7 +118,7 @@ Lint/ParenthesesAsGroupedExpression:
 Lint/RescueException:
   Enabled: false
 
-Lint/StringConversionInInterpolation:
+Lint/RedundantStringCoercion:
   Enabled: false
 
 Lint/UnusedBlockArgument:
@@ -147,22 +142,22 @@ Lint/Void:
 Layout/AccessModifierIndentation:
   Enabled: false
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: false
 
 Style/Alias:
   Enabled: false
 
-Layout/AlignArray:
+Layout/ArrayAlignment:
   Enabled: false
 
-Layout/AlignHash:
+Layout/HashAlignment:
   Enabled: false
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Enabled: false
 
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
 
 Metrics/BlockNesting:
@@ -172,9 +167,6 @@ Style/AsciiComments:
   Enabled: false
 
 Style/Attr:
-  Enabled: false
-
-Style/BracesAroundHashParameters:
   Enabled: false
 
 Style/CaseEquality:
@@ -195,7 +187,7 @@ Layout/MultilineMethodCallBraceLayout:
 Style/CharacterLiteral:
   Enabled: false
 
-Style/ClassAndModuleCamelCase:
+Naming/ClassAndModuleCamelCase:
   Enabled: false
 
 Style/ClassAndModuleChildren:
@@ -216,27 +208,23 @@ Style/ClassVars:
 Style/WhenThen:
   Enabled: false
 
-
 # DISABLED - not useful
 Style/WordArray:
   Enabled: false
 
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: false
 
-Layout/Tab:
+Layout/IndentationStyle:
   Enabled: false
 
 Layout/SpaceBeforeSemicolon:
   Enabled: false
 
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: false
 
 Layout/SpaceInsideBlockBraces:
-  Enabled: false
-
-Layout/SpaceInsideBrackets:
   Enabled: false
 
 Layout/SpaceInsideHashLiteralBraces:
@@ -278,7 +266,6 @@ Layout/SpaceBeforeBlockBraces:
 Layout/SpaceBeforeComma:
   Enabled: false
 
-
 Style/CollectionMethods:
   Enabled: false
 
@@ -294,7 +281,7 @@ Style/CommentAnnotation:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
-Style/ConstantName:
+Naming/ConstantName:
   Enabled: false
 
 Style/Documentation:
@@ -319,10 +306,10 @@ Style/EachWithObject:
 Layout/EmptyLineBetweenDefs:
   Enabled: false
 
-Layout/IndentArray:
+Layout/FirstArrayElementIndentation:
   Enabled: false
 
-Layout/IndentHash:
+Layout/FirstHashElementIndentation:
   Enabled: false
 
 Layout/IndentationConsistency:
@@ -340,7 +327,7 @@ Layout/EmptyLinesAroundAccessModifier:
 Style/EmptyLiteral:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 
 Style/MethodCallWithoutArgsParentheses:
@@ -358,7 +345,10 @@ Layout/TrailingWhitespace:
 Style/StringLiterals:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/TrailingCommaInArguments:
@@ -394,7 +384,6 @@ Style/SingleLineMethods:
 Style/SpecialGlobalVars:
   Enabled: false
 
-
 Style/TrivialAccessors:
   Enabled: false
 
@@ -404,7 +393,7 @@ Style/UnlessElse:
 Style/VariableInterpolation:
   Enabled: false
 
-Style/VariableName:
+Naming/VariableName:
   Enabled: false
 
 Style/WhileUntilDo:
@@ -413,7 +402,7 @@ Style/WhileUntilDo:
 Style/EvenOdd:
   Enabled: false
 
-Style/FileName:
+Naming/FileName:
   Enabled: false
 
 Style/For:
@@ -422,7 +411,7 @@ Style/For:
 Style/Lambda:
   Enabled: false
 
-Style/MethodName:
+Naming/MethodName:
   Enabled: false
 
 Style/MultilineTernaryOperator:
@@ -458,7 +447,7 @@ Style/NumericLiterals:
 Style/OneLineConditional:
   Enabled: false
 
-Style/OpMethod:
+Naming/BinaryOperatorParameterName:
   Enabled: false
 
 Style/ParenthesesAroundCondition:
@@ -470,7 +459,7 @@ Style/PercentLiteralDelimiters:
 Style/PerlBackrefs:
   Enabled: false
 
-Style/PredicateName:
+Naming/PredicateName:
   Enabled: false
 
 Style/RedundantException:
@@ -584,13 +573,10 @@ Layout/EmptyLinesAroundMethodBody:
 Lint/IneffectiveAccessModifier:
   Enabled: false
 
-Performance/StringReplacement:
-  Enabled: false
-
 Layout/ClosingParenthesisIndentation:
   Enabled: false
 
-Style/UnneededInterpolation:
+Style/RedundantInterpolation:
   Enabled: false
 
 Layout/ElseAlignment:
@@ -605,7 +591,7 @@ Layout/FirstParameterIndentation:
 Style/IfInsideElse:
   Enabled: false
 
-Layout/IndentAssignment:
+Layout/AssignmentIndentation:
   Enabled: false
 
 Layout/SpaceAroundBlockParameters:
@@ -614,19 +600,10 @@ Layout/SpaceAroundBlockParameters:
 Style/ParallelAssignment:
   Enabled: false
 
-Performance/RedundantBlockCall:
-  Enabled: false
-
 Style/IdenticalConditionalBranches:
   Enabled: false
 
-Performance/RedundantMatch:
-  Enabled: false
-
 Style/CommandLiteral:
-  Enabled: false
-
-Performance/Casecmp:
   Enabled: false
 
 Lint/NestedMethodDefinition:
@@ -635,19 +612,10 @@ Lint/NestedMethodDefinition:
 Layout/SpaceInsideStringInterpolation:
   Enabled: false
 
-Performance/RedundantMerge:
-  Enabled: false
-
-Performance/ReverseEach:
-  Enabled: false
-
 Style/NestedModifier:
   Enabled: false
 
 Lint/NonLocalExitFromIterator:
-  Enabled: false
-
-Performance/Count:
   Enabled: false
 
 Style/NestedParenthesizedCalls:
@@ -659,19 +627,10 @@ Layout/RescueEnsureAlignment:
 Lint/DuplicateMethods:
   Enabled: false
 
-Performance/RangeInclude:
-  Enabled: false
-
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
-Performance/DoubleStartEndWith:
-  Enabled: false
-
-Performance/RedundantSortBy:
-  Enabled: false
-
-Performance/TimesMap:
+Style/RedundantSortBy:
   Enabled: false
 
 Layout/InitialIndentation:
@@ -691,7 +650,38 @@ Style/ZeroLengthPredicate:
 
 Bundler/OrderedGems:
   Enabled: false
-
   # Enforce LF line endings, even when on Windows
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Style/ExponentialNotation:
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+# Not used becuase too new for support matrix
+Style/NumericPredicate:
+  Enabled: false
+
+# Not used becuase too new for support matrix
+Style/SafeNavigation:
+  Enabled: false
+
+Style/MixinUsage:
+  Enabled: false

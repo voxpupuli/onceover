@@ -7,7 +7,7 @@ class Onceover
   class CLI
     class Show
       def self.command
-        @cmd ||= Cri::Command.define do
+        @command ||= Cri::Command.define do
           name 'show'
           usage 'show [controlrepo|puppetfile]'
           summary 'Shows the current state of things'
@@ -25,7 +25,7 @@ Shows the state of either the controlrepo or the Puppetfile
 
       class Repo
         def self.command
-          @cmd ||= Cri::Command.define do
+          @command ||= Cri::Command.define do
             name 'repo'
             usage 'repo [options]'
             summary 'Shows the current state of the Controlrepo'
@@ -50,7 +50,7 @@ Useful for debugging.
 
       class Puppetfile
         def self.command
-          @cmd ||= Cri::Command.define do
+          @command ||= Cri::Command.define do
             name 'puppetfile'
             usage 'puppetfile [options]'
             summary 'Shows the current state of the puppetfile'
