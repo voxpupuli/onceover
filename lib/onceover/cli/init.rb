@@ -9,7 +9,7 @@ class Onceover
   class CLI
     class Init
       def self.command
-        @cmd ||= Cri::Command.define do
+        @command ||= Cri::Command.define do
           name 'init'
           usage 'init'
           summary 'Sets up a controlrepo for testing from scratch'

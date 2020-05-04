@@ -7,7 +7,7 @@ class Onceover
   class CLI
     class Update
       def self.command
-        @cmd ||= Cri::Command.define do
+        @command ||= Cri::Command.define do
           name 'update'
           usage 'update puppetfile'
           summary 'Updates stuff, currently only the Puppetfile'
@@ -22,7 +22,7 @@ class Onceover
 
       class Puppetfile
         def self.command
-          @cmd ||= Cri::Command.define do
+          @command ||= Cri::Command.define do
             name 'puppetfile'
             usage 'puppetfile'
             summary 'Update all modules in the Puppetfile'

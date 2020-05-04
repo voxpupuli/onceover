@@ -1,3 +1,6 @@
+# rubocop:disable Style/RescueStandardError
+# ^^ I canlt be bothered fixing this because all of this code is deprecated
+
 class Onceover
   class Beaker
     # WARNING: All of this functionality is deprecated. It will be left around
@@ -232,7 +235,10 @@ class Onceover
       end
 
       raise "The networkmanager created too many machines! Only expecting one" if hosts.count > 1
+
       @nwm.instance_variable_get(:@hosts)[0]
     end
   end
 end
+
+# rubocop:enable Style/RescueStandardError

@@ -10,7 +10,7 @@ class Onceover
   class CLI
     class Run
       def self.command
-        @cmd ||= Cri::Command.define do
+        @command ||= Cri::Command.define do
           name 'run'
           usage 'run [spec|acceptance]'
           summary 'Runs either the spec or acceptance tests'
@@ -35,7 +35,7 @@ This includes deploying using r10k and running all custom tests.
 
       class Spec
         def self.command
-          @cmd ||= Cri::Command.define do
+          @command ||= Cri::Command.define do
             name 'spec'
             usage 'spec'
             summary 'Runs spec tests'
@@ -56,7 +56,7 @@ This includes deploying using r10k and running all custom tests.
 
       class Acceptance
         def self.command
-          @cmd ||= Cri::Command.define do
+          @command ||= Cri::Command.define do
             name 'acceptance'
             usage 'acceptance'
             summary 'Runs acceptance tests'
