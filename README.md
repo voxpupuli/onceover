@@ -2,7 +2,9 @@
 
 *The gateway drug to automated infrastructure testing with Puppet*
 
-Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to run stop silly mistakes ever reaching your Puppet Master!
+Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to stop silly mistakes ever reaching your Puppet Master!
+
+**🍺🥳 New in v3.16.0: Multi-threaded module downloads!! See [r10k config](#r10k-config) to enable**
 
 ## Table of Contents
 
@@ -14,6 +16,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [factsets](#factsets)
     - [Hiera Data](#hiera-data)
     - [r10k](#r10k)
+      - [r10k Config](#r10k-config)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Using Workarounds](#using-workarounds)
@@ -28,7 +31,6 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [Ruby Warnings](#ruby-warnings)
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
-    - [r10k and Git][#r10k-and-git]
 
 ## Quick Start
 
@@ -275,6 +277,51 @@ If you have hiera data inside your controlrepo (or somewhere else) Onceover can 
 It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
 
 ### r10k
+
+Organisations often reference modules from their own git servers in the `Puppetfile`, like this:
+
+```
+mod "puppetlabs-apache",
+  :git => "https://git.megacorp.com/pup/puppetlabs-apache.git",
+  :tag => "v5.4.0"
+```
+
+Under the hood, Onceover uses r10k to download the modules in your `Puppetfile`. If you get errors downloading modules from Git, its because `r10k`'s call to your underlying `git` command has failed. Onceover tells you the command that `r10k` tried to run, so if you get an error like this:
+
+```
+INFO     -> Updating module /Users/dylan/control-repo/.onceover/etc/puppetlabs/code/environments
+/production/modules/apache
+ERROR    -> Command exited with non-zero exit code:
+Command: git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+Stderr:
+ssh_askpass: exec(/usr/bin/ssh-askpass): No such file or directory
+Host key verification failed.
+
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Exit code: 128
+```
+
+Then the approach to debug it would be to run the command that Onceover suggested:
+
+```
+git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+```
+
+In this case, running the command interactively gives us a prompt to add the server to our `~/.ssh/known_hosts` file, which fixes the problem permanently:
+
+```
+$ git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+The authenticity of host 'git.megacorp.com (123.456.789.101)' can't be established.
+...
+Warning: Permanently added 'git.megacorp.com,123.456.789.101' (RSA) to the list of known hosts.
+```
+
+The other way to resolve this would have been to install the `ssh_askpass` program, but this can spam the screen with modal dialogs on some platforms.
+
+#### r10k Config
 
 If you have custom r10k config that you want to use, place the `r10k.yaml` file in one of the following locations:
 
@@ -619,51 +666,6 @@ fixtures:
 ```
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
-
-### r10k and Git
-
-Organisations often reference modules from their own git servers in the `Puppetfile`, like this:
-
-```
-mod "puppetlabs-apache",
-  :git => "https://git.megacorp.com/pup/puppetlabs-apache.git",
-  :tag => "v5.4.0"
-```
-
-Under the hood, Onceover uses r10k to download the modules in your `Puppetfile`. If you get errors downloading modules from Git, its because `r10k`'s call to your underlying `git` command has failed. Onceover tells you the command that `r10k` tried to run, so if you get an error like this:
-
-```
-INFO     -> Updating module /Users/dylan/control-repo/.onceover/etc/puppetlabs/code/environments
-/production/modules/apache
-ERROR    -> Command exited with non-zero exit code:
-Command: git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
-Stderr:
-ssh_askpass: exec(/usr/bin/ssh-askpass): No such file or directory
-Host key verification failed.
-
-fatal: Could not read from remote repository.
-
-Please make sure you have the correct access rights
-and the repository exists.
-Exit code: 128
-```
-
-Then the approach to debug it would be to run the command that Onceover suggested:
-
-```
-git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
-```
-
-In this case, running the command interactively gives us a prompt to add the server to our `~/.ssh/known_hosts` file, which fixes the problem permanently:
-
-```
-$ git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
-The authenticity of host 'git.megacorp.com (123.456.789.101)' can't be established.
-...
-Warning: Permanently added 'git.megacorp.com,123.456.789.101' (RSA) to the list of known hosts.
-```
-
-The other way to resolve this would have been to install the `ssh_askpass` program, but this can spam the screen with modal dialogs on some platforms.
 
 ## Developing Onceover
 
