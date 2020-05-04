@@ -13,6 +13,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [onceover.yaml](#onceoveryaml)
     - [factsets](#factsets)
     - [Hiera Data](#hiera-data)
+    - [r10k](#r10k)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Using Workarounds](#using-workarounds)
@@ -271,6 +272,21 @@ Notice that the `extensions` part is implied. The first fact in that example tra
 If you have hiera data inside your controlrepo (or somewhere else) Onceover can be configured to use it. It is however worth noting the the `hiera.yaml` file that you currently use may not be applicable for testing right away. For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
 
 It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
+
+### r10k
+
+If you have custom r10k config that you want to use, place the `r10k.yaml` file in one of the following locations:
+
+- `{repo root}/r10k.yaml`
+- `{repo root}/spec/r10k.yaml`
+
+A good use of this is [enabling multi threading](https://github.com/puppetlabs/r10k/blob/master/doc/dynamic-environments/configuration.mkd#pool_size) by creating the following in `r10k.yaml`:
+
+```yaml
+# spec/r10k.yaml
+---
+pool_size: 20
+```
 
 #### Creating the config file
 

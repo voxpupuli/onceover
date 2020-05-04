@@ -26,7 +26,7 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
 end
 
 When(/^I run onceover command "([^"]*)"$/)  do |command|
-  @cmd.command = command
+  @cmd.command = "#{command} --debug"
   puts @cmd
   @cmd.run
 end

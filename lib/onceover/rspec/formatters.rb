@@ -2,8 +2,14 @@ require 'rspec'
 require 'pathname'
 
 class OnceoverFormatter
-  RSpec::Core::Formatters.register self, :example_group_started,
-    :example_passed, :example_failed, :example_pending, :dump_failures#, :dump_summary
+  RSpec::Core::Formatters.register(
+    self,
+    :example_group_started,
+    :example_passed,
+    :example_failed,
+    :example_pending,
+    :dump_failures,
+  )
 
   COMPILATION_ERROR      = %r{error during compilation: (?<error>.*)}
   ERROR_WITH_LOCATION    = %r{(?<error>.*?)\s(at )?(\((file: (?<file>.*?), )?line: (?<line>\d+)(, column: (?<column>\d+))?\))(; )?}
@@ -218,8 +224,14 @@ end
 class OnceoverFormatterParallel < OnceoverFormatter
   require 'yaml'
 
-  RSpec::Core::Formatters.register self, :example_group_started,
-  :example_passed, :example_failed, :example_pending, :dump_failures
+  RSpec::Core::Formatters.register(
+    self,
+    :example_group_started,
+    :example_passed,
+    :example_failed,
+    :example_pending,
+    :dump_failures,
+  )
 
   def example_group_started notification
     # Do nothing
@@ -287,7 +299,7 @@ class FailureCollector
   end
 
   def dump_failures(failures)
-    open(File.expand_path("#{RSpec.configuration.onceover_tempdir}/failures.out"), 'a') { |f|
+    File.open(File.expand_path("#{RSpec.configuration.onceover_tempdir}/failures.out"), 'a') { |f|
       failures.failed_examples.each do |fe|
         f.puts
         f.puts "#{fe.metadata[:description]}"

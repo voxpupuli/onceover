@@ -3,7 +3,7 @@ require 'cri'
 class Onceover
   class CLI
     def self.command
-      @cmd ||= Cri::Command.define do
+      @command ||= Cri::Command.define do
         name 'onceover'
         usage 'onceover <subcommand> [options]'
         summary 'Tool for testing Puppet controlrepos'

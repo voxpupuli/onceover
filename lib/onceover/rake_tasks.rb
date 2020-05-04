@@ -8,9 +8,10 @@ require 'pathname'
 desc 'Writes a `fixtures.yml` file based on the Puppetfile'
 task :generate_fixtures do
   repo = Onceover::Controlrepo.new
-  if File.exists?(File.expand_path('./.fixtures.yml', repo.root))
+  if File.exist?(File.expand_path('./.fixtures.yml', repo.root))
     raise ".fixtures.yml already exits, we won't overwrite because we are scared"
   end
+
   File.write(File.expand_path('./.fixtures.yml', repo.root), repo.fixtures)
 end
 
