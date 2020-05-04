@@ -28,6 +28,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [Ruby Warnings](#ruby-warnings)
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
+    - [r10k and Git][#r10k-and-git]
 
 ## Quick Start
 
@@ -619,6 +620,51 @@ fixtures:
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
 
+### r10k and Git
+
+Organisations often reference modules from their own git servers in the `Puppetfile`, like this:
+
+```
+mod "puppetlabs-apache",
+  :git => "https://git.megacorp.com/pup/puppetlabs-apache.git",
+  :tag => "v5.4.0"
+```
+
+Under the hood, Onceover uses r10k to download the modules in your `Puppetfile`. If you get errors downloading modules from Git, its because `r10k`'s call to your underlying `git` command has failed. Onceover tells you the command that `r10k` tried to run, so if you get an error like this:
+
+```
+INFO     -> Updating module /Users/dylan/control-repo/.onceover/etc/puppetlabs/code/environments
+/production/modules/apache
+ERROR    -> Command exited with non-zero exit code:
+Command: git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+Stderr:
+ssh_askpass: exec(/usr/bin/ssh-askpass): No such file or directory
+Host key verification failed.
+
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Exit code: 128
+```
+
+Then the approach to debug it would be to run the command that Onceover suggested:
+
+```
+git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+```
+
+In this case, running the command interactively gives us a prompt to add the server to our `~/.ssh/known_hosts` file, which fixes the problem permanently:
+
+```
+$ git --git-dir /Users/dylan/.r10k/git/ssh---git.megacorp.com-pup-puppetlabs_apache.git fetch origin --prune
+The authenticity of host 'git.megacorp.com (123.456.789.101)' can't be established.
+...
+Warning: Permanently added 'git.megacorp.com,123.456.789.101' (RSA) to the list of known hosts.
+```
+
+The other way to resolve this would have been to install the `ssh_askpass` program, but this can spam the screen with modal dialogs on some platforms.
+
 ## Developing Onceover
 
 Install gem dependencies:
@@ -652,4 +698,3 @@ Cheers to all of those who helped out:
   - @raphink
   - @tequeter
   - @alexjfisher
-
