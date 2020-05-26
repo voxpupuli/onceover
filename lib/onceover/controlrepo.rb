@@ -94,7 +94,7 @@ class Onceover
         @root = Dir.pwd
         until File.exist?(File.expand_path('./environment.conf', @root)) do
           # Throw an exception if we can't go any further up
-          throw "Could not file root of the controlrepo anywhere above #{Dir.pwd}" if @root == File.expand_path('../', @root)
+          throw "Could not find root of the controlrepo anywhere above #{Dir.pwd}" if @root == File.expand_path('../', @root)
 
           # Step up and try again
           @root = File.expand_path('../', @root)

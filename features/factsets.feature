@@ -5,7 +5,7 @@ Feature: Handle factsets properly
   Background:
     Given onceover executable
 
-  Scenario: Setecting existing factsets
+  Scenario: Selecting existing factsets
     Given control repo "factsets"
     When I run onceover command "init"
     Then the config should contain "centos_with_env"
@@ -14,6 +14,11 @@ Feature: Handle factsets properly
   # compilation fail becaiuse it breaks all of the workarounds that have been
   # put in place within rspec-puppet for the environment
   Scenario: Run with a factsent containing an environment facts
+    Given existing control repo "factsets"
+    When I run onceover command "run spec"
+    Then I should not see any errors
+
+  Scenario: Using trusted facts
     Given existing control repo "factsets"
     When I run onceover command "run spec"
     Then I should not see any errors
