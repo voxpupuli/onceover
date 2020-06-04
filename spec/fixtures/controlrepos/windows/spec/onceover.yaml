@@ -1,0 +1,24 @@
+# Classes to be tested
+classes:
+  - /role::/
+
+# Nodes to tests classes on, this refers to a 'factset' or 'nodeset'
+# depending on whether you are running 'spec' or 'acceptance' tests
+nodes:
+  - Windows_Server-2012r2-64
+  - windows-10-64
+  - Windows_Server-2008r2-64
+
+# You can group classes here to save typing
+class_groups:
+
+# You can group nodes here to save typing
+# We have created a 'non_windows_nodes' group because we can't
+# give you Windows vagrant boxes to test with because licensing,
+# we can give you fact sets though so go crazy with spec testing!
+node_groups:
+
+test_matrix:
+  - all_nodes:
+      classes: "all_classes"
+      tests: "spec"
