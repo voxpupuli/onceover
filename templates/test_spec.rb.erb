@@ -48,10 +48,12 @@ describe "<%= cls.name %>" do
       #   https://github.com/rodjek/rspec-puppet/issues/665
       #
       # The below should work around this common issue
-      allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:validate)
-      allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_account_name).and_return(false)
-      allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_group_name).and_return(false)
-      allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:validate).and_return(true)
+      if Puppet::Type.type(:acl)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:validate)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_account_name).and_return(false)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_group_name).and_return(false)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:validate).and_return(true)
+      end
     end
 <% end -%>
 
