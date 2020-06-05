@@ -8,7 +8,7 @@ Feature: Run onceover with windows
     Given onceover executable
 
   Scenario: Run with common Windows code
-    Given existing control repo "windows"
+    Given control repo "windows"
     When I run onceover command "run spec"
     Then I should not see any errors
 
