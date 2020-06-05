@@ -8,12 +8,13 @@ Feature: Run onceover with windows
     Given onceover executable
 
   Scenario: Run with common Windows code
-    Given initialized control repo "windows"
+    Given existing control repo "windows"
     When I run onceover command "run spec"
     Then I should not see any errors
 
   Scenario: Run with common Windows code without workarounds
-    Given initialized control repo "windows"
+    Given existing control repo "windows"
     When I run onceover command "run spec --no_workarounds"
+    And test osfamily is not "windows"
     Then I should see error with message pattern "uninitialized constant"
 
