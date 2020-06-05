@@ -47,7 +47,7 @@ class Onceover
       @acceptance_tests  = []
       @opts              = opts
       @mock_functions    = config['functions']
-      @before_conditions = config['before']
+      @before_conditions = config['before'] || []
       @after_conditions  = config['after']
       @strict_variables  = opts[:strict_variables] ? 'yes' : 'no'
       
