@@ -1,4 +1,4 @@
-class role::test {
+class role::acl {
   # ACL often causes failures such as this:
   # https://github.com/rodjek/rspec-puppet/issues/665
   #
