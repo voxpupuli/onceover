@@ -29,6 +29,7 @@ describe "<%= cls.name %>" do
     end
 <% end -%>
 
+<% unless opts[:no_workarounds] -%>
     before :each do
       # Curtrently there is some code within Puppet that will try to execute
       # commands when compiling a catalog even though it shouldn't. One example is
@@ -41,7 +42,20 @@ describe "<%= cls.name %>" do
       unless File.exist? expected_null_file
         allow(Puppet::Util::Execution).to receive(:execute).and_raise(Puppet::ExecutionFailure.new("Onceover caused this"))
       end
+
+      # The windows ACL module causes issues when compiled on other platforms
+      # These are detailed in the following ticket:
+      #   https://github.com/rodjek/rspec-puppet/issues/665
+      #
+      # The below should work around this common issue
+      if Puppet::Type.type(:acl)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:validate)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_account_name).and_return(false)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_group_name).and_return(false)
+        allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:validate).and_return(true)
+      end
     end
+<% end -%>
 
 <% if @after_conditions -%>
     after :each do

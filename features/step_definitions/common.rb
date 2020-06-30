@@ -37,6 +37,17 @@ When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/)  do |command, cl
   @cmd.run
 end
 
+# The below can be used to skip tests if they only work on one os
+When(/^test osfamily is "(\w*)"$/) do |osfamily|
+  require 'facter'
+  pending unless Facter.value(:os)['family'] == osfamily
+end
+
+When(/^test osfamily is not "(\w*)"$/) do |osfamily|
+  require 'facter'
+  pending if Facter.value(:os)['family'] == osfamily
+end
+
 Then(/^I see help for commands: "([^"]*)"$/) do |commands|
   # Get chunk of output between COMMANDS and OPTION, there should be help section
   commands_help = @cmd.output[/COMMANDS(.*)OPTIONS/m, 1]

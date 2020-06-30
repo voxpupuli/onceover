@@ -42,6 +42,7 @@ This includes deploying using r10k and running all custom tests.
 
             optional :p, :parallel, 'Runs spec tests in parallel. This increases speed at the cost of poorly formatted logs and irrelevant junit output.'
             optional nil, :format, 'Which RSpec formatter to use, valid options are: documentation, progress, FailureCollector, OnceoverFormatter. You also specify this multiple times', multiple: true, default: :defaults
+            optional nil, :no_workarounds, 'Disables workarounds that have been added for convenience to get around common RSPec issues such as https://github.com/rodjek/rspec-puppet/issues/665'
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)
