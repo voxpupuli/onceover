@@ -127,10 +127,10 @@ class Onceover
 
     def run_command(*args)
       begin
-        STDERR.raw!
+        STDERR.raw! if STDERR.isatty
         result = Backticks::Runner.new(interactive: true).run(args.flatten).join
       ensure
-        STDERR.cooked!
+        STDERR.cooked! if STDERR.isatty
       end
     end
   end
