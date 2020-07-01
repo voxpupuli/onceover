@@ -54,6 +54,52 @@ describe "<%= cls.name %>" do
         allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:get_group_name).and_return(false)
         allow_any_instance_of(Puppet::Type.type(:acl).provider(:windows)).to receive(:respond_to?).with(:validate).and_return(true)
       end
+
+      # The windows_adsi provider also has an issue where the contructor takes
+      # a different number of arguments depending on whether the ADSI
+      # underlying connectivity exists. This causes the following error:
+      #
+      #      wrong number of arguments (given 1, expected 0)
+      #
+      # This fixes that if we aren't using Windows
+      begin
+        # Test to see if this works without modification
+        require 'puppet/util/windows'
+        require 'puppet/util/windows/adsi'
+        Puppet::Util::Windows::ADSI.computer_name
+      rescue LoadError, StandardError
+        # Declare an entire mocked module because for some reason we can't load it unless we are on Windows
+        module Puppet::Util::Windows
+          module ADSI
+            class ADSIObject; end
+            class User < ADSIObject; end
+            class UserProfile; end
+            class Group < ADSIObject; end
+          end
+          module File; end
+          module Registry
+          end
+          module SID
+            class Principal; end
+          end
+          class EventLog; end
+        end
+
+        # Mock commonly used things
+        allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).and_return('S-1-5-32-544')
+        allow(Puppet::Util::Windows::SID).to receive(:name_to_principal).and_return(nil)
+        
+        allow_any_instance_of(Puppet::Util::Windows::ADSI::User).to receive(:initialize)
+        allow_any_instance_of(Puppet::Util::Windows::ADSI::User).to receive(:groups).and_return([])
+        allow_any_instance_of(Puppet::Util::Windows::ADSI::User).to receive(:name_sid_hash).and_return({})
+
+        # Group instance methods
+        allow_any_instance_of(Puppet::Util::Windows::ADSI::Group).to receive(:members).and_return([])
+        allow_any_instance_of(Puppet::Util::Windows::ADSI::Group).to receive(:members_sids).and_return([])
+        
+        # Class methods
+        allow(Puppet::Util::Windows::ADSI::Group).to receive(:name_sid_hash).and_return({})
+      end
     end
 <% end -%>
 

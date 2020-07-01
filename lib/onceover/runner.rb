@@ -87,10 +87,11 @@ class Onceover
         #`bin/rake spec_standalone`
         if @config.opts[:parallel]
           logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
-          result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'parallel_spec').join
+          result = run_command(@command_prefix.strip.split, 'rake', 'parallel_spec')
         else
+          require 'io/console'
           logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-          result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'spec_standalone').join
+          result = run_command(@command_prefix.strip.split, 'rake', 'spec_standalone')
         end
 
         # Reset env to previous state if we modified it
@@ -117,11 +118,20 @@ class Onceover
         #`bundle install --binstubs`
         #`bin/rake spec_standalone`
         logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
-        result = Backticks::Runner.new(interactive:true).run(@command_prefix.strip.split, 'rake', 'acceptance').join
+        result = run_command(@command_prefix.strip.split, 'rake', 'acceptance')
       end
 
       # Finally exit and preserve the exit code
       exit result.status.exitstatus
+    end
+
+    def run_command(*args)
+      begin
+        STDERR.raw! if STDERR.isatty
+        result = Backticks::Runner.new(interactive: true).run(args.flatten).join
+      ensure
+        STDERR.cooked! if STDERR.isatty
+      end
     end
   end
 end

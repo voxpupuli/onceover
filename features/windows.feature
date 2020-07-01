@@ -9,12 +9,22 @@ Feature: Run onceover with windows
 
   Scenario: Run with common Windows code
     Given control repo "windows"
-    When I run onceover command "run spec"
+    When I run onceover command "run spec" with class "role::users"
     Then I should not see any errors
 
   Scenario: Run with common Windows code without workarounds
     Given existing control repo "windows"
-    When I run onceover command "run spec --no_workarounds"
+    When I run onceover command "run spec --no_workarounds" with class "role::users"
     And test osfamily is not "windows"
-    Then I should see error with message pattern "uninitialized constant"
+    Then Onceover should exit 1
 
+  Scenario: Compiling a windows role with groups that is valid should compile
+    Given control repo "windows"
+    When I run onceover command "run spec" with class "role::groups"
+    Then I should not see any errors
+  
+  Scenario: Compiling a windows role with users that is valid should compile
+    Given control repo "windows"
+    When I run onceover command "run spec" with class "role::users"
+    Then I should not see any errors
+  
