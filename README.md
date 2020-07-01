@@ -4,7 +4,7 @@
 
 Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to stop silly mistakes ever reaching your Puppet Master!
 
-**🍺🥳 New in v3.16.0: Multi-threaded module downloads!! See [r10k config](#r10k-config) to enable**
+**🍺🥳 New in v3.17.1: Heaps more Windows fixes! Windows code is now more likely to compile on Non-Windows.**
 
 ## Table of Contents
 
