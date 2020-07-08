@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rspec', '>= 3.0.0'
   s.add_runtime_dependency 'rspec-puppet', ">= 2.4.0"
   s.add_runtime_dependency 'rspec_junit_formatter', '>= 0.2.0'
-  s.add_runtime_dependency 'table_print', '>= 1.0.0'
+  s.add_runtime_dependency 'terminal-table', '>= 1.8.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
 
 end
