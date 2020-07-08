@@ -206,7 +206,7 @@ class Onceover
     end
 
     def print_puppetfile_table
-      require 'table_print'
+      require 'terminal-table'
       require 'versionomy'
       require 'colored'
       require 'r10k/puppetfile'
@@ -221,48 +221,44 @@ class Onceover
       threads      = []
       puppetfile.modules.each do |mod|
         threads << Thread.new do
-          return_hash = {}
+          row = []
           logger.debug "Loading data for #{mod.full_name}"
-          return_hash[:full_name] = mod.full_name
+          row << mod.full_name
           if mod.is_a?(R10K::Module::Forge)
-            return_hash[:current_version] = mod.expected_version
-            return_hash[:latest_version] = mod.v3_module.current_release.version
-            return_hash[:endorsement] = mod.v3_module.endorsement
+            row << mod.expected_version
+            row << mod.v3_module.current_release.version
+
+            current = Versionomy.parse(mod.expected_version)
+            latest = Versionomy.parse(mod.v3_module.current_release.version)
+            row << if current.major < latest.major
+                     "Major".red
+                   elsif current.minor < latest.minor
+                     "Minor".yellow
+                   elsif current.tiny < latest.tiny
+                     "Tiny".green
+                   else
+                     "No".green
+                   end
+
+            row << mod.v3_module.endorsement
             superseded_by = mod.v3_module.superseded_by
-            return_hash[:superseded_by] = superseded_by.nil? ? '' : superseded_by[:slug]
-            current = Versionomy.parse(return_hash[:current_version])
-            latest = Versionomy.parse(return_hash[:latest_version])
-            if current.major < latest.major
-              return_hash[:out_of_date] = "Major".red
-            elsif current.minor < latest.minor
-              return_hash[:out_of_date] = "Minor".yellow
-            elsif current.tiny < latest.tiny
-              return_hash[:out_of_date] = "Tiny".green
-            else
-              return_hash[:out_of_date] = "No".green
-            end
+            row << (superseded_by.nil? ? '' : superseded_by[:slug])
           else
-            return_hash[:current_version] = "N/A"
-            return_hash[:latest_version]  = "N/A"
-            return_hash[:out_of_date]     = "N/A"
-            return_hash[:endorsement]     = "N/A"
-            return_hash[:superseded_by]   = "N/A"
+            row << "N/A"
+            row << "N/A"
+            row << "N/A"
+            row << "N/A"
+            row << "N/A"
           end
-          output_array << return_hash
+          output_array << row
         end
       end
 
       threads.map(&:join)
 
-      tp(
-        output_array,
-        {:full_name       => {:display_name => "Full Name"}},
-        {:current_version => {:display_name => "Current Version"}},
-        {:latest_version  => {:display_name => "Latest Version"}},
-        {:out_of_date     => {:display_name => "Out of Date?"}},
-        {:endorsement     => {:display_name => "Endorsement"}},
-        {:superseded_by   => {:display_name => "Superseded by"}}
-      )
+      output_array.sort_by! { |line| line[0] }
+
+      puts Terminal::Table.new(headings: ["Full Name", "Current Version", "Latest Version", "Out of Date?", "Endorsement", "Superseded by"], rows: output_array)
     end
 
     def update_puppetfile
