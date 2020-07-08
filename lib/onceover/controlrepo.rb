@@ -256,6 +256,8 @@ class Onceover
 
       threads.map(&:join)
 
+      output_array.sort_by! { |line| line[0] }
+
       puts Terminal::Table.new(headings: ["Full Name", "Current Version", "Latest Version", "Out of Date?", "Endorsement", "Superseded by"], rows: output_array)
     end
 
