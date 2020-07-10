@@ -240,7 +240,7 @@ class Onceover
     def copy_spec_files(repo)
       source_files = @included_specs.map { |glob| Dir.glob "#{repo.spec_dir}/#{glob}" }.flatten.uniq
       source_files.each do |source_file|
-        target_file = File.join(repo.tempdir, 'spec', source_file.delete_prefix(repo.spec_dir))
+        target_file = File.join(repo.tempdir, 'spec', source_file.sub(/^#{repo.spec_dir}/, ''))
         if File.directory?(source_file)
           FileUtils.cp_r source_file, target_file unless File.exists? target_file
         else
