@@ -143,6 +143,7 @@
     "rubyversion": "2.1.7",
     "serialnumber": "0",
     "system32": "C:\\Windows\\system32",
+    "choco_install_path": "C:\\ProgramData\\chocolatey",
     "system_uptime": {
       "days": 0,
       "hours": 0,
