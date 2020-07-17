@@ -83,6 +83,7 @@
     "rubysitedir": "C:/tools/ruby24/lib/ruby/site_ruby/2.4.0",
     "rubyversion": "2.4.3",
     "system32": "C:\\Windows\\system32",
+    "choco_install_path": "C:\\ProgramData\\chocolatey",
     "system_uptime": {
       "seconds": 1113359,
       "hours": 309,

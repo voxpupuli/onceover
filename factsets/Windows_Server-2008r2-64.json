@@ -162,6 +162,7 @@
     "staging_http_get": "powershell",
     "staging_windir": "C:\\ProgramData\\staging",
     "system32": "C:\\Windows\\system32",
+    "choco_install_path": "C:\\ProgramData\\chocolatey",
     "system_uptime": {
       "days": 0,
       "hours": 0,
