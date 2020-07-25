@@ -2,7 +2,9 @@
 
 *The gateway drug to automated infrastructure testing with Puppet*
 
-Onceover is a tool to automatically run basic tests on an entire Puppet controlrepo. It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to stop silly mistakes ever reaching your Puppet Master!
+Onceover is a tool to automatically run basic tests on an entire Puppet control repository.
+
+It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to stop silly mistakes ever reaching your Puppet Master!
 
 **🍺🥳 New in v3.17.1: Heaps more Windows fixes! Windows code is now more likely to compile on Non-Windows.**
 
@@ -10,13 +12,11 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
 
   - [Overview](#overview)
   - [Quick Start](#quick-start)
-  - [Installation](#installation)
-  - [Config files](#config-files)
+  - [Configuration](#configuration)
     - [onceover.yaml](#onceoveryaml)
-    - [factsets](#factsets)
-    - [Hiera Data](#hiera-data)
-    - [r10k](#r10k)
-      - [r10k Config](#r10k-config)
+    - [Factsets](#factsets)
+    - [Hiera](#hiera)
+    - [Puppetfile](#puppetfile)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
   - [Using Workarounds](#using-workarounds)
@@ -32,119 +32,218 @@ Onceover is a tool to automatically run basic tests on an entire Puppet controlr
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
 
-## Quick Start
-
-**Note:** This assumes you are inside the root of your controlrepo.
-
-Install the Gem:
-
-`gem install onceover`
-
-Set up your config:
-
-`onceover init`
-
-Run your spec tests!
-
-`onceover run spec`
-
-**Hint:** Don't forget you can use Bundler to install onceover by adding this to your Gemfile:
-
-```ruby
-gem 'onceover'
-```
-
-Here is an example using Bundler:
-
-Install the Gem:
-
-`bundle install`
-
-Set up your config:
-
-`bundle exec onceover init`
-
-Run your spec tests!
-
-`bundle exec onceover run spec`
-
 ## Overview
 
-This gem provides a toolset for testing Puppet Controlrepos (Repos used with r10k). The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running `rspec-puppet` tests for a controlrepo. Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
+This gem provides a toolset for testing _Puppet control repository_ (ie. Repos used with r10k).
 
-This toolset requires some config before it can be used so definitely read that section before getting started.
+The main purpose of this project is to provide a set of tools to help smooth out the process of setting up and running `rspec-puppet` tests for a controlrepo.
 
-## Installation
+Due to the fact that controlrepos are fairly standardised in nature it seemed ridiculous that you would need to set up the same testing framework that we would normally use within a module for a controlrepo. This is because at this level we are normally just running very basic tests that cover a lot of code. It would also mean that we would need to essentially duplicated our `Puppetfile` into a `.fixtures.yml` file, along with a few other things.
 
-`gem install onceover`
+This toolset requires some [configuration](#configuration) before it can be used so definitely read that section before getting started.
 
-This gem can just be installed using `gem install` however I would recommend using [Bundler](http://bundler.io/) to manage your gems.
+## Quick Start
 
-## Config Files
+**Note:** This assumes you are inside the root of your control-repo.
 
-This project uses one main config file to determine what classes we should be testing and how, this is [onceover.yaml](#onceoveryaml). The `onceover.yaml` config file provides information about what classes to test when, however it needs more information than that:
+1. Add `onceover` to your `Gemfile`:
 
-If we are doing spec testing we need sets of facts to compile the puppet code against, these are stored in [factsets](#factsets). (A few are provided out of the box for you)
+    ```ruby
+    gem 'onceover'
+    ```
+
+1. Run _Bundler_ to install `onceover`
+
+    ```shell
+    bundle install
+    ```
+
+1. Set up your configuration
+
+    ```shell
+    bundle exec onceover init
+    ```
+1. Run your spec tests!
+
+    ```shell
+    bundle exec onceover run spec
+    ```
+
+## Configuration
+
+This project uses one main config file to determine what Puppet classes we should be testing and how: [onceover.yaml](#onceoveryaml).
+
+As `onceover` tests Puppet classes, it need sets of facts to compile the Puppet code against, these are stored in [factsets](#factsets).
 
 ### onceover.yaml
 
-`spec/onceover.yaml` _(override with environment variable: `ONCEOVER_YAML`)_
+Usually located at `spec/onceover.yaml`, this path could be overrided with environment variable: `ONCEOVER_YAML`.
 
-Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets) that we want to test them against. The config file must contain the following sections:
+Hopefully this config file will be fairly self explanatory once you see it, but basically this is the place where we define what classes we want to test and the [factsets](#factsets) that we want to test them against.
 
-**classes:** A list (array) of classes that we want to test, usually this would be your roles, possibly profiles if you want. (If you don't know what roles and profiles are please [READ THIS](http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/)). To make life easier you can also specify one or many **regular expressions** in this section. A good one to start with would be `/^role::/`. Regular expressions are just strings that start and end with a forward slash.
+#### Main settings
 
-**nodes:** The nodes that we want to test against. The nodes that we list here map directly to a [factset](#factsets).
+- `classes`
 
-**node_groups:** The `node_groups` section is just for saving us some typing. Here we can set up groups of nodes which we can then refer to in our test matrix. We can create groups by simply specifying an array of servers to be in the group, or we can use the subtractive *include/exclude* syntax. The names used for the actual `class_groups` and `node_groups` must be unique.
+    A list (array) of classes that we want to test
 
-**class_groups:** The `class_groups` section is much the same as the `node_groups` sections, except that it creates groups of classes, not groups of nodes (duh). All the same rules apply and you can also use the *include/exclude* syntax. This, like the classes section can also accept regular expressions. This means that as long as you name your roles according to a naming convention that includes the desired operating system, you should be able to define your class groups once and never touch them again. The names used for the actual `class_groups` and `node_groups` must be unique.
+    Classes are specified as string or **regular expressions**.
+    The recommended setting to have a good coverage is `/^role::/` if you use [roles and profiles method](https://puppet.com/docs/pe/latest/the_roles_and_profiles_method.html) and if you dont, you [should](https://puppet.com/docs/pe/2019.8/the_roles_and_profiles_method.html).
 
-**test_matrix:** This where the action happens! This is the section where we set up which classes are going to be tested against which nodes. It should be an array of hashes with the following format:
+- `nodes`
+
+    A list (array) of nodes that we want to test against.
+
+    The nodes that we list here map directly to a [factset](#factsets), e.g. `Debian-7.8-64`
+
+- `node_groups`
+
+    An hash of named node groups.
+
+    We can create groups by simply specifying an array of nodes to be in the group, or use the subtractive [include/exclude syntax](#includeexclude-syntax).
+
+    **Note:** A _node group_ named `all_nodes` is automatically created by `onceover`.
+
+    **Important:** The names used for the actual `class_groups` and `node_groups` must be unique.
+
+- `class_groups`
+
+    An hash of named class groups.
+
+    We can create groups by simply specifying an array of classes (string or regexp) to be in the group, or use the subtractive [include/exclude syntax](#includeexclude-syntax).
+
+    **Note:** A _class group_ named `all_classes` is automatically created by `onceover`.
+
+    **Important:** The names used for the actual `class_groups` and `node_groups` must be unique.
+
+- `test_matrix`
+
+    An array of hashes with the following format:
+
+    ```yaml
+      - {nodes_to_test}: # The name of a node or node group
+          classes: '{classes_to_test}' # the name of a class or
+          tests: '{all_tests|acceptance|spec}' # acceptance deprecated/broken, set to spec
+          {valid_option}: {value} # Check the doco for available options
+    ```
+
+#### Advanced settings
+
+- `functions`
+
+    Default: `nil`
+
+    In this section we can add functions that we want to mock when running spec tests.
+
+    Each function takes the `return` arguments, e.g.
+
+    ```yaml
+    functions:
+      puppetdb_query:
+        returns: []
+    ```
+
+- `before`
+
+    Default: `nil`
+
+    A block to run **before** each spec test.
+
+    For example, this can be used when the functions to stub are conditional, the following stub function `x` if the OS is windows, stub function `y` if the fact `java_installed` is true.
+
+    **Note**: The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
+
+    Example:
+    ```yaml
+    before:
+      - "Puppet::Util::Platform.stubs(:'windows?').returns(node_facts['kernel'] == 'windows')"
+    ```
+
+- `after`
+
+    Default: `nil`
+
+    A block to run **after** each spec test.
+
+    **Note**: The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
+
+    Exmaple:
+    ```yaml
+    after:
+      - "puts 'Test finished running'"
+    ```
+
+- `tags`
+
+    Default: `nil`
+
+    One or many tags that tests in this group should be tagged with.
+    This allows you to run only certain tests using the `--tags` command line parameter.
+
+    **NOTE**: Custom spec tests will always be run as they are not subject to tags
+
+- `include_spec_files`
+
+    Default: `[**/*]`
+
+    Glob to select additionnal files to be run during `onceover` spec tests.
+
+    Default is to select all files located in the repo spec directory, usually `spec/`.
+    If you have some RSpec tests that depend on a different RSpec configuration than `onceover` or want, for example, to have a different job in your CI to run your own unit tests, you can use this option to select which spec files to run during `onceover` spec tests.
+
+- `opts`
+
+    Default: `{}`
+
+    This setting overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
+
+    Example:
+    ```yaml
+    opts:
+      :facts_dirs:                           # Remember: `opts` keys are symbols!
+        - 'spec/factsets'                    # Limit factsets to files in this repository
+      :debug: true                           # Set the `logger.level` to debug
+      :profile_regex: '^(profile|site)::'    # Profiles include a legacy module named `site::`
+      :facts_files:                          # Factset filenames use the extension`.facts` instead of `.json`
+        - 'spec/factsets/*.facts'
+    ```
+
+#### Include/Exclude syntax
+
+This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
 
 ```yaml
-  - {nodes_to_test}: # The name of a node or node group
-      classes: '{classes_to_test}' # the name of a class or
-      tests: '{all_tests|acceptance|spec}' # acceptance deprecated/broken, set to spec
-      {valid_option}: {value} # Check the doco for available options
+node_groups:
+  windows_nodes: # This has to be defined first
+    - sevrer2008r2
+    - server2012r2
+  non_windows:
+    include: 'all_nodes' # Start with all nodes
+    exclude: 'windows_nodes' # Then remove the windows ones from that list
 ```
 
-Why an array of hashes? Well, that is so that we can refer to the same node or node group twice, which we may want/need to do.
+It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it
+
+#### Examples
+
+##### Minimal
+
+```yaml
+classes:
+  - /^role::/
+
+nodes:
+  - Debian-10-amd64
+
+test_matrix:
+  - all_nodes:
+      classes: 'all_classes'
+      tests: 'spec'
+```
+
+##### Advanced
 
 In the example below we have referred to `centos6a` and `centos7b` in all of our tests as they are in `all_nodes`, `non_windows_servers` and `centos_severs`. However we have *left the more specific references to last*. This is because entries in the test_matrix will override entries above them if applicable. Meaning that we are still only testing each class on the two Centos servers once (Because the gem does de-duplication before running the tests), but also making sure we run `roles::frontend_webserver` twice before checking for idempotency.
-
-**functions** In this section we can add functions that we want to mock when running spec tests. Each function takes the following arguments:
-
-- **returns** *Optional: A value to return*
-
-**before and after conditions** We can set `before` and `after` blocks before each spec test. These are usually used when the functions to stub are conditional: stub function `x` if the OS is windows, stub function `y` if the fact java_installed is true. The facts are available through the `node_facts` hash and the trusted facts as `trusted_facts`.
-
-```yaml
-before:
-  - "Puppet::Util::Platform.stubs(:'windows?').returns(node_facts['kernel'] == 'windows')"
-
-after:
-  - "puts 'Test finished running'"
-```
-
-**opts** The `opts` section overrides defaults for the `Onceover::Controlrepo` class' `opts` hash.
-
-```yaml
-opts:
-  :facts_dirs:        # Remember: `opts` keys are symbols!
-    - 'spec/factsets' # Limit factsets to files in this repository
-  :debug: true        # set the `logger.level` to debug
-```
-
-```yaml
-opts:
-  # profiles include a legacy module named `site::`
-  :profile_regex: '^(profile|site)::'
-
-  # factset filenames use the extension`.facts` instead of `.json`
-  :facts_files:
-    - 'spec/factsets/*.facts'
-```
 
 A full example:
 
@@ -211,52 +310,23 @@ opts:
     - spec/factsets
 ```
 
-**Include/Exclude syntax:** This can be used with either `node_groups` or `class_groups` and allows us to save some time by using existing groups to create new ones e.g.
+### Factsets
 
-```yaml
-node_groups:
-  windows_nodes: # This has to be defined first
-    - sevrer2008r2
-    - server2012r2
-  non_windows:
-    include: 'all_nodes' # Start with all nodes
-    exclude: 'windows_nodes' # Then remove the windows ones from that list
+Factsets are used by the onceover gem to generate spec tests, which compile a given class against a certain set of facts.
+
+This gem comes with a few pre-canned factsets, these are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`.
+
+You can, and its a good pratice, add your own factsets by putting them in `spec/factsets/*.json`.
+
+To generate these factsets all we need to do is log onto a real machine that has puppet installed and run:
+
+```shell
+puppet facts > fact_set_name.json
 ```
 
-It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it (Makes sense right?)
+Its recommended to run this on each of the types of nodes that you run in your infrastructure to have good coverage.
 
-#### Optional test parameters
-
-**tags** *Default: nil*
-
-One or many tags that tests in this group should be tagged with. This allows you to run only certain tests using the `--tags` command line parameter. **NOTE:** Custom spec tests will always be run as they are not subject to tags
-
-**include_spec_files** *Default: [**/*]*
-
-Glob to select additionnal files to be run during `onceover` spec tests.
-
-Default is to select all files located in the repo spec directory, usually `spec/`.
-If you have some RSpec tests that depend on a different RSpec configuration than `onceover` or want, for example, to have a different job in your CI to run your own unit tests, you can use this option to select which spec files to run during `onceover` spec tests.
-
-### factsets
-
-This gem comes with a few pre-canned factsets. These are listed under the `nodes` sections of `onceover.yaml` when you run `onceover init`. You can also add your own factsets by putting them in:
-
-`spec/factsets/*.json`
-
-Factsets are used by the onceover gem to generate spec tests, which compile a given class against a certain set of facts. To create these factsets all we need to do is log onto a real machine that has puppet installed and run:
-
-`puppet facts`
-
-Which will give raw json output of every fact which puppet knows about. Usually I would recommend running this on each of the types of machines that you run in your infrastructure so that you have good coverage. To make life easier you might want to direct it into a file instead of copying it from the command line:
-
-`puppet facts > fact_set_name.json`
-
-Once we have our factset all we need to do is copy it into `spec/factsets/` inside our controlrepo and commit it to version control. Factsets are named based on their filename, not the name of the server they came from (Although you can, if you want). i.e the following factset file:
-
-`spec/factsets/server2008r2.json`
-
-Would map to a node named `server2008r2` in `onceover.yaml`
+Factsets are named based on their filename, i.e. `myfactset` in `onceover.yaml` refers `spec/factsets/myfactset.json`
 
 #### Trusted Facts
 
@@ -277,13 +347,17 @@ You can add trusted facts to the factsets by creating a new section called trust
 
 Notice that the `extensions` part is implied. The first fact in that example translates to `$trusted['extensions']['pp_role']` in Puppet code.
 
-### Hiera Data
+### Hiera
 
-If you have hiera data inside your controlrepo (or somewhere else) Onceover can be configured to use it. It is however worth noting the the `hiera.yaml` file that you currently use may not be applicable for testing right away. For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
+If you have hiera data inside your controlrepo (or somewhere else) `onceover` can be configured to use it.
+It is however worth noting the `hiera.yaml` file that you currently use may not be applicable for testing right away.
+For example; if you are using `hiera-eyaml` I recommend creating a `hiera.yaml` purely for testing that simply uses the `yaml` backend, meaning that you don't need to provide the private keys to the testing machines.
 
-It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets. Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate. In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
+It is also worth noting that any hiera hierarchies that are based on custom facts will not work unless those facts are part of your factsets.
+Trusted facts will also not work at all as the catalogs are being compiled without the node's certificate.
+In these instances it may be worth creating a hierarchy level that simply includes dummy data for testing purposes in order to avoid hiera lookup errors.
 
-### r10k
+### Puppetfile
 
 Organisations often reference modules from their own git servers in the `Puppetfile`, like this:
 
@@ -293,7 +367,9 @@ mod "puppetlabs-apache",
   :tag => "v5.4.0"
 ```
 
-Under the hood, Onceover uses r10k to download the modules in your `Puppetfile`. If you get errors downloading modules from Git, its because `r10k`'s call to your underlying `git` command has failed. Onceover tells you the command that `r10k` tried to run, so if you get an error like this:
+Under the hood, `onceover` uses `r10k` to download the modules in your `Puppetfile`.
+If you get errors downloading modules from `git`, its because `r10k`'s call to your underlying `git` command has failed.
+`onceover` tells you the command that `r10k` tried to run, so if you get an error like this:
 
 ```
 INFO     -> Updating module /Users/dylan/control-repo/.onceover/etc/puppetlabs/code/environments
@@ -328,7 +404,7 @@ Warning: Permanently added 'git.megacorp.com,123.456.789.101' (RSA) to the list 
 
 The other way to resolve this would have been to install the `ssh_askpass` program, but this can spam the screen with modal dialogs on some platforms.
 
-#### r10k Config
+#### r10k configuration
 
 If you have custom r10k config that you want to use, place the `r10k.yaml` file in one of the following locations:
 
