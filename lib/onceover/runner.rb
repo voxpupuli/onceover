@@ -24,8 +24,8 @@ class Onceover
       FileUtils.mkdir_p("#{@repo.tempdir}/spec/classes")
       FileUtils.mkdir_p("#{@repo.tempdir}/spec/acceptance/nodesets")
 
-      # Copy our entire spec directory over
-      FileUtils.cp_r("#{@repo.spec_dir}", "#{@repo.tempdir}")
+      # Copy specified spec files over
+      @config.copy_spec_files(@repo)
 
       # Create the Rakefile so that we can take advantage of the existing tasks
       @config.write_rakefile(@repo.tempdir, "spec/classes/**/*_spec.rb")
