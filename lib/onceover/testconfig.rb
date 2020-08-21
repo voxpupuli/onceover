@@ -289,16 +289,25 @@ class Onceover
           # Remove tests that do not have matching tags
           tests.keep_if do |test|
             filter_list.any? do |filter|
-              if test.send(method)
-                test.send(method).include?(filter)
-              else
-                false
-              end
+              filter_test test, method, filter
             end
           end
         end
       end
       tests
+    end
+
+    def filter_test(test, method, filter)
+      if test.send(method)
+        if method == 'tags' && filter.start_with?('~')
+          filter = filter.sub(/^~/, '')
+          ! test.send(method).include?(filter)
+        else
+          test.send(method).include?(filter)
+        end
+      else
+        false
+      end
     end
   end
 end

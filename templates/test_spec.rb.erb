@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 <% test.classes.each do |cls| -%>
-describe "<%= cls.name %>" do
+describe "<%= cls.name %>"<%= test.tags.map { |tag| ",#{tag}: true "}.join %> do
 
 <% test.nodes.each do |node| -%>
   context "using fact set <%= node.name %>" do
