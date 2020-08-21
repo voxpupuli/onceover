@@ -37,8 +37,6 @@ class Onceover
       # Create spec_helper_accpetance.rb
       @config.write_spec_helper_acceptance("#{@repo.tempdir}/spec", @repo)
 
-      # TODO: Remove all tests that do not match set tags
-
       if @mode.include?(:spec)
         # Verify all of the spec tests
         @config.spec_tests.each { |test| @config.verify_spec_test(@repo, test) }
@@ -84,8 +82,10 @@ class Onceover
           ENV['RUBYOPT']   = ENV['RUBYOPT'].to_s + ' -W0'
         end
 
-        #`bundle install --binstubs`
-        #`bin/rake spec_standalone`
+        # NOTE: This is the way to provide options to rspec according to:
+        # https://github.com/puppetlabs/puppetlabs_spec_helper/blob/master/lib/puppetlabs_spec_helper/rake_tasks.rb#L51
+        ENV['CI_SPEC_OPTIONS'] = ENV['CI_SPEC_OPTIONS'].to_s + @config.filter_tags.map { |tag| " --tag #{tag}" }.join unless @config.filter_tags.nil?
+
         if @config.opts[:parallel]
           logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"
           result = run_command(@command_prefix.strip.split, 'rake', 'parallel_spec')

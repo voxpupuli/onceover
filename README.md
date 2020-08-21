@@ -124,8 +124,17 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
       - {nodes_to_test}: # The name of a node or node group
           classes: '{classes_to_test}' # the name of a class or
           tests: '{all_tests|acceptance|spec}' # acceptance deprecated/broken, set to spec
-          {valid_option}: {value} # Check the doco for available options
+          {valid_option}: {value} # See below
     ```
+
+    Valid options:
+
+    - `tags`
+
+        Default: `nil`
+
+       One or many tags that tests in this group should be tagged with.
+       This allows you to run only certain tests using the `--tags` command line parameter.
 
 #### Advanced settings
 
@@ -172,15 +181,6 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
     after:
       - "puts 'Test finished running'"
     ```
-
-- `tags`
-
-    Default: `nil`
-
-    One or many tags that tests in this group should be tagged with.
-    This allows you to run only certain tests using the `--tags` command line parameter.
-
-    **NOTE**: Custom spec tests will always be run as they are not subject to tags
 
 - `include_spec_files`
 
