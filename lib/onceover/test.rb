@@ -25,10 +25,11 @@ class Onceover
       @classes = []
       @test_config = test_config
       @test_config.delete('classes') # remove classes from the config
-      @tags = @test_config['tags']
 
       # Make sure that tags are an array
-      @test_config['tags'] = [@test_config['tags']].flatten if @test_config['tags']
+      @test_config['tags'] ||= []
+      @test_config['tags'] = [@test_config['tags']].flatten
+      @tags = @test_config['tags']
 
       # Get the nodes we are working on
       if Onceover::Group.find(on_this)
