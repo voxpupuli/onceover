@@ -1,4 +1,5 @@
 require 'backticks'
+require 'io/console'
 
 class Onceover
   class Runner
