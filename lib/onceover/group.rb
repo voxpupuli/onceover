@@ -71,7 +71,7 @@ class Onceover
         else
           return false
         end
-      rescue StandardErroor
+      rescue StandardError
         return false
       end
     end
