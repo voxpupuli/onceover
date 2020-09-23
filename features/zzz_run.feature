@@ -1,6 +1,6 @@
 @run
 Feature: Run rspec and acceptance test suites
-  Onceover should allow to run rspec and acceptance test for all profvile and role classes
+  Onceover should allow to run rspec and acceptance test for all profile and role classes
   or for any part of them. Use should set if he wants to see only summary of tests or full
   log info.
 
