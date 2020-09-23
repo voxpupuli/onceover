@@ -73,6 +73,13 @@ Feature: Run rspec and acceptance test suites
     Then I should see message pattern "failed"
     And Onceover should exit 1
 
+  Scenario: Run with a custom Puppetfile
+    Given initialized control repo "custom_puppetfile"
+    When I run onceover command "run spec" with --puppetfile Puppetfile.custom
+    Then Puppetfile.custom should be copied to Puppetfile
+    And I should see message pattern "Using Puppetfile .*Puppetfile"
+    And I should see message pattern "Updating module .*extlib"
+
   # This test is a full test using my controlrepo. It should remain at the end because it takes ages
   Scenario: Run advanced spec tests
     Given control repo "puppet_controlrepo"
