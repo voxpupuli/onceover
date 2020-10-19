@@ -83,6 +83,7 @@ class Onceover
       logger.debug "found #{git_branch} as current working branch"
       # Only try to modify Puppetfile if it exists
       unless skip_r10k
+        FileUtils.copy repo.puppetfile, "#{temp_controlrepo}/Puppetfile"
         puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
 
         logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
@@ -118,7 +119,7 @@ class Onceover
           prod_dir = "#{repo.tempdir}/#{repo.environmentpath}/production"
           Dir.chdir(prod_dir) do
             install_cmd = []
-            install_cmd << "r10k puppetfile install --color --puppetfile #{repo.puppetfile}"
+            install_cmd << 'r10k puppetfile install --color'
             install_cmd << "--force" if force
             install_cmd << "--config #{repo.r10k_config_file}" if repo.r10k_config_file
             install_cmd << (logger.level > 0 ? "--verbose" : "--verbose debug") # Enable debugging if we're debugging

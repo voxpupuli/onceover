@@ -87,3 +87,16 @@ Then(/^I should see message pattern "([^"]*)"$/) do |msg_regexp|
     puts @cmd.output
   end
 end
+
+When(/^I run onceover command "([^"]*)" with \-\-puppetfile ([^"]*)$/)  do |command, puppetfile|
+  puppetfile_path = @repo.root_folder + puppetfile
+  @cmd.command = "#{command} --puppetfile #{puppetfile_path} --debug"
+  puts @cmd
+  @cmd.run
+end
+
+Then(/^([^"]*) should be copied to Puppetfile$/) do |puppetfile|
+  source =  @repo.root_folder + puppetfile
+  destination = @repo.onceover_temp_puppetfile
+  expect(IO.read(source)).to eq(IO.read(destination))
+end
