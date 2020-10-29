@@ -206,6 +206,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
       :profile_regex: '^(profile|site)::'    # Profiles include a legacy module named `site::`
       :facts_files:                          # Factset filenames use the extension`.facts` instead of `.json`
         - 'spec/factsets/*.facts'
+      :manifest: 'manifests/site.pp'         # Manifest to use while compiling (nil by default)
     ```
 
 #### Include/Exclude syntax
@@ -254,7 +255,7 @@ classes:
   - 'roles::load_balancer'
   - 'roles::syd_f5_load_balancer'
   - 'roles::windows_server'
-  - '/^role/'
+  - '/^role/'                     # Note that this regex format requires `/`
 
 nodes:
   - centos6a
@@ -308,6 +309,7 @@ functions:
 opts:
   :facts_dirs:
     - spec/factsets
+  :profile_regex: '^(profile|site)::'   # Note that this regex _doesn't_ use `/`
 ```
 
 ### Factsets
