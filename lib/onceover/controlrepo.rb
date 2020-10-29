@@ -124,7 +124,7 @@ class Onceover
       @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
       $temp_modulepath  = nil
       manifest          = opts[:manifest]         || config['manifest']
-      @manifest         = manifest ? File.expand_path(manifest) : nil
+      @manifest         = manifest ? File.expand_path(manifest, @root) : nil
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
