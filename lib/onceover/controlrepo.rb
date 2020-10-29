@@ -123,7 +123,8 @@ class Onceover
       @profile_regex    = opts[:profile_regex]    ?  Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
       @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
       $temp_modulepath  = nil
-      @manifest         = opts[:manifest]         || config['manifest'] ? File.expand_path(config['manifest'], @root) : nil
+      manifest          = opts[:manifest]         || config['manifest']
+      @manifest         = manifest ? File.expand_path(manifest) : nil
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
@@ -420,7 +421,7 @@ class Onceover
       rescue StandardError
         raise "modulepath was not found in environment.conf, don't know where to look for roles & profiles"
       end
-      
+
       environment_config
     end
 
@@ -444,7 +445,7 @@ class Onceover
     end
 
     def temp_manifest
-      config['manifest'] ? File.expand_path(config['manifest'], @tempdir) : nil
+      @manifest
     end
 
     def self.init(repo)
@@ -642,7 +643,7 @@ class Onceover
     def find_classname(filename)
       file = File.new(filename, "r")
       while (line = file.gets)
-        begin      
+        begin
           if line =~ /^class (\w+(?:::\w+)*)/
             return $1
           end
