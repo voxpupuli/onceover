@@ -52,6 +52,11 @@ Feature: Run rspec and acceptance test suites
     And I run onceover command "run spec --force"
     Then I should see message pattern "Overwriting local modifications"
 
+  Scenario: When using an alternate manifests directory
+    Given initialized control repo "basic"
+    When I run onceover command "run spec --manifest manifests_alternate"
+    Then I should see error with message pattern "Using alternate site.pp"
+
   Scenario: Check that control_branch functionality works
     Given initialized control repo "control_branch"
     When I run onceover command "run spec"
