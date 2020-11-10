@@ -77,12 +77,25 @@ Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.output.match err_msg_regexp).to_not be nil
 end
 
-Then(/^I should see message pattern "([^"]*)"$/) do |msg_regexp|
+Then(/^I should (not )?see message pattern "([^"]*)"$/) do |notword, msg_regexp|
   output_surround = 30
   match = Regexp.new(msg_regexp).match(@cmd.output)
-  expect(@cmd.output).to match(msg_regexp)
-  if match
-    puts match.pre_match[-output_surround..-1] + match.to_s + match.post_match[0..output_surround]
+  
+  # Expect it to match unless we said it shouldn't match
+  expected_match = notword.nil?
+  does_match = !match.nil?
+
+  if expected_match
+    expect(@cmd.output).to match(msg_regexp)
+  else
+    expect(@cmd.output).not_to match(msg_regexp)
+  end
+
+  # If the regex matches and that's what we expected then just print a summary
+  if does_match == expected_match
+    if match
+      puts match.pre_match[-output_surround..-1] + match.to_s + match.post_match[0..output_surround]
+    end
   else
     puts @cmd.output
   end

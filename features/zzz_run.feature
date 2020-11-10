@@ -85,6 +85,13 @@ Feature: Run rspec and acceptance test suites
     And I should see message pattern "Using Puppetfile .*Puppetfile"
     And I should see message pattern "Updating module .*extlib"
 
+  Scenario: Testing that --tags works with native rspec tags
+    Given control repo "puppet_controlrepo"
+    When I run onceover command "run spec --tags syntax"
+    Then I should not see any errors
+    And I should see message pattern "When checking Puppet syntax"
+    And I should not see message pattern "role::"
+
   # This test is a full test using my controlrepo. It should remain at the end because it takes ages
   Scenario: Run advanced spec tests
     Given control repo "puppet_controlrepo"
