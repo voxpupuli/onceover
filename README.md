@@ -8,7 +8,7 @@ It includes automatic parsing of the `Puppetfile`, `environment.conf` and others
 
 **🍺🥳 New in v3.17.1: Heaps more Windows fixes! Windows code is now more likely to compile on Non-Windows.**
 
-[![Build Status](https://travis-ci.com/dylanratcliffe/onceover.svg?branch=master)](https://travis-ci.com/dylanratcliffe/onceover) [![Build status](https://ci.appveyor.com/api/projects/status/2ys2ggkgln69hmyf?svg=true)](https://ci.appveyor.com/project/dylanratcliffe/onceover)
+[![Build Status](https://travis-ci.com/dylanratcliffe/onceover.svg?branch=master)](https://travis-ci.com/dylanratcliffe/onceover) [![Build status](https://ci.appveyor.com/api/projects/status/2ys2ggkgln69hmyf/branch/master?svg=true)](https://ci.appveyor.com/project/dylanratcliffe/onceover/branch/master)
 
 ## Table of Contents
 
