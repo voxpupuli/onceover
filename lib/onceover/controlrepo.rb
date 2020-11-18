@@ -123,8 +123,8 @@ class Onceover
       @profile_regex    = opts[:profile_regex]    ?  Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
       @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
       $temp_modulepath  = nil
-      manifest          = opts[:manifest]         || config['manifest'] || 'manifests'
-      @manifest         = File.expand_path(manifest, @root)
+      manifest          = opts[:manifest]         || config['manifest']
+      @manifest         = manifest.nil? ? :no_manifest : File.expand_path(manifest, @root)
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
@@ -442,10 +442,6 @@ class Onceover
 
     def r10k_config=(data)
       File.write(r10k_config_file, data.to_yaml)
-    end
-
-    def temp_manifest
-      @manifest
     end
 
     def self.init(repo)
