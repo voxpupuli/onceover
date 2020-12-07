@@ -1,8 +1,8 @@
 forge "http://forge.puppetlabs.com"
 
-mod 'puppetlabs-acl', '3.1.1'
+mod 'puppetlabs-acl', '3.2.1'
 mod 'puppetlabs-chocolatey', '5.1.1'
 mod 'puppetlabs-stdlib', '6.5.0'
 mod 'puppetlabs-powershell', '4.0.0'
-mod 'puppetlabs-pwshlib', '0.5.1'
+mod 'puppetlabs-pwshlib', '0.6.1'
 mod 'puppetlabs-registry', '3.1.1'
