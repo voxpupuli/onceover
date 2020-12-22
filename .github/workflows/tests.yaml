@@ -1,0 +1,37 @@
+name: Tests
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+        puppet:
+          - '~> 5.0'
+          - '~> 6.0'
+          - '~> 7.0'
+        include:
+          - puppet: '~> 5.0'
+            ruby: 2.4
+          - puppet: '~> 6.0'
+            ruby: 2.5
+          - puppet: '~> 7.0'
+            ruby: 2.7
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+        env:
+          PUPPET_VERSION: ${{ matrix.puppet }}
+      - env:
+          PUPPET_VERSION: ${{ matrix.puppet }}
+        run: bundle exec rake full_tests
