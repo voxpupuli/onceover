@@ -1,0 +1,2 @@
+# force LF line endings, even when on Windows
+* text eol=lf

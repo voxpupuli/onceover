@@ -1,6 +1,7 @@
 require 'rubygems/tasks'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
+require 'rubocop/rake_task'
 Gem::Tasks.new
 
 def windows?
@@ -44,11 +45,13 @@ task :syntax do
   end
 end
 
-task :rubocop do
-  require 'rubocop'
-  cli = RuboCop::CLI.new
-  exit_code = cli.run(%w(--display-cop-names --format simple))
-  raise "RuboCop detected offenses" if exit_code != 0
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.options << '--display-cop-names'
+  task.formatters = ['simple']
+  task.patterns = [
+    "lib/**/*.rb",
+    "ext/**/*.rb",
+  ]
 end
 
 task :fixtures do
