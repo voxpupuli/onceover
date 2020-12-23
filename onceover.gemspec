@@ -36,8 +36,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'terminal-table', '>= 1.8.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
 
-  s.add_development_dependency 'cucumber', '~> 2.0'
-  s.add_development_dependency 'pry', '~> 0.10.0'
+  s.add_development_dependency 'cucumber', '~> 4.1'
+  s.add_development_dependency 'pry', '~> 0.13.1'
   s.add_development_dependency 'rubocop', '~> 1.6', '>= 1.6.1'
-  s.add_development_dependency 'rubygems-tasks', '~> 0.2.0'
+  s.add_development_dependency 'rubygems-tasks', '~> 0.2.5'
 end
