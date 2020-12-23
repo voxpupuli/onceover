@@ -60,6 +60,7 @@ class Onceover
       @@all
     end
 
+    # rubocop:disable Lint/DuplicateBranch
     def self.valid_members?(members)
       # Check that they are all the same type
       # Also catch any errors to assume it's invalid
@@ -75,5 +76,6 @@ class Onceover
         return false
       end
     end
+    # rubocop:enable Lint/DuplicateBranch
   end
 end

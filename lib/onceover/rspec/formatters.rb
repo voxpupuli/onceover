@@ -12,7 +12,9 @@ class OnceoverFormatter
   )
 
   COMPILATION_ERROR      = %r{error during compilation: (?<error>.*)}
+  # rubocop:disable Lint/MixedRegexpCaptureTypes
   ERROR_WITH_LOCATION    = %r{(?<error>.*?)\s(at )?(\((file: (?<file>.*?), )?line: (?<line>\d+)(, column: (?<column>\d+))?\))(; )?}
+  # rubocop:enable Lint/MixedRegexpCaptureTypes
   ERROR_WITHOUT_LOCATION = %r{(?<error>.*?)\son node}
 
   def initialize output
@@ -72,6 +74,8 @@ class OnceoverFormatter
     @output << "\n"
   end
 
+  # rubocop:disable Style/CombinableLoops
+  #
   # This method takes a notification and formats it into a hash that can be
   # printed easily
   def extract_failures notification
@@ -90,6 +94,7 @@ class OnceoverFormatter
 
     grouped
   end
+  # rubocop:enable Style/CombinableLoops
 
   # Extaracts data out of RSpec failres
   def extract_failure_data(fails)

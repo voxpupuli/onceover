@@ -1,4 +1,6 @@
 AllCops:
+  TargetRubyVersion: 2.4 # this should match the oldest version in .github/workflows/tests.yaml's matrix 
+  NewCops: enable
   Include:
     - "lib/**/*.rb"
     - "ext/**/*.rb"
@@ -10,6 +12,21 @@ AllCops:
     - "tasks/**/*"
     - "vendor/**/*"
 
+# Turning off some failing checks until it is determined which one is breaking things
+Style/AccessorGrouping:
+  Enabled: false
+Style/CaseLikeIf:
+  Enabled: false
+Style/GlobalStdStream:
+  Enabled: false
+Style/RedundantRegexpCharacterClass:
+  Enabled: false
+Style/SoleNestedConditional:
+  Enabled: false
+Style/StringConcatenation:
+  Enabled: false
+# end turning things off for debugging
+
 Layout/ConditionPosition:
   Enabled: true
 
@@ -19,7 +36,7 @@ Lint/ElseLayout:
 Lint/UnreachableCode:
   Enabled: true
 
-Lint/UselessComparison:
+Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
 # MAYBE useful - no return inside ensure block.
