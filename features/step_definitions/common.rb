@@ -28,14 +28,14 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
 end
 
 When(/^I run onceover command "([^"]*)"$/)  do |command|
-  @cmd.command = "#{command} --debug --trace"
-  puts @cmd
+  @cmd.command = "#{command} --debug"
+  log(@cmd)
   @cmd.run
 end
 
 When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/)  do |command, cls|
   @cmd.command = "#{command} --classes #{cls}"
-  puts @cmd
+  log(@cmd)
   @cmd.run
 end
 
@@ -55,12 +55,12 @@ Then(/^I see help for commands: "([^"]*)"$/) do |commands|
   commands_help = @cmd.output[/COMMANDS(.*)OPTIONS/m, 1]
   commands.split(',').each do |command|
     result = commands_help.match(/^\s+#{command.strip}.+\n/)
-    puts result.to_s if expect(result).not_to be nil
+    log(result.to_s) if expect(result).not_to be nil
   end
 end
 
 Then(/^I should not see any errors$/) do
-  puts @cmd.output unless @cmd.success?
+  log(@cmd.output) unless @cmd.success?
   expect(@cmd.success?).to be true
 end
 
@@ -75,7 +75,7 @@ end
 
 Then(/^I should see error with message pattern "([^"]*)"$/) do |err_msg_regexp|
   expect(@cmd.success?).to be false
-  puts @cmd.output
+  log(@cmd.output)
   expect(@cmd.output.match err_msg_regexp).to_not be nil
 end
 
@@ -96,17 +96,17 @@ Then(/^I should (not )?see message pattern "([^"]*)"$/) do |notword, msg_regexp|
   # If the regex matches and that's what we expected then just print a summary
   if does_match == expected_match
     if match
-      puts match.pre_match[-output_surround..-1] + match.to_s + match.post_match[0..output_surround]
+      log(match.pre_match[-output_surround..-1] + match.to_s + match.post_match[0..output_surround])
     end
   else
-    puts @cmd.output
+    log(@cmd.output)
   end
 end
 
 When(/^I run onceover command "([^"]*)" with \-\-puppetfile ([^"]*)$/)  do |command, puppetfile|
   puppetfile_path = @repo.root_folder + puppetfile
   @cmd.command = "#{command} --puppetfile #{puppetfile_path} --debug"
-  puts @cmd
+  log(@cmd)
   @cmd.run
 end
 
