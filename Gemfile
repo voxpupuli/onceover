@@ -23,10 +23,3 @@ if ENV['APPVEYOR'] == 'True'
   # in order to not have symlinks and therefor work on windows
   gem 'r10k', git: 'https://github.com/puppetlabs/r10k.git'
 end
-
-group :development do
-  gem 'cucumber', '~> 2.0'
-  gem 'pry', '~> 0.10.0'
-  gem 'rubocop', '~> 0.82.0'
-  gem 'rubygems-tasks', '~> 0.2.0'
-end
