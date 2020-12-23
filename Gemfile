@@ -17,9 +17,3 @@ end
 if File.exist?(File.join(Dir.home, '.gemfile'))
   eval(File.read(File.join(Dir.home, '.gemfile')), binding)
 end
-
-if ENV['APPVEYOR'] == 'True'
-  # R10k needs to be pinned to this until the next release after 3.1.1
-  # in order to not have symlinks and therefor work on windows
-  gem 'r10k', git: 'https://github.com/puppetlabs/r10k.git'
-end
