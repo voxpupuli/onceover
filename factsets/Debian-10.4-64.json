@@ -1,0 +1,476 @@
+{
+  "name": "buster",
+  "values": {
+    "aio_agent_version": "6.19.1",
+    "architecture": "amd64",
+    "augeas": {
+      "version": "1.12.0"
+    },
+    "augeasversion": "1.12.0",
+    "bios_release_date": "04/01/2014",
+    "bios_vendor": "SeaBIOS",
+    "bios_version": "1.13.0-1ubuntu1",
+    "blockdevice_vda_size": 21474836480,
+    "blockdevice_vda_vendor": "0x1af4",
+    "blockdevices": "vda",
+    "chassistype": "Other",
+    "dhcp_servers": {
+      "ens5": "192.168.121.1",
+      "system": "192.168.121.1"
+    },
+    "disks": {
+      "vda": {
+        "size": "20.00 GiB",
+        "size_bytes": 21474836480,
+        "vendor": "0x1af4"
+      }
+    },
+    "dmi": {
+      "bios": {
+        "release_date": "04/01/2014",
+        "vendor": "SeaBIOS",
+        "version": "1.13.0-1ubuntu1"
+      },
+      "chassis": {
+        "type": "Other"
+      },
+      "manufacturer": "QEMU",
+      "product": {
+        "name": "Standard PC (i440FX + PIIX, 1996)"
+      }
+    },
+    "facterversion": "3.14.14",
+    "filesystems": "ext2,ext3,ext4",
+    "fips_enabled": false,
+    "fqdn": "localhost",
+    "gid": "vagrant",
+    "hardwareisa": "unknown",
+    "hardwaremodel": "x86_64",
+    "hostname": "buster",
+    "hypervisors": {
+      "kvm": {
+      }
+    },
+    "id": "vagrant",
+    "identity": {
+      "gid": 1000,
+      "group": "vagrant",
+      "privileged": false,
+      "uid": 1000,
+      "user": "vagrant"
+    },
+    "interfaces": "ens5,lo",
+    "ipaddress": "192.168.121.72",
+    "ipaddress6": "fe80::5054:ff:fe88:49a2",
+    "ipaddress6_ens5": "fe80::5054:ff:fe88:49a2",
+    "ipaddress6_lo": "::1",
+    "ipaddress_ens5": "192.168.121.72",
+    "ipaddress_lo": "127.0.0.1",
+    "is_virtual": true,
+    "kernel": "Linux",
+    "kernelmajversion": "4.19",
+    "kernelrelease": "4.19.0-9-amd64",
+    "kernelversion": "4.19.0",
+    "load_averages": {
+      "15m": 0.01,
+      "1m": 0.08,
+      "5m": 0.03
+    },
+    "lsbdistcodename": "buster",
+    "lsbdistdescription": "Debian GNU/Linux 10 (buster)",
+    "lsbdistid": "Debian",
+    "lsbdistrelease": "10.4",
+    "lsbmajdistrelease": "10",
+    "lsbminordistrelease": "4",
+    "macaddress": "52:54:00:88:49:a2",
+    "macaddress_ens5": "52:54:00:88:49:a2",
+    "manufacturer": "QEMU",
+    "memory": {
+      "system": {
+        "available": "289.72 MiB",
+        "available_bytes": 303792128,
+        "capacity": "40.04%",
+        "total": "483.20 MiB",
+        "total_bytes": 506667008,
+        "used": "193.48 MiB",
+        "used_bytes": 202874880
+      }
+    },
+    "memoryfree": "289.72 MiB",
+    "memoryfree_mb": 289.71875,
+    "memorysize": "483.20 MiB",
+    "memorysize_mb": 483.1953125,
+    "mountpoints": {
+      "/": {
+        "available": "16.20 GiB",
+        "available_bytes": 17397014528,
+        "capacity": "6.13%",
+        "device": "/dev/vda1",
+        "filesystem": "ext4",
+        "options": [
+          "rw",
+          "relatime",
+          "errors=remount-ro"
+        ],
+        "size": "18.21 GiB",
+        "size_bytes": 19550347264,
+        "used": "1.06 GiB",
+        "used_bytes": 1136635904
+      },
+      "/dev": {
+        "available": "227.57 MiB",
+        "available_bytes": 238620672,
+        "capacity": "0%",
+        "device": "udev",
+        "filesystem": "devtmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "relatime",
+          "size=233028k",
+          "nr_inodes=58257",
+          "mode=755"
+        ],
+        "size": "227.57 MiB",
+        "size_bytes": 238620672,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/dev/hugepages": {
+        "available": "0 bytes",
+        "available_bytes": 0,
+        "capacity": "100%",
+        "device": "hugetlbfs",
+        "filesystem": "hugetlbfs",
+        "options": [
+          "rw",
+          "relatime",
+          "pagesize=2M"
+        ],
+        "size": "0 bytes",
+        "size_bytes": 0,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/dev/mqueue": {
+        "available": "0 bytes",
+        "available_bytes": 0,
+        "capacity": "100%",
+        "device": "mqueue",
+        "filesystem": "mqueue",
+        "options": [
+          "rw",
+          "relatime"
+        ],
+        "size": "0 bytes",
+        "size_bytes": 0,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/dev/pts": {
+        "available": "0 bytes",
+        "available_bytes": 0,
+        "capacity": "100%",
+        "device": "devpts",
+        "filesystem": "devpts",
+        "options": [
+          "rw",
+          "nosuid",
+          "noexec",
+          "relatime",
+          "gid=5",
+          "mode=620",
+          "ptmxmode=000"
+        ],
+        "size": "0 bytes",
+        "size_bytes": 0,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/dev/shm": {
+        "available": "241.60 MiB",
+        "available_bytes": 253333504,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev"
+        ],
+        "size": "241.60 MiB",
+        "size_bytes": 253333504,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/run": {
+        "available": "46.75 MiB",
+        "available_bytes": 49016832,
+        "capacity": "3.26%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "noexec",
+          "relatime",
+          "size=49480k",
+          "mode=755"
+        ],
+        "size": "48.32 MiB",
+        "size_bytes": 50667520,
+        "used": "1.57 MiB",
+        "used_bytes": 1650688
+      },
+      "/run/lock": {
+        "available": "5.00 MiB",
+        "available_bytes": 5242880,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "relatime",
+          "size=5120k"
+        ],
+        "size": "5.00 MiB",
+        "size_bytes": 5242880,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/run/user/1000": {
+        "available": "48.32 MiB",
+        "available_bytes": 50663424,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "relatime",
+          "size=49476k",
+          "mode=700",
+          "uid=1000",
+          "gid=1000"
+        ],
+        "size": "48.32 MiB",
+        "size_bytes": 50663424,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/sys/fs/cgroup": {
+        "available": "241.60 MiB",
+        "available_bytes": 253333504,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "ro",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "mode=755"
+        ],
+        "size": "241.60 MiB",
+        "size_bytes": 253333504,
+        "used": "0 bytes",
+        "used_bytes": 0
+      }
+    },
+    "mtu_ens5": 1500,
+    "mtu_lo": 65536,
+    "netmask": "255.255.255.0",
+    "netmask6": "ffff:ffff:ffff:ffff::",
+    "netmask6_ens5": "ffff:ffff:ffff:ffff::",
+    "netmask6_lo": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+    "netmask_ens5": "255.255.255.0",
+    "netmask_lo": "255.0.0.0",
+    "network": "192.168.121.0",
+    "network6": "fe80::",
+    "network6_ens5": "fe80::",
+    "network6_lo": "::1",
+    "network_ens5": "192.168.121.0",
+    "network_lo": "127.0.0.0",
+    "networking": {
+      "dhcp": "192.168.121.1",
+      "fqdn": "localhost",
+      "hostname": "buster",
+      "interfaces": {
+        "ens5": {
+          "bindings": [
+            {
+              "address": "192.168.121.72",
+              "netmask": "255.255.255.0",
+              "network": "192.168.121.0"
+            }
+          ],
+          "bindings6": [
+            {
+              "address": "fe80::5054:ff:fe88:49a2",
+              "netmask": "ffff:ffff:ffff:ffff::",
+              "network": "fe80::"
+            }
+          ],
+          "dhcp": "192.168.121.1",
+          "ip": "192.168.121.72",
+          "ip6": "fe80::5054:ff:fe88:49a2",
+          "mac": "52:54:00:88:49:a2",
+          "mtu": 1500,
+          "netmask": "255.255.255.0",
+          "netmask6": "ffff:ffff:ffff:ffff::",
+          "network": "192.168.121.0",
+          "network6": "fe80::",
+          "scope6": "link"
+        },
+        "lo": {
+          "bindings": [
+            {
+              "address": "127.0.0.1",
+              "netmask": "255.0.0.0",
+              "network": "127.0.0.0"
+            }
+          ],
+          "bindings6": [
+            {
+              "address": "::1",
+              "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+              "network": "::1"
+            }
+          ],
+          "ip": "127.0.0.1",
+          "ip6": "::1",
+          "mtu": 65536,
+          "netmask": "255.0.0.0",
+          "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+          "network": "127.0.0.0",
+          "network6": "::1",
+          "scope6": "host"
+        }
+      },
+      "ip": "192.168.121.72",
+      "ip6": "fe80::5054:ff:fe88:49a2",
+      "mac": "52:54:00:88:49:a2",
+      "mtu": 1500,
+      "netmask": "255.255.255.0",
+      "netmask6": "ffff:ffff:ffff:ffff::",
+      "network": "192.168.121.0",
+      "network6": "fe80::",
+      "primary": "ens5",
+      "scope6": "link"
+    },
+    "operatingsystem": "Debian",
+    "operatingsystemmajrelease": "10",
+    "operatingsystemrelease": "10.4",
+    "os": {
+      "architecture": "amd64",
+      "distro": {
+        "codename": "buster",
+        "description": "Debian GNU/Linux 10 (buster)",
+        "id": "Debian",
+        "release": {
+          "full": "10.4",
+          "major": "10",
+          "minor": "4"
+        }
+      },
+      "family": "Debian",
+      "hardware": "x86_64",
+      "name": "Debian",
+      "release": {
+        "full": "10.4",
+        "major": "10",
+        "minor": "4"
+      },
+      "selinux": {
+        "enabled": false
+      }
+    },
+    "osfamily": "Debian",
+    "partitions": {
+      "/dev/vda1": {
+        "mount": "/",
+        "size": "18.63 GiB",
+        "size_bytes": 19998441472
+      }
+    },
+    "path": "/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/opt/puppetlabs/bin:/usr/sbin:/sbin",
+    "physicalprocessorcount": 1,
+    "processor0": "AMD EPYC-Rome Processor",
+    "processorcount": 1,
+    "processors": {
+      "count": 1,
+      "isa": "unknown",
+      "models": [
+        "AMD EPYC-Rome Processor"
+      ],
+      "physicalcount": 1
+    },
+    "productname": "Standard PC (i440FX + PIIX, 1996)",
+    "puppetversion": "6.19.1",
+    "ruby": {
+      "platform": "x86_64-linux",
+      "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0",
+      "version": "2.5.8"
+    },
+    "rubyplatform": "x86_64-linux",
+    "rubysitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0",
+    "rubyversion": "2.5.8",
+    "scope6": "link",
+    "scope6_ens5": "link",
+    "scope6_lo": "host",
+    "selinux": false,
+    "ssh": {
+      "ecdsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 3 1 b42a0206d9f3e7a5af8fe74c52aa8deb0246311b",
+          "sha256": "SSHFP 3 2 b941abe135d0fd4b529b8a64ec8e69957c249873d7104f54e14d43fc0270f1b5"
+        },
+        "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCnAsP0kgyFNxjHAHbm8FWFjyZCnnzbYv2bDn+5Nre0Byq83ObNcIvtQwveTqvXGAqNfT2GjLdovby2zq1yJpkI=",
+        "type": "ecdsa-sha2-nistp256"
+      },
+      "ed25519": {
+        "fingerprints": {
+          "sha1": "SSHFP 4 1 4460b6b2b862be9fc2b74982ab7eb6bf59d023cf",
+          "sha256": "SSHFP 4 2 48ccb96d5cc2dc6c9e0d197c642bb25da77eb231a57259ee297760b9fa4bfc39"
+        },
+        "key": "AAAAC3NzaC1lZDI1NTE5AAAAIL397Wi4k2iiEaBr9yRnfxeW7r2pTIHlpSowZeWCNEfB",
+        "type": "ssh-ed25519"
+      },
+      "rsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 1 1 a3c5c7eb200a59d18f0b23c3c52bc2d443b4c34c",
+          "sha256": "SSHFP 1 2 b27e438e1cb0569386f0423c5718f2a9fca78734f69887fee0e83371eb6d3c5d"
+        },
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQCn5di3FxsIrYFI//j0keOPMrlg6xxCbsTmEnGBvOgrIBwfjujiagldtz5gUShBD1kVqH+YVND8csppLqTMSIAJMUKQF5ZXYFp6S/qVZ6pCWlRn9ygu3oRpgFmhy41k8hjDZqCa9q2MEl1YSlxKjt6deEis1IM5YYzb7ulqIZ9eHMzAEUN0K/ZONfwuaDzIblypYV5pSICAa4sMtcCaY4tPvstK4GPKJ/jSbcVvMfpVs7o0wXOAocVExKzLT5Xam0xVF9tsY7APFiFhG5ouk/ZXaCi1yoqedeGZq3IDiVUVJ9WQbHv63WiUZ/v9oPDCHOnOjf05Sm5T4tI64ZaWjSPf",
+        "type": "ssh-rsa"
+      }
+    },
+    "sshecdsakey": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCnAsP0kgyFNxjHAHbm8FWFjyZCnnzbYv2bDn+5Nre0Byq83ObNcIvtQwveTqvXGAqNfT2GjLdovby2zq1yJpkI=",
+    "sshed25519key": "AAAAC3NzaC1lZDI1NTE5AAAAIL397Wi4k2iiEaBr9yRnfxeW7r2pTIHlpSowZeWCNEfB",
+    "sshfp_ecdsa": "SSHFP 3 1 b42a0206d9f3e7a5af8fe74c52aa8deb0246311b\nSSHFP 3 2 b941abe135d0fd4b529b8a64ec8e69957c249873d7104f54e14d43fc0270f1b5",
+    "sshfp_ed25519": "SSHFP 4 1 4460b6b2b862be9fc2b74982ab7eb6bf59d023cf\nSSHFP 4 2 48ccb96d5cc2dc6c9e0d197c642bb25da77eb231a57259ee297760b9fa4bfc39",
+    "sshfp_rsa": "SSHFP 1 1 a3c5c7eb200a59d18f0b23c3c52bc2d443b4c34c\nSSHFP 1 2 b27e438e1cb0569386f0423c5718f2a9fca78734f69887fee0e83371eb6d3c5d",
+    "sshrsakey": "AAAAB3NzaC1yc2EAAAADAQABAAABAQCn5di3FxsIrYFI//j0keOPMrlg6xxCbsTmEnGBvOgrIBwfjujiagldtz5gUShBD1kVqH+YVND8csppLqTMSIAJMUKQF5ZXYFp6S/qVZ6pCWlRn9ygu3oRpgFmhy41k8hjDZqCa9q2MEl1YSlxKjt6deEis1IM5YYzb7ulqIZ9eHMzAEUN0K/ZONfwuaDzIblypYV5pSICAa4sMtcCaY4tPvstK4GPKJ/jSbcVvMfpVs7o0wXOAocVExKzLT5Xam0xVF9tsY7APFiFhG5ouk/ZXaCi1yoqedeGZq3IDiVUVJ9WQbHv63WiUZ/v9oPDCHOnOjf05Sm5T4tI64ZaWjSPf",
+    "system_uptime": {
+      "days": 0,
+      "hours": 0,
+      "seconds": 78,
+      "uptime": "0:01 hours"
+    },
+    "timezone": "UTC",
+    "uptime": "0:01 hours",
+    "uptime_days": 0,
+    "uptime_hours": 0,
+    "uptime_seconds": 78,
+    "virtual": "kvm",
+    "clientcert": "buster",
+    "clientversion": "6.19.1",
+    "clientnoop": false
+  },
+  "timestamp": "2021-01-01T02:16:21.197378737+00:00",
+  "expiration": "2021-01-01T02:46:21.197648839+00:00"
+}
