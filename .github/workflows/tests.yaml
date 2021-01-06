@@ -3,7 +3,7 @@ on:
   - push
   - pull_request
 jobs:
-  test:
+  full_tests:
     strategy:
       fail-fast: false
       matrix:
@@ -12,15 +12,15 @@ jobs:
           - ubuntu-latest
           - macos-latest
         puppet:
-          - '~> 5.0'
-          - '~> 6.0'
-          - '~> 7.0'
+          - "~> 5.0"
+          - "~> 6.0"
+          - "~> 7.0"
         include:
-          - puppet: '~> 5.0'
+          - puppet: "~> 5.0"
             ruby: 2.4
-          - puppet: '~> 6.0'
+          - puppet: "~> 6.0"
             ruby: 2.5
-          - puppet: '~> 7.0'
+          - puppet: "~> 7.0"
             ruby: 2.7
 
     runs-on: ${{ matrix.os }}
