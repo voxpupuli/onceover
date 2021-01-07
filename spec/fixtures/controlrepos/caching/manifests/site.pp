@@ -29,4 +29,5 @@ node default {
   # This is where you can declare classes for all nodes.
   # Example:
   #   class { 'my_class': }
+  fail('This was using the manifest setting from environment.conf')
 }
