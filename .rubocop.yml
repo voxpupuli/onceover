@@ -650,9 +650,6 @@ Style/ZeroLengthPredicate:
 
 Bundler/OrderedGems:
   Enabled: false
-  # Enforce LF line endings, even when on Windows
-Layout/EndOfLine:
-  EnforcedStyle: lf
 
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true

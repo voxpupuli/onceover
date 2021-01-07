@@ -7,6 +7,8 @@ Given(/^control repo "([^"]*)"$/) do |controlrepo_name|
   @cmd.controlrepo = @repo
   FileUtils.rm_rf @repo.root_folder
   FileUtils.mkdir_p @repo.tmp_folder
+
+  FileUtils.rm_rf "#{@repo.tmp_folder}#{controlrepo_name}"
   FileUtils.cp_r "spec/fixtures/controlrepos/#{controlrepo_name}", @repo.tmp_folder
 end
 
@@ -26,7 +28,7 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
 end
 
 When(/^I run onceover command "([^"]*)"$/)  do |command|
-  @cmd.command = "#{command} --debug"
+  @cmd.command = "#{command} --debug --trace"
   puts @cmd
   @cmd.run
 end
