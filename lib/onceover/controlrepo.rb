@@ -123,11 +123,16 @@ class Onceover
       @profile_regex    = opts[:profile_regex]    ?  Regexp.new(opts[:profile_regex]) : /profile[s]?:{2}/
       @tempdir          = opts[:tempdir]          || File.expand_path('./.onceover', @root)
       $temp_modulepath  = nil
-      manifest          = opts[:manifest]         || config['manifest'] || 'manifests'
-      @manifest         = File.expand_path(manifest, @root)
       @opts             = opts
       logger.level = :debug if @opts[:debug]
       @@existing_controlrepo = self
+
+      # Set the manifest option to the fully expanded path if it's used,
+      # default to nil
+      manifest = opts[:manifest] || config['manifest'] || nil
+      if manifest
+        @manifest = File.expand_path(manifest, @root)
+      end
     end
 
 
