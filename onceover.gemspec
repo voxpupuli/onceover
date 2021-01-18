@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'logging', '>= 2.0.0'
   s.add_runtime_dependency 'multi_json', '~> 1.10'
   s.add_runtime_dependency 'parallel_tests', ">= 2.0.0"
+  s.add_runtime_dependency 'pathspec', '< 1.0.0'
   s.add_runtime_dependency 'puppet', '>=4.0'
   s.add_runtime_dependency 'puppetlabs_spec_helper', ">= 0.4.0"
   s.add_runtime_dependency 'r10k', '>=2.1.0'
