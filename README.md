@@ -6,7 +6,7 @@ Onceover is a tool to automatically run basic tests on an entire Puppet control 
 
 It includes automatic parsing of the `Puppetfile`, `environment.conf` and others in order to stop silly mistakes ever reaching your Puppet Master!
 
-**New in v3.20.0: I've reversed the decision to have onceover use `site.pp` in the same way Puppet does. From now on your `manifest` setting in `environment.conf` will be ignored and your `site.pp` will only be used if you explicitly set the `manifest` option in the CLI or config file.**
+**New in v3.19.1: I've reversed the decision to have onceover use `site.pp` in the same way Puppet does. From now on your `manifest` setting in `environment.conf` will be ignored and your `site.pp` will only be used if you explicitly set the `manifest` option in the CLI or config file.**
 
 [![Build Status](https://travis-ci.com/dylanratcliffe/onceover.svg?branch=master)](https://travis-ci.com/dylanratcliffe/onceover) [![Build status](https://ci.appveyor.com/api/projects/status/2ys2ggkgln69hmyf/branch/master?svg=true)](https://ci.appveyor.com/project/dylanratcliffe/onceover/branch/master)
 
