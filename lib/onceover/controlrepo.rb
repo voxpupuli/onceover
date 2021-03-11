@@ -190,7 +190,14 @@ class Onceover
       all_facts = []
       logger.debug "Reading factsets"
       @facts_files.each do |file|
-        all_facts << read_facts(file)[key]
+        facts_from_file = read_facts(file)
+        # Facter 4 removed the top level key 'values' and, instead, puts facts
+        # at the top level. The conditional below accounts for this.
+        if (key.eql?('values') and facts_from_file.has_key?('values')) or !key.eql?('values')
+          all_facts << facts_from_file[key]
+        else
+          all_facts << facts_from_file
+        end
       end
       if filter
         # Allow us to pass a hash of facts to filter by
@@ -201,11 +208,7 @@ class Onceover
           filter.each do |filter_fact,value|
             matches << keypair_is_in_hash(hash,filter_fact,value)
           end
-          if matches.include? false
-            false
-          else
-            true
-          end
+          !matches.include? false
         end
       end
       return all_facts
@@ -626,11 +629,7 @@ class Onceover
       else
         matches << false
       end
-      if matches.include? false
-        false
-      else
-        true
-      end
+      !matches.include? false
     end
 
     def get_classes(dir)

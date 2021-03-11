@@ -1,0 +1,1091 @@
+{
+  "os": {
+    "architecture": "amd64",
+    "release": {
+      "full": "10.0",
+      "major": "10",
+      "minor": "0"
+    },
+    "distro": {
+      "id": "Debian",
+      "codename": "buster",
+      "description": "Debian GNU/Linux 10 (buster)",
+      "release": {
+        "full": "10.0",
+        "major": "10",
+        "minor": "0"
+      }
+    },
+    "hardware": "x86_64",
+    "selinux": {
+      "enabled": false
+    },
+    "family": "Debian",
+    "name": "Debian"
+  },
+  "augeas": {
+    "version": "1.12.0"
+  },
+  "partitions": {
+    "/dev/mapper/localhost--vg-swap_1": {
+      "size_bytes": 4294967296,
+      "size": "4.00 GiB",
+      "filesystem": "swap",
+      "uuid": "e1d39dbf-07b1-40f3-bb00-61c373ff3679"
+    },
+    "/dev/mapper/localhost--vg-root": {
+      "size_bytes": 16919822336,
+      "size": "15.76 GiB",
+      "filesystem": "ext3",
+      "uuid": "d5e15cec-ac09-49ac-a7e9-69a0b4d3bd7a",
+      "mount": "/"
+    },
+    "/dev/sda2": {
+      "size_bytes": 1024,
+      "size": "1.00 KiB"
+    },
+    "/dev/sda5": {
+      "size_bytes": 21216886784,
+      "size": "19.76 GiB",
+      "filesystem": "LVM2_member",
+      "uuid": "PnWAEL-Qhls-LcWt-U7Rd-Odiy-U0k8-8fNFXY",
+      "partuuid": "4b9f600f-05"
+    },
+    "/dev/sda1": {
+      "size_bytes": 254803968,
+      "size": "243.00 MiB",
+      "filesystem": "ext2",
+      "uuid": "6e570548-0c10-405c-abbb-2325c6c85912",
+      "partuuid": "4b9f600f-01",
+      "mount": "/boot"
+    }
+  },
+  "mountpoints": {
+    "/dev": {
+      "device": "udev",
+      "filesystem": "devtmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "relatime",
+        "size=2004744k",
+        "nr_inodes=501186",
+        "mode=755"
+      ],
+      "size_bytes": 2052857856,
+      "available_bytes": 2052857856,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "1.91 GiB",
+      "available": "1.91 GiB",
+      "used": "0 bytes"
+    },
+    "/dev/pts": {
+      "device": "devpts",
+      "filesystem": "devpts",
+      "options": [
+        "rw",
+        "nosuid",
+        "noexec",
+        "relatime",
+        "gid=5",
+        "mode=620",
+        "ptmxmode=000"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/run": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "noexec",
+        "relatime",
+        "size=404128k",
+        "mode=755"
+      ],
+      "size_bytes": 413827072,
+      "available_bytes": 408092672,
+      "used_bytes": 5734400,
+      "capacity": "1.39%",
+      "size": "394.66 MiB",
+      "available": "389.19 MiB",
+      "used": "5.47 MiB"
+    },
+    "/": {
+      "device": "/dev/mapper/localhost--vg-root",
+      "filesystem": "ext3",
+      "options": [
+        "rw",
+        "relatime",
+        "errors=remount-ro"
+      ],
+      "size_bytes": 16586805248,
+      "available_bytes": 14209556480,
+      "used_bytes": 1531260928,
+      "capacity": "9.73%",
+      "size": "15.45 GiB",
+      "available": "13.23 GiB",
+      "used": "1.43 GiB"
+    },
+    "/dev/shm": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev"
+      ],
+      "size_bytes": 2069123072,
+      "available_bytes": 2069123072,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "1.93 GiB",
+      "available": "1.93 GiB",
+      "used": "0 bytes"
+    },
+    "/run/lock": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev",
+        "noexec",
+        "relatime",
+        "size=5120k"
+      ],
+      "size_bytes": 5242880,
+      "available_bytes": 5242880,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "5.00 MiB",
+      "available": "5.00 MiB",
+      "used": "0 bytes"
+    },
+    "/sys/fs/cgroup": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "ro",
+        "nosuid",
+        "nodev",
+        "noexec",
+        "mode=755"
+      ],
+      "size_bytes": 2069123072,
+      "available_bytes": 2069123072,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "1.93 GiB",
+      "available": "1.93 GiB",
+      "used": "0 bytes"
+    },
+    "/dev/mqueue": {
+      "device": "mqueue",
+      "filesystem": "mqueue",
+      "options": [
+        "rw",
+        "relatime"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/dev/hugepages": {
+      "device": "hugetlbfs",
+      "filesystem": "hugetlbfs",
+      "options": [
+        "rw",
+        "relatime",
+        "pagesize=2M"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/boot": {
+      "device": "/dev/sda1",
+      "filesystem": "ext2",
+      "options": [
+        "rw",
+        "relatime",
+        "block_validity",
+        "barrier",
+        "user_xattr",
+        "acl"
+      ],
+      "size_bytes": 246755328,
+      "available_bytes": 183791616,
+      "used_bytes": 50224128,
+      "capacity": "21.46%",
+      "size": "235.32 MiB",
+      "available": "175.28 MiB",
+      "used": "47.90 MiB"
+    },
+    "/run/user/0": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev",
+        "relatime",
+        "size=404124k",
+        "mode=700"
+      ],
+      "size_bytes": 413822976,
+      "available_bytes": 413822976,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "394.65 MiB",
+      "available": "394.65 MiB",
+      "used": "0 bytes"
+    }
+  },
+  "virtual": "vmware",
+  "disks": {
+    "sr0": {
+      "model": "VMware IDE CDR00",
+      "size_bytes": 1073741312,
+      "size": "1.00 GiB",
+      "vendor": "NECVMWar",
+      "type": "hdd"
+    },
+    "sda": {
+      "model": "Virtual disk",
+      "size_bytes": 21474836480,
+      "size": "20.00 GiB",
+      "vendor": "VMware",
+      "type": "hdd"
+    }
+  },
+  "kernelversion": "4.19.0",
+  "ssh": {
+    "rsa": {
+      "fingerprints": {
+        "sha1": "SSHFP 1 1 05576cc92738720d76248d148747cfa8f32712ff",
+        "sha256": "SSHFP 1 2 aed61463793821b34ee97afcb8934c5aa13a473e6dd26a61fda080261c01def0"
+      },
+      "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDdoV7A+ji8joSrg4YUCTdFtLt+4Nphb9wBNDlLVdaD03SLXtyFt3vydtKzNjXRPzCSurb96Sfi32hmxHFrimLKMltBuZj0AlLEHlCnYCHDAlgL7cllqxqv5+s0b32cbhmwLx6ghaNk6XDc7hmCZuovnr4b4pHC2mka8P9gl1osb6dTRfsEZiLm3qu1fxMlJU4adS05u1uHAdcX32KF8ty1Q1s9EygwcLfmJOeKTxdA/D4axkuuLuGP48U0KO+ld4tHHb9yVVWKdhoCL3WSMYH7tMA3NRTbsbdEehEvbjQPQprZHk6uCuqcbh7Ua/L8i5/oVCH4FpTF3a+gQeN9wpLj",
+      "type": "ssh-rsa"
+    },
+    "ecdsa": {
+      "fingerprints": {
+        "sha1": "SSHFP 3 1 108a7a47d204732b908ebb2aa553f797ae85a495",
+        "sha256": "SSHFP 3 2 bcaa6eb722707b5a1cb7732f64b4aa303037c24c96731ffa9eb107a062562fb7"
+      },
+      "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL9WhxtGZBEre40NnExVbI5PBO8uqcIoeqFeDdgr3GItFUKNJaTKJnroImYyiU+GP6pPnyW3wsy9rAENm6AfzsY=",
+      "type": "ecdsa-sha2-nistp256"
+    },
+    "ed25519": {
+      "fingerprints": {
+        "sha1": "SSHFP 4 1 0701e1636d201ea085c317968e75f26003244255",
+        "sha256": "SSHFP 4 2 c8379fec233379a68aa6086d8aa6c1dbd8db39fef95fb5fa8a7cee2b60c27dc7"
+      },
+      "key": "AAAAC3NzaC1lZDI1NTE5AAAAIJgYWtJU2Dn1mY0wpKIZHfUNb+0BMDTXl+cNciltzpQ3",
+      "type": "ssh-ed25519"
+    }
+  },
+  "networking": {
+    "scope6": "link",
+    "mtu": 1500,
+    "ip6": "fe80::250:56ff:fe9a:521a",
+    "mac": "00:50:56:9a:52:1a",
+    "fqdn": "foo.example.com",
+    "netmask6": "ffff:ffff:ffff:ffff::",
+    "primary": "ens192",
+    "network": "10.16.112.0",
+    "netmask": "255.255.240.0",
+    "domain": "example.com",
+    "dhcp": "10.32.22.9",
+    "network6": "fe80::",
+    "interfaces": {
+      "lo": {
+        "bindings": [
+          {
+            "address": "127.0.0.1",
+            "netmask": "255.0.0.0",
+            "network": "127.0.0.0"
+          }
+        ],
+        "bindings6": [
+          {
+            "address": "::1",
+            "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+            "network": "::1",
+            "scope6": "host"
+          }
+        ],
+        "mtu": 65536,
+        "ip": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "network": "127.0.0.0",
+        "ip6": "::1",
+        "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "network6": "::1",
+        "scope6": "host"
+      },
+      "ens192": {
+        "mac": "00:50:56:9a:52:1a",
+        "bindings": [
+          {
+            "address": "10.16.124.235",
+            "netmask": "255.255.240.0",
+            "network": "10.16.112.0"
+          }
+        ],
+        "bindings6": [
+          {
+            "address": "fe80::250:56ff:fe9a:521a",
+            "netmask": "ffff:ffff:ffff:ffff::",
+            "network": "fe80::",
+            "scope6": "link"
+          }
+        ],
+        "mtu": 1500,
+        "dhcp": "10.32.22.9",
+        "ip": "10.16.124.235",
+        "netmask": "255.255.240.0",
+        "network": "10.16.112.0",
+        "ip6": "fe80::250:56ff:fe9a:521a",
+        "netmask6": "ffff:ffff:ffff:ffff::",
+        "network6": "fe80::",
+        "scope6": "link"
+      }
+    },
+    "hostname": "foo",
+    "ip": "10.16.124.235"
+  },
+  "timezone": "PST",
+  "filesystems": "ext2,ext3,ext4",
+  "is_virtual": true,
+  "processors": {
+    "isa": "unknown",
+    "physicalcount": 1,
+    "models": [
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz",
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz",
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz",
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz"
+    ],
+    "speed": "2.29 GHz",
+    "count": 4
+  },
+  "dmi": {
+    "board": {
+      "serial_number": "None",
+      "manufacturer": "Intel Corporation",
+      "product": "440BX Desktop Reference Platform"
+    },
+    "chassis": {
+      "type": "Other",
+      "asset_tag": "No Asset Tag"
+    },
+    "manufacturer": "VMware, Inc.",
+    "product": {
+      "name": "VMware Virtual Platform",
+      "serial_number": "VMware-42 1a af ad 81 f1 50 f3-13 72 c0 e5 63 24 c6 28",
+      "uuid": "adaf1a42-f181-f350-1372-c0e56324c628"
+    },
+    "bios": {
+      "vendor": "Phoenix Technologies LTD",
+      "release_date": "12/12/2018",
+      "version": "6.00"
+    }
+  },
+  "load_averages": {
+    "1m": 0.02,
+    "5m": 0.05,
+    "15m": 0.02
+  },
+  "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+  "identity": {
+    "uid": 0,
+    "user": "root",
+    "gid": 0,
+    "group": "root",
+    "privileged": true
+  },
+  "kernelmajversion": "4.19",
+  "kernelrelease": "4.19.0-5-amd64",
+  "system_uptime": {
+    "days": 0,
+    "seconds": 287,
+    "hours": 0,
+    "uptime": "0:04 hours"
+  },
+  "facterversion": "4.0.52",
+  "ruby": {
+    "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.7.0",
+    "platform": "x86_64-linux",
+    "version": "2.7.2"
+  },
+  "fips_enabled": false,
+  "hypervisors": {
+    "vmware": {
+      "version": "ESXi 6.7"
+    },
+    "ldom": {
+      "domain_name": "foo"
+    }
+  },
+  "memory": {
+    "system": {
+      "total": "3.85 GiB",
+      "total_bytes": 4138246144,
+      "used_bytes": 440221696,
+      "capacity": "10.64%",
+      "available_bytes": 3698024448,
+      "available": "3.44 GiB",
+      "used": "419.83 MiB"
+    },
+    "swap": {
+      "total": "4.00 GiB",
+      "total_bytes": 4294963200,
+      "used_bytes": 0,
+      "capacity": "0.00%",
+      "available_bytes": 4294963200,
+      "available": "4.00 GiB",
+      "used": "0 bytes"
+    }
+  },
+  "kernel": "Linux",
+  "puppetversion": "7.5.0",
+  "debian_kernel": "#1 SMP Debian 4.19.37-5 (2019-06-19)\n",
+  "who2bug": [],
+  "puppet_cert_paths": {
+    "confdir": "/etc/puppetlabs/puppet",
+    "ssldir": "/etc/puppetlabs/puppet/ssl",
+    "cert_dir": "/etc/puppetlabs/puppet/ssl/certs",
+    "ca_path": "/etc/puppetlabs/puppet/ssl/certs/ca.pem",
+    "client_cert_path": "/etc/puppetlabs/puppet/ssl/certs/.pem",
+    "client_key_path": "/etc/puppetlabs/puppet/ssl/private_keys/.pem"
+  },
+  "puppet_files_dir_present": false,
+  "puppet_ssldir": "/etc/puppetlabs/puppet/ssl",
+  "puppet_digest_algorithm": "sha256",
+  "puppet_config": "/etc/puppetlabs/puppet/puppet.conf",
+  "puppet_stringify_facts": false,
+  "mco_confdir": "/etc/mcollective/etc",
+  "context": "",
+  "puppet_inventory_metadata": {
+    "packages": {
+      "collection_enabled": false,
+      "last_collection_time": "0.0s"
+    }
+  },
+  "meltdown": {
+    "CVE-2017-5753": {
+      "CVE": "2017-5753",
+      "description": "SPECTRE VARIANT 1",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: __user pointer sanitization"
+      }
+    },
+    "CVE-2017-5715": {
+      "CVE": "2017-5715",
+      "description": "SPECTRE VARIANT 2",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Full retpoline + IBPB are mitigating the vulnerability"
+      }
+    },
+    "CVE-2017-5754": {
+      "CVE": "2017-5754",
+      "description": "MELTDOWN",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: PTI"
+      }
+    },
+    "CVE-2018-3640": {
+      "CVE": "2018-3640",
+      "description": "VARIANT 3A",
+      "vulnerable": false,
+      "info": {
+        "hardware": "your CPU microcode mitigates the vulnerability"
+      }
+    },
+    "CVE-2018-3639": {
+      "CVE": "2018-3639",
+      "description": "VARIANT 4",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Speculative Store Bypass disabled via prctl and seccomp"
+      }
+    },
+    "CVE-2018-3615": {
+      "CVE": "2018-3615",
+      "description": "L1TF SGX",
+      "vulnerable": false,
+      "info": {
+        "hardware": "your CPU vendor reported your CPU model as not vulnerable"
+      }
+    },
+    "CVE-2018-3620": {
+      "CVE": "2018-3620",
+      "description": "L1TF OS",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: PTE Inversion"
+      }
+    },
+    "CVE-2018-3646": {
+      "CVE": "2018-3646",
+      "description": "L1TF VMM",
+      "vulnerable": false,
+      "info": {
+        "hardware": "this system is not running a hypervisor"
+      }
+    },
+    "CVE-2018-12126": {
+      "CVE": "2018-12126",
+      "description": "MSBDS",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Clear CPU buffers; SMT Host state unknown"
+      }
+    },
+    "CVE-2018-12130": {
+      "CVE": "2018-12130",
+      "description": "MFBDS",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Clear CPU buffers; SMT Host state unknown"
+      }
+    },
+    "CVE-2018-12127": {
+      "CVE": "2018-12127",
+      "description": "MLPDS",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Clear CPU buffers; SMT Host state unknown"
+      }
+    },
+    "CVE-2019-11091": {
+      "CVE": "2019-11091",
+      "description": "MDSUM",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Clear CPU buffers; SMT Host state unknown"
+      }
+    }
+  },
+  "package_provider": "apt",
+  "current_environment": "production",
+  "puppet_agent_pid": 2614,
+  "windows_java_temp": "\\tmp",
+  "lvm_support": true,
+  "lvm_vgs": 1,
+  "lvm_vg_0": "localhost-vg",
+  "lvm_vg_localhost-vg_pvs": "/dev/sda5",
+  "lvm_pvs": 1,
+  "lvm_pv_0": "/dev/sda5",
+  "jenkins_plugins": "",
+  "python_release": "2.7",
+  "python2_release": "2.7",
+  "python3_release": "3.7",
+  "os_maj_version": "10",
+  "is_pe": false,
+  "aio_agent_version": "7.4.1.59",
+  "vcsrepo_svn_ver": "",
+  "number_string": "",
+  "apt_reboot_required": false,
+  "function": "",
+  "aio_agent_build": "7.4.1.59.g5d5199a8a",
+  "python_version": "2.7.16",
+  "python2_version": "2.7.16",
+  "python3_version": "3.7.3",
+  "mongodb_is_master": "not_installed",
+  "is_valid_hostname": false,
+  "iptables_version": "1.8.2",
+  "mysql_server_id": 23180442,
+  "staging_http_get": "curl",
+  "whereami": "pdx",
+  "platform_tag": "debian-10-amd64",
+  "puppetserver_installed": false,
+  "env_temp_variable": "/tmp",
+  "docker_home_dirs": {
+    "root": "/root",
+    "daemon": "/usr/sbin",
+    "bin": "/bin",
+    "sys": "/dev",
+    "sync": "/bin",
+    "games": "/usr/games",
+    "man": "/var/cache/man",
+    "lp": "/var/spool/lpd",
+    "mail": "/var/mail",
+    "news": "/var/spool/news",
+    "uucp": "/var/spool/uucp",
+    "proxy": "/bin",
+    "www-data": "/var/www",
+    "backup": "/var/backups",
+    "list": "/var/list",
+    "irc": "/var/run/ircd",
+    "gnats": "/var/lib/gnats",
+    "nobody": "/nonexistent",
+    "_apt": "/nonexistent",
+    "systemd-timesync": "/run/systemd",
+    "systemd-network": "/run/systemd",
+    "systemd-resolve": "/run/systemd",
+    "messagebus": "/nonexistent",
+    "sshd": "/run/sshd",
+    "ntp": "/nonexistent",
+    "systemd-coredump": "/"
+  },
+  "apt_has_updates": true,
+  "apt_has_dist_updates": true,
+  "apt_package_updates": [
+    "base-files",
+    "ncurses-bin",
+    "libperl5.28",
+    "perl",
+    "perl-base",
+    "perl-modules-5.28",
+    "bzip2",
+    "libbz2-1.0",
+    "ncurses-base",
+    "libnss-systemd",
+    "libsystemd0",
+    "libpam-systemd",
+    "systemd",
+    "udev",
+    "libudev1",
+    "systemd-sysv",
+    "dbus",
+    "libdbus-1-3",
+    "libexpat1",
+    "libjson-c3",
+    "libssl1.1",
+    "libcryptsetup12",
+    "libidn2-0",
+    "libp11-kit0",
+    "libgnutls30",
+    "libzstd1",
+    "libapt-pkg5.0",
+    "libapt-inst2.0",
+    "apt",
+    "apt-utils",
+    "gpgv",
+    "initramfs-tools-core",
+    "initramfs-tools",
+    "libext2fs2",
+    "e2fsprogs",
+    "cron",
+    "console-setup-linux",
+    "console-setup",
+    "keyboard-configuration",
+    "python2.7",
+    "python2.7-minimal",
+    "libpython2.7-stdlib",
+    "libpython2.7-minimal",
+    "libncurses6",
+    "libtinfo6",
+    "libncursesw6",
+    "libsqlite3-0",
+    "python3.7",
+    "libpython3.7-stdlib",
+    "python3.7-minimal",
+    "libpython3.7-minimal",
+    "tzdata",
+    "iproute2",
+    "iputils-ping",
+    "libicu63",
+    "libxml2",
+    "bind9-host",
+    "libbind9-161",
+    "libisccfg163",
+    "libisccc161",
+    "libdns1104",
+    "libisc1100",
+    "libcom-err2",
+    "libgssapi-krb5-2",
+    "libkrb5-3",
+    "libkrb5support0",
+    "libk5crypto3",
+    "liblwres161",
+    "file",
+    "libmagic1",
+    "libmagic-mgc",
+    "krb5-locales",
+    "libsasl2-modules-db",
+    "libsasl2-2",
+    "libldap-common",
+    "libldap-2.4-2",
+    "ncurses-term",
+    "openssh-sftp-server",
+    "openssh-server",
+    "openssh-client",
+    "reportbug",
+    "gpgsm",
+    "gpg-wks-server",
+    "gpg-wks-client",
+    "gnupg-utils",
+    "gpg-agent",
+    "gpg",
+    "gnupg-l10n",
+    "dirmngr",
+    "gnupg",
+    "gpgconf",
+    "python-apt-common",
+    "python3-apt",
+    "python3-reportbug",
+    "openssl",
+    "ca-certificates",
+    "libnghttp2-14",
+    "curl",
+    "libcurl4",
+    "distro-info-data",
+    "fuse",
+    "libfuse2",
+    "libefivar1",
+    "libefiboot1",
+    "grub-pc",
+    "grub2-common",
+    "grub-pc-bin",
+    "libfreetype6",
+    "grub-common",
+    "libcurl3-gnutls",
+    "libisc-export1100",
+    "libdns-export1104",
+    "libglib2.0-0",
+    "libglib2.0-data",
+    "rake",
+    "libruby2.5",
+    "libsasl2-modules",
+    "libss2",
+    "libx11-data",
+    "libx11-6",
+    "libxslt1.1",
+    "linux-libc-dev",
+    "open-vm-tools",
+    "patch",
+    "rubygems-integration",
+    "ruby2.5",
+    "sudo",
+    "unzip"
+  ],
+  "apt_package_dist_updates": [
+    "base-files",
+    "ncurses-bin",
+    "libperl5.28",
+    "perl",
+    "perl-base",
+    "perl-modules-5.28",
+    "bzip2",
+    "libbz2-1.0",
+    "ncurses-base",
+    "libnss-systemd",
+    "libsystemd0",
+    "libpam-systemd",
+    "systemd",
+    "udev",
+    "libudev1",
+    "systemd-sysv",
+    "dbus",
+    "libdbus-1-3",
+    "libexpat1",
+    "libjson-c3",
+    "libssl1.1",
+    "libcryptsetup12",
+    "libidn2-0",
+    "libp11-kit0",
+    "libgnutls30",
+    "libzstd1",
+    "libapt-pkg5.0",
+    "libapt-inst2.0",
+    "apt",
+    "apt-utils",
+    "gpgv",
+    "initramfs-tools-core",
+    "initramfs-tools",
+    "libext2fs2",
+    "e2fsprogs",
+    "cron",
+    "console-setup-linux",
+    "console-setup",
+    "keyboard-configuration",
+    "python2.7",
+    "python2.7-minimal",
+    "libpython2.7-stdlib",
+    "libpython2.7-minimal",
+    "libncurses6",
+    "libtinfo6",
+    "libncursesw6",
+    "libsqlite3-0",
+    "python3.7",
+    "libpython3.7-stdlib",
+    "python3.7-minimal",
+    "libpython3.7-minimal",
+    "tzdata",
+    "iproute2",
+    "iputils-ping",
+    "libicu63",
+    "libxml2",
+    "bind9-host",
+    "libbind9-161",
+    "libisccfg163",
+    "libisccc161",
+    "libdns1104",
+    "libisc1100",
+    "libcom-err2",
+    "libgssapi-krb5-2",
+    "libkrb5-3",
+    "libkrb5support0",
+    "libk5crypto3",
+    "liblwres161",
+    "file",
+    "libmagic1",
+    "libmagic-mgc",
+    "krb5-locales",
+    "libsasl2-modules-db",
+    "libsasl2-2",
+    "libldap-common",
+    "libldap-2.4-2",
+    "ncurses-term",
+    "openssh-sftp-server",
+    "openssh-server",
+    "openssh-client",
+    "reportbug",
+    "gpgsm",
+    "gpg-wks-server",
+    "gpg-wks-client",
+    "gnupg-utils",
+    "gpg-agent",
+    "gpg",
+    "gnupg-l10n",
+    "dirmngr",
+    "gnupg",
+    "gpgconf",
+    "python-apt-common",
+    "python3-apt",
+    "python3-reportbug",
+    "openssl",
+    "ca-certificates",
+    "libnghttp2-14",
+    "curl",
+    "libcurl4",
+    "distro-info-data",
+    "fuse",
+    "libfuse2",
+    "libefivar1",
+    "libefiboot1",
+    "grub-pc",
+    "grub2-common",
+    "grub-pc-bin",
+    "libfreetype6",
+    "grub-common",
+    "libcurl3-gnutls",
+    "libisc-export1100",
+    "libdns-export1104",
+    "libglib2.0-0",
+    "libglib2.0-data",
+    "rake",
+    "libruby2.5",
+    "libsasl2-modules",
+    "libss2",
+    "libx11-data",
+    "libx11-6",
+    "libxslt1.1",
+    "linux-image-4.19.0-14-amd64",
+    "linux-image-amd64",
+    "linux-libc-dev",
+    "open-vm-tools",
+    "patch",
+    "rubygems-integration",
+    "ruby2.5",
+    "sudo",
+    "unzip"
+  ],
+  "apt_package_security_updates": [
+    "libexpat1",
+    "libjson-c3",
+    "libssl1.1",
+    "libidn2-0",
+    "libp11-kit0",
+    "libzstd1",
+    "libapt-pkg5.0",
+    "libapt-inst2.0",
+    "apt",
+    "apt-utils",
+    "libicu63",
+    "bind9-host",
+    "libbind9-161",
+    "libisccfg163",
+    "libisccc161",
+    "libdns1104",
+    "libisc1100",
+    "libgssapi-krb5-2",
+    "libkrb5-3",
+    "libkrb5support0",
+    "libk5crypto3",
+    "liblwres161",
+    "krb5-locales",
+    "libsasl2-modules-db",
+    "libsasl2-2",
+    "libldap-common",
+    "libldap-2.4-2",
+    "python-apt-common",
+    "python3-apt",
+    "openssl",
+    "libnghttp2-14",
+    "curl",
+    "libcurl4",
+    "grub-pc",
+    "grub2-common",
+    "grub-pc-bin",
+    "libfreetype6",
+    "grub-common",
+    "libcurl3-gnutls",
+    "libisc-export1100",
+    "libdns-export1104",
+    "libsasl2-modules",
+    "linux-libc-dev",
+    "patch",
+    "sudo"
+  ],
+  "apt_package_security_dist_updates": [
+    "libexpat1",
+    "libjson-c3",
+    "libssl1.1",
+    "libidn2-0",
+    "libp11-kit0",
+    "libzstd1",
+    "libapt-pkg5.0",
+    "libapt-inst2.0",
+    "apt",
+    "apt-utils",
+    "libicu63",
+    "bind9-host",
+    "libbind9-161",
+    "libisccfg163",
+    "libisccc161",
+    "libdns1104",
+    "libisc1100",
+    "libgssapi-krb5-2",
+    "libkrb5-3",
+    "libkrb5support0",
+    "libk5crypto3",
+    "liblwres161",
+    "krb5-locales",
+    "libsasl2-modules-db",
+    "libsasl2-2",
+    "libldap-common",
+    "libldap-2.4-2",
+    "python-apt-common",
+    "python3-apt",
+    "openssl",
+    "libnghttp2-14",
+    "curl",
+    "libcurl4",
+    "grub-pc",
+    "grub2-common",
+    "grub-pc-bin",
+    "libfreetype6",
+    "grub-common",
+    "libcurl3-gnutls",
+    "libisc-export1100",
+    "libdns-export1104",
+    "libsasl2-modules",
+    "linux-image-4.19.0-14-amd64",
+    "linux-image-amd64",
+    "linux-libc-dev",
+    "patch",
+    "sudo"
+  ],
+  "apt_updates": 128,
+  "apt_dist_updates": 130,
+  "apt_security_updates": 45,
+  "apt_security_dist_updates": 47,
+  "puppet_vardir": "/opt/puppetlabs/puppet/cache",
+  "puppet_environmentpath": "/etc/puppetlabs/code/environments",
+  "puppet_server": "pe-infranext-prod.infc-aws.puppet.net",
+  "systemd": true,
+  "systemd_version": "241",
+  "systemd_internal_services": {
+    "systemd-boot-check-no-failures.service": "disabled",
+    "systemd-fsck-root.service": "enabled-runtime",
+    "systemd-networkd-wait-online.service": "disabled",
+    "systemd-networkd.service": "disabled",
+    "systemd-resolved.service": "disabled",
+    "systemd-time-wait-sync.service": "disabled",
+    "systemd-timesyncd.service": "enabled"
+  },
+  "network_nexthop_ip": "10.16.112.1",
+  "network_primary_interface": "ens192",
+  "network_primary_ip": "10.16.124.235",
+  "prometheus_alert_manager_running": false,
+  "stage": "crusade",
+  "haszfs": false,
+  "apt_update_last_success": 1615413102,
+  "virt_libvirt": false,
+  "classification": {
+    "hostname": "marital-crusade",
+    "parts": [
+      "marital",
+      "",
+      "",
+      "",
+      "crusade",
+      ""
+    ],
+    "version": 0,
+    "group": "marital",
+    "function": "",
+    "number": "",
+    "number_string": "",
+    "context": "",
+    "stage": "crusade",
+    "id": ""
+  },
+  "ip6tables_version": "1.8.2",
+  "root_home": "/root",
+  "primary_ip": "10.16.124.235",
+  "primary_iface": "eth0",
+  "group": "marital",
+  "function_number": "",
+  "platform_symlink_writable": true,
+  "service_provider": "systemd",
+  "pe_patch": {
+    "package_updates": [],
+    "package_update_count": 0,
+    "missing_update_kbs": [],
+    "security_package_updates": [],
+    "security_package_update_count": 0,
+    "blackouts": {},
+    "pinned_packages": [],
+    "last_run": {},
+    "patch_group": "",
+    "reboot_override": "default",
+    "reboots": {
+      "reboot_required": "unknown"
+    },
+    "block_patching_on_warnings": "false",
+    "warnings": {
+      "update_file": "Update file not found, update information invalid",
+      "security_update_file": "Security update file not found, update information invalid"
+    },
+    "blocked": false,
+    "blocked_reasons": []
+  },
+  "domain": "example.com",
+  "fqdn": "foo.example.com",
+  "hostname": "foo"
+}

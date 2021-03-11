@@ -1,0 +1,706 @@
+{
+  "os": {
+    "family": "RedHat",
+    "name": "CentOS",
+    "distro": {
+      "id": "CentOS",
+      "codename": "Core",
+      "description": "CentOS Linux release 7.2.1511 (Core)",
+      "release": {
+        "full": "7.2.1511",
+        "major": "7",
+        "minor": "2"
+      }
+    },
+    "release": {
+      "full": "7.2.1511",
+      "major": "7",
+      "minor": "2"
+    },
+    "architecture": "x86_64",
+    "hardware": "x86_64",
+    "selinux": {
+      "enabled": false
+    }
+  },
+  "disks": {
+    "sda": {
+      "model": "Virtual disk",
+      "size_bytes": 75161927680,
+      "size": "70.00 GiB",
+      "vendor": "VMware",
+      "type": "hdd"
+    },
+    "sr0": {
+      "model": "VMware IDE CDR10",
+      "size_bytes": 1073741312,
+      "size": "1.00 GiB",
+      "vendor": "NECVMWar",
+      "type": "hdd"
+    }
+  },
+  "processors": {
+    "isa": "x86_64",
+    "models": [
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz",
+      "Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz"
+    ],
+    "physicalcount": 2,
+    "speed": "2.29 GHz",
+    "count": 2
+  },
+  "dmi": {
+    "manufacturer": "VMware, Inc.",
+    "bios": {
+      "version": "6.00",
+      "release_date": "12/12/2018",
+      "vendor": "Phoenix Technologies LTD"
+    },
+    "product": {
+      "serial_number": "VMware-42 1a 82 af c5 f4 ae ed-3c 68 d6 f5 a9 f6 8b 4f",
+      "uuid": "421A82AF-C5F4-AEED-3C68-D6F5A9F68B4F",
+      "name": "VMware Virtual Platform"
+    },
+    "board": {
+      "manufacturer": "Intel Corporation",
+      "product": "440BX Desktop Reference Platform",
+      "serial_number": "None"
+    },
+    "chassis": {
+      "type": "Other",
+      "asset_tag": "No Asset Tag"
+    }
+  },
+  "virtual": "vmware",
+  "facterversion": "4.0.52",
+  "filesystems": "xfs",
+  "partitions": {
+    "/dev/sda1": {
+      "size_bytes": 524288000,
+      "size": "500.00 MiB",
+      "filesystem": "xfs",
+      "uuid": "c09f15ab-207f-4177-bdc7-8daa7e6081bc",
+      "mount": "/boot"
+    },
+    "/dev/sda2": {
+      "size_bytes": 74636574208,
+      "size": "69.51 GiB",
+      "filesystem": "LVM2_member",
+      "uuid": "b2tvC3-PJFs-mmT4-kBjc-bBXV-Uf8y-bznmpv"
+    },
+    "/dev/mapper/centos-root": {
+      "size_bytes": 73559703552,
+      "size": "68.51 GiB",
+      "filesystem": "xfs",
+      "uuid": "38606c1b-3f90-4b89-88a2-b24f9d76ea3e",
+      "mount": "/"
+    },
+    "/dev/mapper/centos-swap": {
+      "size_bytes": 1073741824,
+      "size": "1.00 GiB",
+      "filesystem": "swap",
+      "uuid": "2d3926f4-35c8-4fe8-9b9d-31b1371a9616"
+    }
+  },
+  "fips_enabled": false,
+  "system_uptime": {
+    "hours": 0,
+    "seconds": 428,
+    "uptime": "0:07 hours",
+    "days": 0
+  },
+  "networking": {
+    "network6": "fe80::",
+    "primary": "ens160",
+    "scope6": "link",
+    "dhcp": "10.32.22.10",
+    "hostname": "foo",
+    "interfaces": {
+      "lo": {
+        "bindings": [
+          {
+            "address": "127.0.0.1",
+            "netmask": "255.0.0.0",
+            "network": "127.0.0.0"
+          }
+        ],
+        "bindings6": [
+          {
+            "address": "::1",
+            "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+            "network": "::1",
+            "scope6": "host"
+          }
+        ],
+        "mtu": 65536,
+        "ip": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "network": "127.0.0.0",
+        "ip6": "::1",
+        "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "network6": "::1",
+        "scope6": "host"
+      },
+      "ens160": {
+        "mac": "00:50:56:9a:3a:fb",
+        "bindings": [
+          {
+            "address": "10.16.115.28",
+            "netmask": "255.255.240.0",
+            "network": "10.16.112.0"
+          }
+        ],
+        "bindings6": [
+          {
+            "address": "fe80::250:56ff:fe9a:3afb",
+            "netmask": "ffff:ffff:ffff:ffff::",
+            "network": "fe80::",
+            "scope6": "link"
+          }
+        ],
+        "mtu": 1500,
+        "dhcp": "10.32.22.10",
+        "ip": "10.16.115.28",
+        "netmask": "255.255.240.0",
+        "network": "10.16.112.0",
+        "ip6": "fe80::250:56ff:fe9a:3afb",
+        "netmask6": "ffff:ffff:ffff:ffff::",
+        "network6": "fe80::",
+        "scope6": "link"
+      }
+    },
+    "domain": "example.com",
+    "ip": "10.16.115.28",
+    "ip6": "fe80::250:56ff:fe9a:3afb",
+    "fqdn": "foo.example.com",
+    "mac": "00:50:56:9a:3a:fb",
+    "netmask": "255.255.240.0",
+    "netmask6": "ffff:ffff:ffff:ffff::",
+    "mtu": 1500,
+    "network": "10.16.112.0"
+  },
+  "hypervisors": {
+    "vmware": {
+      "version": "ESXi 6.7"
+    },
+    "ldom": {
+      "domain_name": "foo"
+    }
+  },
+  "load_averages": {
+    "1m": 0.01,
+    "5m": 0.07,
+    "15m": 0.05
+  },
+  "ssh": {
+    "rsa": {
+      "fingerprints": {
+        "sha1": "SSHFP 1 1 14bf05ea55895d355c5f93084f8e4918a265b17c",
+        "sha256": "SSHFP 1 2 0d29863d9911711d66f9433866873ec99719dcd4f4585f4560e2c6dd50d0f9f2"
+      },
+      "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDYebI2aBIKbhv7xjQ25BZmpvlwoOXDRd2kUVM+a56MlKCz6SdmiaiWuvlBZtLaKUK/VseYSw/dTO+QEhq1fxZdNGdf+JVwATnuIUP0Jyp6dO/D2ioM3jqhMZDX/p8vzHMew82NFATFrASmWQYy9/dW4X/c1FSMVKGjV24fi+PKIodcYnpv2JHi6j2jAF2D8lWXpNrAxrFDVMTjy5l5k33cGTltSFPC+bS+a8/f6QBG0cnFDGQ6pQWGC6ezA7igGWr9+PpJTEpQ4dvgoA5f47eTxVziEhp/IYzajjYjH55Fm7zKGxkBuqAxCHn5OCAksyK7dtzlNzBdmX+mhcYBug0l",
+      "type": "ssh-rsa"
+    },
+    "ecdsa": {
+      "fingerprints": {
+        "sha1": "SSHFP 3 1 57ad36841469adfe43fe54d248f412a8c2cebf0c",
+        "sha256": "SSHFP 3 2 860d729121a8b6570b7e39ab478f57a339a1082bed1ccc5d75d31876ce860133"
+      },
+      "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHyJXV2wV3Jb8UuOur+7q7CBsBfMTTzpSeYM/n0kttIHdQEG9mhlAKwtuJ3UAZi9xo4Qi5elQtM5BvAZz232seg=",
+      "type": "ecdsa-sha2-nistp256"
+    },
+    "ed25519": {
+      "fingerprints": {
+        "sha1": "SSHFP 4 1 9e7bf9c4187bd54303e699e3a20c2eea6fd51c73",
+        "sha256": "SSHFP 4 2 ebe7efee29d04a05360ee605e4da254e5185eb133c441453c355ba07dadb1e47"
+      },
+      "key": "AAAAC3NzaC1lZDI1NTE5AAAAINPlae1fNM6UnCY0EqCP90s5kTtI2LL42UgPs0AOkWS+",
+      "type": "ssh-ed25519"
+    }
+  },
+  "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/puppetlabs/bin:/sbin",
+  "identity": {
+    "gid": 0,
+    "group": "root",
+    "privileged": true,
+    "uid": 0,
+    "user": "root"
+  },
+  "is_virtual": true,
+  "memory": {
+    "swap": {
+      "available": "1.00 GiB",
+      "available_bytes": 1073737728,
+      "capacity": "0.00%",
+      "total": "1.00 GiB",
+      "total_bytes": 1073737728,
+      "used": "0 bytes",
+      "used_bytes": 0
+    },
+    "system": {
+      "available": "7.16 GiB",
+      "available_bytes": 7689355264,
+      "capacity": "6.25%",
+      "total": "7.64 GiB",
+      "total_bytes": 8202276864,
+      "used": "489.16 MiB",
+      "used_bytes": 512921600
+    }
+  },
+  "kernelmajversion": "3.10",
+  "kernelrelease": "3.10.0-862.3.2.el7.x86_64",
+  "augeas": {
+    "version": "1.12.0"
+  },
+  "kernelversion": "3.10.0",
+  "ruby": {
+    "platform": "x86_64-linux",
+    "version": "2.7.2",
+    "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.7.0"
+  },
+  "mountpoints": {
+    "/": {
+      "device": "/dev/mapper/centos-root",
+      "filesystem": "xfs",
+      "options": [
+        "rw",
+        "relatime",
+        "attr2",
+        "inode64",
+        "noquota"
+      ],
+      "size_bytes": 73549217792,
+      "available_bytes": 71886938112,
+      "used_bytes": 1662279680,
+      "capacity": "2.26%",
+      "size": "68.50 GiB",
+      "available": "66.95 GiB",
+      "used": "1.55 GiB"
+    },
+    "/dev": {
+      "device": "devtmpfs",
+      "filesystem": "devtmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "size=3992900k",
+        "nr_inodes=998225",
+        "mode=755"
+      ],
+      "size_bytes": 4088729600,
+      "available_bytes": 4088729600,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "3.81 GiB",
+      "available": "3.81 GiB",
+      "used": "0 bytes"
+    },
+    "/dev/shm": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev"
+      ],
+      "size_bytes": 4101136384,
+      "available_bytes": 4101136384,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "3.82 GiB",
+      "available": "3.82 GiB",
+      "used": "0 bytes"
+    },
+    "/dev/pts": {
+      "device": "devpts",
+      "filesystem": "devpts",
+      "options": [
+        "rw",
+        "nosuid",
+        "noexec",
+        "relatime",
+        "gid=5",
+        "mode=620",
+        "ptmxmode=000"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/run": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev",
+        "mode=755"
+      ],
+      "size_bytes": 4101136384,
+      "available_bytes": 4092194816,
+      "used_bytes": 8941568,
+      "capacity": "0.22%",
+      "size": "3.82 GiB",
+      "available": "3.81 GiB",
+      "used": "8.53 MiB"
+    },
+    "/sys/fs/cgroup": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "ro",
+        "nosuid",
+        "nodev",
+        "noexec",
+        "mode=755"
+      ],
+      "size_bytes": 4101136384,
+      "available_bytes": 4101136384,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "3.82 GiB",
+      "available": "3.82 GiB",
+      "used": "0 bytes"
+    },
+    "/dev/mqueue": {
+      "device": "mqueue",
+      "filesystem": "mqueue",
+      "options": [
+        "rw",
+        "relatime"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/dev/hugepages": {
+      "device": "hugetlbfs",
+      "filesystem": "hugetlbfs",
+      "options": [
+        "rw",
+        "relatime"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/var/lib/nfs/rpc_pipefs": {
+      "device": "sunrpc",
+      "filesystem": "rpc_pipefs",
+      "options": [
+        "rw",
+        "relatime"
+      ],
+      "size_bytes": 0,
+      "available_bytes": 0,
+      "used_bytes": 0,
+      "capacity": "100%",
+      "size": "0 bytes",
+      "available": "0 bytes",
+      "used": "0 bytes"
+    },
+    "/boot": {
+      "device": "/dev/sda1",
+      "filesystem": "xfs",
+      "options": [
+        "rw",
+        "relatime",
+        "attr2",
+        "inode64",
+        "noquota"
+      ],
+      "size_bytes": 520794112,
+      "available_bytes": 345763840,
+      "used_bytes": 175030272,
+      "capacity": "33.61%",
+      "size": "496.67 MiB",
+      "available": "329.75 MiB",
+      "used": "166.92 MiB"
+    },
+    "/run/user/0": {
+      "device": "tmpfs",
+      "filesystem": "tmpfs",
+      "options": [
+        "rw",
+        "nosuid",
+        "nodev",
+        "relatime",
+        "size=801004k",
+        "mode=700"
+      ],
+      "size_bytes": 820228096,
+      "available_bytes": 820228096,
+      "used_bytes": 0,
+      "capacity": "0%",
+      "size": "782.23 MiB",
+      "available": "782.23 MiB",
+      "used": "0 bytes"
+    }
+  },
+  "kernel": "Linux",
+  "timezone": "UTC",
+  "puppetversion": "7.5.0",
+  "whereami": "pdx",
+  "function": "",
+  "env_temp_variable": "/tmp",
+  "haszfs": false,
+  "ip6tables_version": "1.4.21",
+  "mongodb_is_master": "not_installed",
+  "puppet_cert_paths": {
+    "confdir": "/etc/puppetlabs/puppet",
+    "ssldir": "/etc/puppetlabs/puppet/ssl",
+    "cert_dir": "/etc/puppetlabs/puppet/ssl/certs",
+    "ca_path": "/etc/puppetlabs/puppet/ssl/certs/ca.pem",
+    "client_cert_path": "/etc/puppetlabs/puppet/ssl/certs/.pem",
+    "client_key_path": "/etc/puppetlabs/puppet/ssl/private_keys/.pem"
+  },
+  "primary_ip": "10.16.115.28",
+  "number_string": "",
+  "meltdown": {
+    "CVE-2017-5753": {
+      "CVE": "2017-5753",
+      "description": "SPECTRE VARIANT 1",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Load fences"
+      }
+    },
+    "CVE-2017-5715": {
+      "CVE": "2017-5715",
+      "description": "SPECTRE VARIANT 2",
+      "vulnerable": true,
+      "info": {
+        "hardware": "IBRS+IBPB or retpoline+IBPB+RSB filling, is needed to mitigate the vulnerability"
+      }
+    },
+    "CVE-2017-5754": {
+      "CVE": "2017-5754",
+      "description": "MELTDOWN",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: PTI"
+      }
+    },
+    "CVE-2018-3640": {
+      "CVE": "2018-3640",
+      "description": "VARIANT 3A",
+      "vulnerable": false,
+      "info": {
+        "hardware": "your CPU microcode mitigates the vulnerability"
+      }
+    },
+    "CVE-2018-3639": {
+      "CVE": "2018-3639",
+      "description": "VARIANT 4",
+      "vulnerable": false,
+      "info": {
+        "hardware": "Mitigation: Speculative Store Bypass disabled via prctl"
+      }
+    },
+    "CVE-2018-3615": {
+      "CVE": "2018-3615",
+      "description": "L1TF SGX",
+      "vulnerable": false,
+      "info": {
+        "hardware": "your CPU vendor reported your CPU model as not vulnerable"
+      }
+    },
+    "CVE-2018-3620": {
+      "CVE": "2018-3620",
+      "description": "L1TF OS",
+      "vulnerable": true,
+      "info": {
+        "hardware": "Your kernel doesn't support PTE inversion, update it"
+      }
+    },
+    "CVE-2018-3646": {
+      "CVE": "2018-3646",
+      "description": "L1TF VMM",
+      "vulnerable": false,
+      "info": {
+        "hardware": "this system is not running a hypervisor"
+      }
+    },
+    "CVE-2018-12126": {
+      "CVE": "2018-12126",
+      "description": "MSBDS",
+      "vulnerable": true,
+      "info": {
+        "hardware": "Your microcode supports mitigation, but your kernel doesn't, upgrade it to mitigate the vulnerability"
+      }
+    },
+    "CVE-2018-12130": {
+      "CVE": "2018-12130",
+      "description": "MFBDS",
+      "vulnerable": true,
+      "info": {
+        "hardware": "Your microcode supports mitigation, but your kernel doesn't, upgrade it to mitigate the vulnerability"
+      }
+    },
+    "CVE-2018-12127": {
+      "CVE": "2018-12127",
+      "description": "MLPDS",
+      "vulnerable": true,
+      "info": {
+        "hardware": "Your microcode supports mitigation, but your kernel doesn't, upgrade it to mitigate the vulnerability"
+      }
+    },
+    "CVE-2019-11091": {
+      "CVE": "2019-11091",
+      "description": "MDSUM",
+      "vulnerable": true,
+      "info": {
+        "hardware": "Your microcode supports mitigation, but your kernel doesn't, upgrade it to mitigate the vulnerability"
+      }
+    }
+  },
+  "puppetserver_installed": false,
+  "platform_symlink_writable": true,
+  "platform_tag": "el-7-x86_64",
+  "jenkins_plugins": "",
+  "python_release": "2.7",
+  "python2_release": "2.7",
+  "puppet_ssldir": "/etc/puppetlabs/puppet/ssl",
+  "puppet_digest_algorithm": "sha256",
+  "puppet_config": "/etc/puppetlabs/puppet/puppet.conf",
+  "puppet_stringify_facts": false,
+  "mco_confdir": "/etc/mcollective/etc",
+  "os_maj_version": "7",
+  "pper_installed": false,
+  "vcsrepo_svn_ver": "",
+  "windows_java_temp": "\\tmp",
+  "is_valid_hostname": false,
+  "puppet_files_dir_present": false,
+  "context": "",
+  "package_provider": "yum",
+  "systemd": true,
+  "systemd_version": "219",
+  "systemd_internal_services": {
+    "systemd-bootchart.service": "disabled",
+    "systemd-nspawn@.service": "disabled",
+    "systemd-readahead-collect.service": "enabled",
+    "systemd-readahead-done.service": "indirect",
+    "systemd-readahead-drop.service": "enabled",
+    "systemd-readahead-replay.service": "enabled"
+  },
+  "current_environment": "production",
+  "primary_iface": "eth0",
+  "staging_http_get": "curl",
+  "iptables_version": "1.4.21",
+  "lvm_support": true,
+  "lvm_vgs": 1,
+  "lvm_vg_0": "centos",
+  "lvm_vg_centos_pvs": "/dev/sda2",
+  "lvm_pvs": 1,
+  "lvm_pv_0": "/dev/sda2",
+  "puppet_agent_pid": 2569,
+  "python_version": "2.7.5",
+  "python2_version": "2.7.5",
+  "aio_agent_build": "7.4.1.59.g5d5199a8a",
+  "aio_agent_version": "7.4.1.59",
+  "docker_home_dirs": {
+    "root": "/root",
+    "bin": "/bin",
+    "daemon": "/sbin",
+    "adm": "/var/adm",
+    "lp": "/var/spool/lpd",
+    "sync": "/sbin",
+    "shutdown": "/sbin",
+    "halt": "/sbin",
+    "mail": "/var/spool/mail",
+    "operator": "/root",
+    "games": "/usr/games",
+    "ftp": "/var/ftp",
+    "nobody": "/",
+    "avahi-autoipd": "/var/lib/avahi-autoipd",
+    "systemd-bus-proxy": "/",
+    "systemd-network": "/",
+    "dbus": "/",
+    "polkitd": "/",
+    "rpc": "/var/lib/rpcbind",
+    "tss": "/dev/null",
+    "rpcuser": "/var/lib/nfs",
+    "nfsnobody": "/var/lib/nfs",
+    "postfix": "/var/spool/postfix",
+    "sshd": "/var/empty/sshd"
+  },
+  "prometheus_alert_manager_running": false,
+  "who2bug": [],
+  "classification": {
+    "hostname": "live-pulp",
+    "parts": [
+      "live",
+      "",
+      "",
+      "",
+      "pulp",
+      ""
+    ],
+    "version": 0,
+    "group": "live",
+    "function": "",
+    "number": "",
+    "number_string": "",
+    "context": "",
+    "stage": "pulp",
+    "id": ""
+  },
+  "network_nexthop_ip": "10.16.112.1",
+  "network_primary_interface": "ens160",
+  "network_primary_ip": "10.16.115.28",
+  "group": "live",
+  "puppet_inventory_metadata": {
+    "packages": {
+      "collection_enabled": false,
+      "last_collection_time": "0.0s"
+    }
+  },
+  "function_number": "",
+  "root_home": "/root",
+  "virt_libvirt": false,
+  "stage": "pulp",
+  "mysql_server_id": 23179131,
+  "puppet_vardir": "/opt/puppetlabs/puppet/cache",
+  "puppet_environmentpath": "/etc/puppetlabs/code/environments",
+  "puppet_server": "pe-infranext-prod.infc-aws.puppet.net",
+  "selinux_python_command": "python",
+  "is_pe": false,
+  "service_provider": "systemd",
+  "pe_patch": {
+    "package_updates": [],
+    "package_update_count": 0,
+    "missing_update_kbs": [],
+    "security_package_updates": [],
+    "security_package_update_count": 0,
+    "blackouts": {},
+    "pinned_packages": [],
+    "last_run": {},
+    "patch_group": "",
+    "reboot_override": "default",
+    "reboots": {
+      "reboot_required": "unknown"
+    },
+    "block_patching_on_warnings": "false",
+    "warnings": {
+      "update_file": "Update file not found, update information invalid",
+      "security_update_file": "Security update file not found, update information invalid"
+    },
+    "blocked": false,
+    "blocked_reasons": []
+  },
+  "domain": "example.com",
+  "fqdn": "foo.example.com",
+  "hostname": "foo"
+}
