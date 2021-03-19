@@ -76,6 +76,10 @@ class Onceover
       @@existing_controlrepo.facts(filter, 'trusted')
     end
 
+    def self.trusted_external_facts(filter = nil)
+      @@existing_controlrepo.facts(filter, 'trusted_external')
+    end
+
     def self.hiera_config_file
       @@existing_controlrepo.hiera_config_file
     end
@@ -596,7 +600,7 @@ class Onceover
 
       # Loop over each test, executing the user's block on each
       tests.each do |tst|
-        block.call(tst.classes[0].name, tst.nodes[0].name, tst.nodes[0].fact_set, testconfig.pre_condition)
+        block.call(tst.classes[0].name, tst.nodes[0].name, tst.nodes[0].fact_set, tst.nodes[0].trusted_set, tst.nodes[0].trusted_external_set, testconfig.pre_condition)
       end
     end
 

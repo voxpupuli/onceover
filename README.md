@@ -330,6 +330,18 @@ puppet facts > fact_set_name.json
 
 Its recommended to run this on each of the types of nodes that you run in your infrastructure to have good coverage.
 
+If you are using [Trusted Facts](#trusted-facts) or [Trusted External Data](#trusted-external-data) and can use the [PE client tools](https://puppet.com/docs/pe/latest/installing_pe_client_tools.html) you can generate a factset which contains this information by running:
+
+```shell
+puppet facts --terminus puppetdb > fact_set_name.json
+```
+
+or
+
+```shell
+puppet facts --terminus puppetdb <node certname> > fact_set_name.json
+```
+
 Factsets are named based on their filename, i.e. `myfactset` in `onceover.yaml` refers `spec/factsets/myfactset.json`
 
 #### Trusted Facts
@@ -350,6 +362,71 @@ You can add trusted facts to the factsets by creating a new section called trust
 ```
 
 Notice that the `extensions` part is implied. The first fact in that example translates to `$trusted['extensions']['pp_role']` in Puppet code.
+
+Alternatively, if you generated your factset using the PE client tools your trusted facts will be nested under the **values** hash. For example:
+
+```json
+{
+  "name": "node.puppetlabs.net",
+  "values": {
+    "aio_agent_build": "1.10.4",
+    "aio_agent_version": "1.10.4",
+    "architecture": "x86_64",
+    "trusted": {
+      "extensions": {
+        "pp_role": "agent",
+        "pp_datacenter": "puppet"
+      }
+    }
+```
+
+In this case, you're all set and onceover will auto-magically pick those up for you.
+
+**Note**: The top level `trusted` hash takes precidence over the `trusted[extensions]` hash nested under `values`. Meaning that if you have any specified at the top level, any nested ones will not be considered. So pick **ONE** method and stick with that.
+
+#### Trusted External Data
+
+You can add trusted external data to the factsets by creating a new section called trusted_external:
+
+```json
+{
+  "name": "node.puppetlabs.net",
+  "trusted_external": {
+    "example_forager": {
+      "globalRegion": "EMEA",
+      "serverOwner": "John Doe"
+    }
+  },
+  "values": {
+    "aio_agent_build": "1.10.4",
+    "aio_agent_version": "1.10.4",
+    "architecture": "x86_64",
+```
+
+Notice that the `external` part is implied, though the foragers name will still need to be provided. The first fact in that example translates to `$trusted['external']['example_forager']['globalRegion']` in Puppet code.
+
+Alternatively, if you generated your factset using the PE client tools your trusted external data will be nested under the **values** hash. For example:
+
+```json
+{
+  "name": "node.puppetlabs.net",
+  "values": {
+    "aio_agent_build": "1.10.4",
+    "aio_agent_version": "1.10.4",
+    "architecture": "x86_64",
+    "trusted": {
+      "external": {
+        "example_forager": {
+          "globalRegion": "EMEA",
+          "serverOwner": "John Doe"
+        }
+      }
+    }
+```
+
+In this case, you're all set and onceover will auto-magically pick those up for you.
+
+**Note**: The top level `trusted_external` hash takes precidence over the `trusted[external]` hash nested under `values`. Meaning that if you have any specified at the top level, any nested ones will not be considered. So pick **ONE** method and stick with that.
 
 ### Hiera
 
@@ -587,10 +664,12 @@ require 'spec_helper'
 require 'onceover/controlrepo'
 require 'helpers/shared_examples'
 
-Onceover::Controlrepo.new.spec_tests do |class_name,node_name,facts,pre_conditions|
+Onceover::Controlrepo.new.spec_tests do |class_name, node_name, facts, trusted_facts, trusted_external_data, pre_conditions|
   describe class_name do
     context "on #{node_name}" do
       let(:facts) { facts }
+      let(:trusted_facts) { trusted_facts }
+      let(:trusted_external_data) { trusted_external_data }
       let(:pre_condition) { pre_conditions }
 
       it_behaves_like 'soe'
