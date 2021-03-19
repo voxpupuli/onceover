@@ -11,6 +11,10 @@ describe "<%= cls.name %>"<%= test.tags.map { |tag| ",#{tag}: true "}.join %> do
     trusted_facts = <%= node.trusted_set %>
     let(:trusted_facts) { trusted_facts }
 <% end -%>
+<% if node.trusted_external_set -%>
+    trusted_external_data = <%= node.trusted_external_set %>
+    let(:trusted_external_data) { trusted_external_data }
+<% end -%>
 <% if @before_conditions -%>
     before :each do
 <% @before_conditions.each do |function| -%>

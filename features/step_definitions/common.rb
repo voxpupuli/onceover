@@ -39,6 +39,12 @@ When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/)  do |command, cl
   @cmd.run
 end
 
+When(/^I run onceover command "([^"]*)" with class "([^"]*)" on nodes "([^"]*)"$/)  do |command, cls, nodes|
+  @cmd.command = "#{command} --classes #{cls} --nodes #{nodes}"
+  log(@cmd)
+  @cmd.run
+end
+
 # The below can be used to skip tests if they only work on one os
 When(/^test osfamily is "(\w*)"$/) do |osfamily|
   require 'facter'
