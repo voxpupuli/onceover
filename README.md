@@ -386,6 +386,8 @@ In this case, you're all set and onceover will auto-magically pick those up for 
 
 #### Trusted External Data
 
+**Note:** This feature requires `rspec-puppet` >= 2.8.0.
+
 You can add trusted external data to the factsets by creating a new section called trusted_external:
 
 ```json
