@@ -146,7 +146,7 @@ Hopefully this config file will be fairly self explanatory once you see it, but 
 
     In this section we can add functions that we want to mock when running spec tests.
 
-    Each function takes the `return` arguments, e.g.
+    Each function takes the `returns` arguments, e.g.
 
     ```yaml
     functions:
