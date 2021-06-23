@@ -86,9 +86,12 @@ class Onceover
         FileUtils.copy repo.puppetfile, "#{temp_controlrepo}/Puppetfile"
         puppetfile_contents = File.read("#{temp_controlrepo}/Puppetfile")
 
-        logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
-        new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
-        File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)
+        # Avoid touching thing if we don't need to
+        if puppetfile_contents ~= /:control_branch/ {
+          logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
+          new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+          File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)  
+        }
       end
 
       # Remove all files written by the last onceover run, but not the ones
