@@ -83,7 +83,7 @@ Feature: Run rspec and acceptance test suites
     When I run onceover command "run spec" with --puppetfile Puppetfile.custom
     Then Puppetfile.custom should be copied to Puppetfile
     And I should see message pattern "Using Puppetfile .*Puppetfile"
-    And I should see message pattern "Updating module .*extlib"
+    And I should see message pattern ".*extlib"
 
   Scenario: Testing that --tags works with native rspec tags
     Given control repo "puppet_controlrepo"
