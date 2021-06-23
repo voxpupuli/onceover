@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.4 # this should match the oldest version in .github/workflows/tests.yaml's matrix 
+  TargetRubyVersion: 2.4 # this should match the oldest version in .github/workflows/tests.yaml's matrix
   NewCops: enable
   Include:
     - "lib/**/*.rb"
