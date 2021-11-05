@@ -85,6 +85,7 @@ class Onceover
         # NOTE: This is the way to provide options to rspec according to:
         # https://github.com/puppetlabs/puppetlabs_spec_helper/blob/master/lib/puppetlabs_spec_helper/rake_tasks.rb#L51
         ENV['CI_SPEC_OPTIONS'] = ENV['CI_SPEC_OPTIONS'].to_s + @config.filter_tags.map { |tag| " --tag #{tag}" }.join unless @config.filter_tags.nil?
+        ENV['CI_SPEC_OPTIONS'] = ENV['CI_SPEC_OPTIONS'].to_s + ' --fail-fast' if @config.fail_fast
 
         if @config.opts[:parallel]
           logger.debug "Running #{@command_prefix}rake parallel_spec from #{@repo.tempdir}"

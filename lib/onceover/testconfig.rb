@@ -27,6 +27,7 @@ class Onceover
     attr_accessor :after_conditions
     attr_accessor :skip_r10k
     attr_accessor :force
+    attr_accessor :fail_fast
     attr_accessor :strict_variables
     attr_accessor :formatters
 
@@ -79,6 +80,7 @@ class Onceover
       @filter_nodes   = opts[:nodes]     ? [opts[:nodes].split(',')].flatten.map {|x| Onceover::Node.find(x)} : nil
       @skip_r10k      = opts[:skip_r10k] ? true : false
       @force          = opts[:force] || false
+      @fail_fast      = opts[:fail_fast] || false
 
       # Validate the mock_functions
       if @mock_functions && @mock_functions.any? { |name, details| details.has_key? 'type' }
