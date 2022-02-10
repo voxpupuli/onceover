@@ -32,7 +32,7 @@ jobs:
         env:
           PUPPET_VERSION: ${{ matrix.puppet }}
       - name: Set long paths on Windows
-        if: startsWith('windows', matrix.os)
+        if: startsWith(matrix.os, 'windows')
         run: Set-ItemProperty 'HKLM:\System\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -value 1
       - env:
           PUPPET_VERSION: ${{ matrix.puppet }}
