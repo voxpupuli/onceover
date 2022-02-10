@@ -8,6 +8,12 @@ if ENV['PUPPET_VERSION']
   gem 'puppet', ENV['PUPPET_VERSION']
 end
 
+group :test do
+  # Required for the final controlrepo tests
+  gem 'toml-rb'
+end
+
+
 # Evaluate Gemfile.local if it exists
 if File.exist? "#{__FILE__}.local"
   eval(File.read("#{__FILE__}.local"), binding)
