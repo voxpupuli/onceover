@@ -33,7 +33,7 @@ class Onceover
 
     def initialize(file, opts = {})
       begin
-        config = YAML.safe_load(File.read(file), [Symbol])
+        config = YAML.safe_load(File.read(file), permitted_classes: [Symbol])
       rescue Errno::ENOENT
         raise "Could not find #{file}"
       rescue Psych::SyntaxError
