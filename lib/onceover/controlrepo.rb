@@ -575,7 +575,7 @@ class Onceover
       else
         template = File.read(File.expand_path("./#{template_name}", template_dir))
       end
-      ERB.new(template, nil, '-').result(bind)
+      ERB.new(template, trim_mode: '-').result(bind)
     end
 
     def self.init_write_file(contents, out_file)
