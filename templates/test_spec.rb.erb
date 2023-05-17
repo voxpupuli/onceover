@@ -10,6 +10,9 @@ describe "<%= cls.name %>"<%= test.tags.map { |tag| ",#{tag}: true "}.join %> do
 <% if node.trusted_set -%>
     trusted_facts = <%= node.trusted_set %>
     let(:trusted_facts) { trusted_facts }
+  <% if node.trusted_set['certname'] -%>
+    let(:node) { "<%= node.trusted_set['certname'] %>" }
+  <% end -%>
 <% end -%>
 <% if node.trusted_external_set -%>
     trusted_external_data = <%= node.trusted_external_set %>
