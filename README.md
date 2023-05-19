@@ -225,7 +225,7 @@ node_groups:
     exclude: 'windows_nodes' # Then remove the windows ones from that list
 ```
 
-It's important to note that in order to reference a group using the *include/exclude* syntax is has to have been defined already i.e. it has to come above the group that references it
+It's important to note that in order to reference a group using the *include/exclude* syntax it has to have been defined already i.e. it has to come above the group that references it
 
 #### Examples
 
