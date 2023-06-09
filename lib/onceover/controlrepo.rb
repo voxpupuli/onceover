@@ -249,8 +249,8 @@ class Onceover
               puppetforge_format = Versionomy.default_format.modified_copy do
                 field(:patchlevel_minor) do
                   recognize_number(:default_value_optional => true,
-                                  :delimiter_regexp => '-',
-                                  :default_delimiter => '-')
+                                   :delimiter_regexp => '-',
+                                   :default_delimiter => '-')
                 end
               end
 
