@@ -232,61 +232,74 @@ class Onceover
 
       output_array = []
       threads      = []
+      error_array  = []
       puppetfile.modules.each do |mod|
         threads << Thread.new do
-          row = []
-          logger.debug "Loading data for #{mod.full_name}"
-          row << mod.full_name
-          if mod.is_a?(R10K::Module::Forge)
-            row << mod.expected_version
-            row << mod.v3_module.current_release.version
+          begin
+            row = []
+            logger.debug "Loading data for #{mod.full_name}"
+            row << mod.full_name
+            if mod.is_a?(R10K::Module::Forge)
+              row << mod.expected_version
+              row << mod.v3_module.current_release.version
 
-            # Configure a custom version format to support modern Puppet Forge versions.
-            # (major.minor.tiny-patchlevel-patchlevel_minor)
-            # e.g. 8.5.0-0-2
-            puppet_format = Versionomy.default_format.modified_copy do
-              field(:patchlevel_minor) do
-                recognize_number(:default_value_optional => true,
-                                :delimiter_regexp => '-',
-                                :default_delimiter => '-')
+              # Configure a custom version format to support modern Puppet Forge versions.
+              # (major.minor.tiny-patchlevel-patchlevel_minor)
+              # e.g. 8.5.0-0-2
+              puppetforge_format = Versionomy.default_format.modified_copy do
+                field(:patchlevel_minor) do
+                  recognize_number(:default_value_optional => true,
+                                  :delimiter_regexp => '-',
+                                  :default_delimiter => '-')
+                end
               end
+
+              current = puppetforge_format.parse(mod.expected_version)
+              latest = puppetforge_format.parse(mod.v3_module.current_release.version)
+              row << if current.major < latest.major
+                        "Major".red
+                      elsif current.minor < latest.minor
+                        "Minor".yellow
+                      elsif current.tiny < latest.tiny
+                        "Tiny".green
+                      elsif current.patchlevel < latest.patchlevel
+                        "PatchLevel".green
+                      elsif current.patchlevel_minor < latest.patchlevel_minor
+                        "PatchLevel_minor".green
+                      else
+                        "No".green
+                      end
+
+              row << mod.v3_module.endorsement
+              superseded_by = mod.v3_module.superseded_by
+              row << (superseded_by.nil? ? '' : superseded_by[:slug])
+            else
+              row << "N/A"
+              row << "N/A"
+              row << "N/A"
+              row << "N/A"
+              row << "N/A"
             end
-
-            current = puppetforge_format.parse(mod.expected_version)
-            latest = puppetforge_format.parse(mod.v3_module.current_release.version)
-            row << if current.major < latest.major
-                      "Major".red
-                    elsif current.minor < latest.minor
-                      "Minor".yellow
-                    elsif current.tiny < latest.tiny
-                      "Tiny".green
-                    elsif current.patchlevel < latest.patchlevel
-                      "PatchLevel".green
-                    elsif current.patchlevel_minor < latest.patchlevel_minor
-                      "PatchLevel_minor".green
-                    else
-                      "No".green
-                    end
-
-            row << mod.v3_module.endorsement
-            superseded_by = mod.v3_module.superseded_by
-            row << (superseded_by.nil? ? '' : superseded_by[:slug])
-          else
-            row << "N/A"
-            row << "N/A"
-            row << "N/A"
-            row << "N/A"
-            row << "N/A"
+            output_array << row
+          rescue => e
+            error = []
+            error << mod.full_name
+            error << mod.expected_version
+            error << mod.v3_module.current_release.version
+            error << e.message
+            error_array << error
+            logger.debug "Error loading module #{mod.full_name} - #{e.inspect}"
           end
-          output_array << row
+          end
         end
-      end
 
       threads.map(&:join)
 
       output_array.sort_by! { |line| line[0] }
+      error_array.sort_by! { |line| line[0] } unless error_array.empty?
 
       puts Terminal::Table.new(headings: ["Full Name", "Current Version", "Latest Version", "Out of Date?", "Endorsement", "Superseded by"], rows: output_array)
+      puts Terminal::Table.new(headings: ["Issue assessing module", "Current", "Latest", "Error"], rows: error_array) unless error_array.empty?
     end
 
     def update_puppetfile
