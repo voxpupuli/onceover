@@ -241,17 +241,32 @@ class Onceover
             row << mod.expected_version
             row << mod.v3_module.current_release.version
 
-            current = Versionomy.parse(mod.expected_version)
-            latest = Versionomy.parse(mod.v3_module.current_release.version)
+            # Configure a custom version format to support modern Puppet Forge versions.
+            # (major.minor.tiny-patchlevel-patchlevel_minor)
+            # e.g. 8.5.0-0-2
+            puppet_format = Versionomy.default_format.modified_copy do
+              field(:patchlevel_minor) do
+                recognize_number(:default_value_optional => true,
+                                :delimiter_regexp => '-',
+                                :default_delimiter => '-')
+              end
+            end
+
+            current = puppetforge_format.parse(mod.expected_version)
+            latest = puppetforge_format.parse(mod.v3_module.current_release.version)
             row << if current.major < latest.major
-                     "Major".red
-                   elsif current.minor < latest.minor
-                     "Minor".yellow
-                   elsif current.tiny < latest.tiny
-                     "Tiny".green
-                   else
-                     "No".green
-                   end
+                      "Major".red
+                    elsif current.minor < latest.minor
+                      "Minor".yellow
+                    elsif current.tiny < latest.tiny
+                      "Tiny".green
+                    elsif current.patchlevel < latest.patchlevel
+                      "PatchLevel".green
+                    elsif current.patchlevel_minor < latest.patchlevel_minor
+                      "PatchLevel_minor".green
+                    else
+                      "No".green
+                    end
 
             row << mod.v3_module.endorsement
             superseded_by = mod.v3_module.superseded_by
