@@ -56,7 +56,7 @@ Useful for debugging.
             summary 'Shows the current state of the puppetfile'
             description <<-DESCRIPTION
 Shows the state of the puppetfile including current versions and
-laetst versions of each module. Great for checking for updates.
+latest versions of each module. Great for checking for updates.
 To update all modules run `onceover update puppetfile`. (Hint: once
 you have done the update, run the tests to make sure nothing breaks.)
             DESCRIPTION
