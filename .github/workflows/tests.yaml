@@ -12,9 +12,8 @@ jobs:
           - ubuntu-latest
           - macos-latest
         puppet:
-          - "~> 5.0"
-          - "~> 6.0"
           - "~> 7.0"
+          - "~> 8.0"
         include:
           - puppet: "~> 7.0"
             ruby: 2.7
