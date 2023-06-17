@@ -1,4 +1,6 @@
 require 'r10k/puppetfile'
+require 'r10k/initializers'
+require 'r10k/settings/loader'
 require 'erb'
 require 'yaml'
 require 'find'
@@ -218,6 +220,12 @@ class Onceover
       return all_facts
     end
 
+    def settings_from_config(override_path)
+      loader = R10K::Settings::Loader.new
+      path = loader.search(override_path)
+      loader.read(path)
+    end
+
     def print_puppetfile_table
       require 'terminal-table'
       require 'versionomy'
@@ -226,6 +234,9 @@ class Onceover
 
       # Load up the Puppetfile using R10k
       logger.debug "Reading puppetfile from #{@root}"
+      @settings = R10K::Settings.global_settings.evaluate(settings_from_config('r10k.yaml'))
+      R10K::Initializers::GlobalInitializer.new(@settings).call
+      logger.debug "Settings: #{@settings}"
       puppetfile = R10K::Puppetfile.new(@root)
       logger.debug "Loading modules from Puppetfile"
       puppetfile.load!
@@ -254,7 +265,11 @@ class Onceover
                    end
 
             row << mod.v3_module.endorsement
-            superseded_by = mod.v3_module.superseded_by
+            begin
+              superseded_by = mod.v3_module.superseded_by
+            rescue NoMethodError
+              superseded_by = nil
+            end
             row << (superseded_by.nil? ? '' : superseded_by[:slug])
           else
             row << "N/A"
@@ -279,6 +294,8 @@ class Onceover
 
       # Read in the Puppetfile as a string and as an object
       puppetfile_string = File.read(@puppetfile).split("\n")
+      @settings = R10K::Settings.global_settings.evaluate(settings_from_config('r10k.yaml'))
+      R10K::Initializers::GlobalInitializer.new(@settings).call
       puppetfile = R10K::Puppetfile.new(@root)
       puppetfile.load!
 
