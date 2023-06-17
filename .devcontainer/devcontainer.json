@@ -5,9 +5,8 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
 	"features": {
-		"ghcr.io/devcontainers/features/ruby:1": {
-			"version": "3.2.2"
-		}
+		"ghcr.io/devcontainers/features/ruby:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 
 	"postAttachCommand": "bundle",
