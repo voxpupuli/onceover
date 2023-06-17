@@ -5,7 +5,6 @@ require 'onceover/test'
 require 'onceover/logger'
 require 'onceover/controlrepo'
 require 'git'
-require 'pry'
 include Onceover::Logger
 
 class Onceover
@@ -245,7 +244,6 @@ class Onceover
       source_files.each do |source_file|
         target_file = File.join(repo.tempdir, 'spec', source_file.sub(/^#{repo.spec_dir}/, ''))
         if File.directory?(source_file)
-          # binding.pry
           FileUtils.cp_r source_file, target_file unless File.exist? target_file
         else
           FileUtils.mkdir_p File.dirname target_file
