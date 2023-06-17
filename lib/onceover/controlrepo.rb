@@ -281,7 +281,7 @@ class Onceover
               row << "N/A"
             end
             output_array << row
-          rescue => e
+          rescue RuntimeError => e
             error = []
             error << mod.full_name
             error << mod.expected_version
