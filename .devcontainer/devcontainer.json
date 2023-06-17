@@ -14,7 +14,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"castwide.ruby-debug"
+				"castwide.ruby-debug",
+				"CucumberOpen.cucumber-official"
 			]
 		}
 	}
