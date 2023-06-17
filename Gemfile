@@ -13,6 +13,9 @@ group :test do
   gem 'toml-rb'
 end
 
+group :development do
+  gem 'pry'
+end
 
 # Evaluate Gemfile.local if it exists
 if File.exist? "#{__FILE__}.local"
