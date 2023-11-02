@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'terminal-table', '>= 1.8.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
 
-  s.add_development_dependency 'cucumber', '~> 4.1'
+  s.add_development_dependency 'cucumber', '>= 4.1', '< 10.0.0'
   s.add_development_dependency 'pry', '~> 0.13.1'
   # We need to depend on rubocop <= 1.12 in order to support Ruby 2.4 (Puppet
   # 5). Once we drop support for Puppet 5 we can re-open this
