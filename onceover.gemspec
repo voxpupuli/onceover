@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path('lib', __dir__)
 
 Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.name        = "onceover"
-  s.version     = "3.21.0"
+  s.version     = "3.22.0"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
   s.homepage    = "https://github.com/dylanratcliffe/onceover"
