@@ -11,3 +11,7 @@ end
 When(/^I make local modifications$/) do
   FileUtils.rm_rf("#{@repo.onceover_temp_root_folder}/modules/apache/manifests")
 end
+
+Before('@skip_on_windows') do
+  skip_this_scenario if RUBY_PLATFORM =~ /mswin|mingw/
+end
