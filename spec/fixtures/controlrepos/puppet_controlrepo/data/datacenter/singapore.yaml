@@ -1,0 +1,12 @@
+---
+profile::compile::balancer::listening_pool: singapore
+profile::compile::master::listening_pool: singapore
+
+pe_repo::compile_master_pool_address: lb-sg-01.puppet.com
+puppet_enterprise::profile::agent::pcp_broker_list:
+  - lb-sg-01.puppet.com:8142
+puppet_enterprise::profile::agent::server_list:
+  - lb-sg-01.puppet.com
+puppet_enterprise::profile::mcollective::agent::activemq_brokers:
+  - com-sg-01.puppet.com
+  - com-sg-02.puppet.com

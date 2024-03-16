@@ -89,7 +89,7 @@ class Onceover
         # Avoid touching thing if we don't need to
         if /:control_branch/.match(puppetfile_contents)
           logger.debug "replacing :control_branch mentions in the Puppetfile with #{git_branch}"
-          new_puppetfile_contents = puppetfile_contents.gsub(/:control_branch/, "'#{git_branch}'")
+          new_puppetfile_contents = puppetfile_contents.gsub(":control_branch", "'#{git_branch}'")
           File.write("#{temp_controlrepo}/Puppetfile", new_puppetfile_contents)  
         end
       end

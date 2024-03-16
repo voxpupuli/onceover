@@ -72,7 +72,7 @@ class Onceover
       if classes.count > 1
         class_msg = "#{classes.count}_classes"
       else
-        class_msg = classes[0].name.gsub(/::/,'__')
+        class_msg = classes[0].name.gsub("::",'__')
       end
 
       if nodes.count > 1

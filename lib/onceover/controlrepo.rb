@@ -517,7 +517,7 @@ class Onceover
       # Add .onceover to Gitignore
       gitignore_path = File.expand_path('.gitignore', repo.root)
       if File.exist? gitignore_path
-        gitignore_content = (File.open(gitignore_path, 'r') {|f| f.read }).split("\n")
+        gitignore_content = (File.read(gitignore_path)).split("\n")
         message = "#{'changed'.green}"
       else
         message = "#{'created'.green}"
@@ -526,7 +526,7 @@ class Onceover
 
       unless gitignore_content.include?(".onceover")
         gitignore_content << ".onceover\n"
-        File.open(gitignore_path, 'w') {|f| f.write(gitignore_content.join("\n")) }
+        File.write(gitignore_path, gitignore_content.join("\n"))
         puts "#{message} #{Pathname.new(gitignore_path).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
       end
     end
@@ -611,7 +611,7 @@ class Onceover
       if File.exist?(out_file)
         puts "#{'skipped'.yellow} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s} #{'(exists)'.yellow}"
       else
-        File.open(out_file,'w') {|f| f.write(contents)}
+        File.write(out_file, contents)
         puts "#{'created'.green} #{Pathname.new(out_file).relative_path_from(Pathname.new(Dir.pwd)).to_s}"
       end
     end

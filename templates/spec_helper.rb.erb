@@ -19,11 +19,9 @@ RSpec.configure do |c|
   # Also add JUnit output in case people want to use that
   c.add_formatter('RSpecJUnitFormatter','<%= repo.tempdir %>/spec.xml')
 
-  c.parser                = 'future'
 <% @formatters.each do |fm| -%>
   c.formatter             = '<%= fm %>'
 <% end -%>
-  c.trusted_server_facts  = true
   c.environmentpath       = '<%= environmentpath %>'
   c.module_path           = '<%= modulepath %>'
 <% if repo.hiera_config_file_relative_path %>

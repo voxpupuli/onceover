@@ -1,0 +1,9 @@
+{
+  "cmd": "bundle exec onceover run spec",
+  "name": "onceover spec",
+  "cwd": "{PROJECT_PATH}",
+  "errorMatch": [
+    "compilation:\\s.*production\\/(?<file>[\\w\\/]*.pp):(?<line>\\d*):(?<col>\\d*)"
+  ],
+  "atomCommandName": "onceover:spec"
+}
