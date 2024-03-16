@@ -1,0 +1,54 @@
+classes:
+  - "/role::/"
+
+nodes:
+  - CentOS-7.0-64
+  - CentOS-7.0-64-master
+  - CentOS-7.0-64-openstack
+  - Windows_Server-2008r2-64
+  - Windows_Server-2012r2-64
+
+node_groups:
+  centos:
+    - CentOS-7.0-64
+    - CentOS-7.0-64-master
+  windows:
+    - Windows_Server-2008r2-64
+    - Windows_Server-2012r2-64
+  master:
+    - CentOS-7.0-64-master
+
+class_groups:
+  master_classes:
+    - "role::compile::balancer"
+    - "role::compile::master"
+  windows_classes:
+    - /windows/
+  linux_classes:
+    include: "all_classes"
+    exclude: "windows_classes"
+
+test_matrix:
+  # Main spec tests for all CentOS roles
+  - centos:
+      classes:
+        include: "linux_classes"
+        exclude: "master_classes"
+      tests: "spec"
+  # Master based spec tests
+  - master:
+      classes: "master_classes"
+      tests: "spec"
+      tags: "master"
+
+functions:
+  puppetdb_query:
+    returns: []
+  pe_compiling_server_version:
+    returns: "2019.2.1"
+  pe_build_version:
+    returns: "2019.2.1"
+  pe_empty:
+    returns: false
+  pe_join:
+    returns: ""

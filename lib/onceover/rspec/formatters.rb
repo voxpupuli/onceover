@@ -266,9 +266,7 @@ class OnceoverFormatterParallel < OnceoverFormatter
     FileUtils.mkdir_p "#{RSpec.configuration.onceover_tempdir}/parallel"
 
     # Dump the notification to a unique file
-    File.open("#{RSpec.configuration.onceover_tempdir}/parallel/results-#{random_string}.yaml", "w") do |file|
-      file.write(extract_failures(notification).to_yaml)
-    end
+    File.write("#{RSpec.configuration.onceover_tempdir}/parallel/results-#{random_string}.yaml", extract_failures(notification).to_yaml)
   end
 
   def output_results(directory)
@@ -280,7 +278,7 @@ class OnceoverFormatterParallel < OnceoverFormatter
     # Merge data
     roles = files.reduce({}) do |errs, file|
       # Read all files and merge them
-      errs.merge(YAML.load(File.read(file))) {|key, oldval, newval| [oldval, newval].flatten }# rubocop:disable Security/YAMLLoad
+      errs.merge(YAML.load_file(file)) {|key, oldval, newval| [oldval, newval].flatten }
     end
   
     # Delete files from the disk

@@ -3,21 +3,19 @@
 {
 	"name": "Debian",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+	"image": "mcr.microsoft.com/devcontainers/ruby:3.2",
 	"features": {
-		"ghcr.io/devcontainers/features/ruby:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 
-	"postAttachCommand": "bundle",
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"castwide.ruby-debug",
-				"CucumberOpen.cucumber-official"
+				"CucumberOpen.cucumber-official",
+				"Shopify.ruby-extensions-pack"
 			]
 		}
-	}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# This script attempts to handle all the CD4PE setup steps described here: 
+# https://confluence.puppetlabs.com/pages/viewpage.action?pageId=169839939
+# 
+#
+# A few assumptions are made:
+#
+# 1) Setup was performed via install_docker.sh and docker_compose.yaml
+# 2) Script is run locally from the node hosting all the containers
+# 2) A valid license.json file exists at the same location as this script
+# 3) Manual setup of the admin user and generic-local repo in Artifactory have been completed 
+
+ARTIFACTORY_USER=<%= $artifactory_user %>
+ARTIFACTORY_PASSWORD=<%= $artifactory_password %>
+ARTIFACTORY_ENDPOINT=<%= $artifactory_endpoint %>
+
+CD4PE_ENDPOINT=<%= $cd4pe_endpoint %>
+CD4PE_ROOT_LOGIN=<%= $cd4pe_root_login %>
+CD4PE_ROOT_PW=<%= $cd4pe_root_pw %>
+CD4PE_DUMP=<%= $cd4pe_dump %>
+CD4PE_BACKEND=<%= $cd4pe_backend %>
+
+#This is how the cd4pe container resolves artifactory
+DOCKER_ARTIFACTORY=<%= $artifactory_endpoint %>
+
+
+# Tools for this script to work
+if ! [ -x "$(command -v jq)" ]; then
+  yum install -y wget
+  wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+  chmod +x ./jq
+  cp jq /usr/bin
+fi
+
+## Create the generic-local repo
+## Unfortunately creating a repo requires Artifactory Pro.. otherwise this would work
+# payload='{"key":"generic-local", "rclass":"local", "packageType":"generic"}'
+#
+#curl -X PUT "http://${ARTIFACTORY_ENDPOINT}/artifactory/api/repositories/generic-local" -H "content-type:application/json" -d "${payload}"
+#
+
+## Create the API token in Artifactory
+echo 'Creating Artifactory API token'
+data=$(curl -s "http://${ARTIFACTORY_ENDPOINT}/artifactory/api/security/apiKey"  -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD})
+
+if [ $data == '{}' ]
+then
+  data=$(curl -s -X POST "http://${ARTIFACTORY_ENDPOINT}/artifactory/api/security/apiKey"  -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD})
+fi
+
+ARTIFACTORY_API_KEY=$(echo ${data} | jq -r .apiKey)
+echo "Artifactory Key: ${ARTIFACTORY_API_KEY}"
+
+#Step 1:Create the root account for CD4PE
+echo 'Creating root account'
+payload=$(cat  << EOF
+{
+  "op": "CreateRootAccount",
+  "content": {"email":"${CD4PE_ROOT_LOGIN}", "passwd":"${CD4PE_ROOT_PW}"}
+}
+EOF
+)
+echo curl -X POST "http://${CD4PE_ENDPOINT}/root-account" -H 'Content-Type: application/json' -d "${payload}"
+curl -X POST "http://${CD4PE_ENDPOINT}/root-account" -H 'Content-Type: application/json' -d "${payload}"
+echo ' '
+
+#Quick dirty way to get a cookie - this could def be improved
+cookie=$(curl -X POST http://localhost:8080/login -H 'Content-Type: application/json'  -d '{"op":"PfiLogin","content":{"email":"<%= $cd4pe_root_login %>","passwd":"<%= $cd4pe_root_pw %>"}}' -v > out.txt 2>&1 ; cat out.txt | awk -F= '/Set-Cookie:/ { print $2; exit }')
+echo "Cookie: ${cookie}"
+
+
+#Step 2: Endpoint setup
+echo 'Setting up endpoints'
+payload=$(cat << EOF
+{ "op":"SaveEndpointSettings",
+  "content": {"setting": {
+    "webUIEndpoint":"http://${CD4PE_ENDPOINT}",
+    "backendServiceEndpoint":"http://${CD4PE_BACKEND}",
+    "agentServiceEndpoint":"dump://${CD4PE_DUMP}"}
+  }
+}
+EOF
+)
+curl -X POST "http://${CD4PE_ENDPOINT}/root/endpoint-settings" -H 'Content-Type: application/json' -H "Cookie:com.puppet.pipelines.pfi.sid=${cookie}" -d "${payload}"
+echo ' '
+
+#Step 3: Artifactory Storage Setup
+echo 'Setting up Artifactory storage'
+payload=$(cat << EOF
+{ "op":"SaveStorageSettings",
+  "content": {"setting" : {
+    "osType":"ARTIFACTORY",
+    "osEndpoint":"http://${DOCKER_ARTIFACTORY}/artifactory",
+    "osCredKey":"",
+    "osCredSecret":"${ARTIFACTORY_API_KEY}",
+    "osBucket":"generic-local",
+    "osDiskRoot":"",
+    "osPathPrefix":""
+  }}
+}
+EOF
+)
+curl -X POST "http://${CD4PE_ENDPOINT}/root/storage-settings" -H 'Content-Type: application/json' -H "Cookie:com.puppet.pipelines.pfi.sid=${cookie}" -d "${payload}"
+echo ' '
+
+#Step 4: Upload the license
+echo 'Uploading License'
+jq --slurpfile content license.json -n '{op:"SavePfiLicense",content:$content[0]}' | curl -X POST "http://${CD4PE_ENDPOINT}/root/license" -H 'Content-Type: application/json' -H "Cookie:com.puppet.pipelines.pfi.sid=${cookie}" -d @- | jq
+echo ' '

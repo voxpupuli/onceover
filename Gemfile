@@ -15,6 +15,9 @@ end
 
 group :development do
   gem 'pry'
+  gem 'cucumber'
+  gem 'rubocop'
+  gem 'rubygems-tasks'
 end
 
 # Evaluate Gemfile.local if it exists

@@ -1,4 +1,0 @@
-[submodule "spec/fixtures/controlrepos/puppet_controlrepo"]
-	path = spec/fixtures/controlrepos/puppet_controlrepo
-	url = https://github.com/dylanratcliffe/puppet_controlrepo.git
-	branch = production

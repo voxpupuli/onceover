@@ -39,14 +39,14 @@ RSpec.configure do |c|
   }
   #read env vars
   env_vars = {
-    :color       => ENV['BEAKER_color'] || ENV['RS_COLOR'],
-    :nodeset     => ENV['BEAKER_set'] || ENV['RS_SET'],
-    :nodesetfile => ENV['BEAKER_setfile'] || ENV['RS_SETFILE'],
-    :provision   => ENV['BEAKER_provision'] || ENV['RS_PROVISION'],
-    :keyfile     => ENV['BEAKER_keyfile'] || ENV['RS_KEYFILE'],
-    :debug       => ENV['BEAKER_debug'] || ENV['RS_DEBUG'],
-    :destroy     => ENV['BEAKER_destroy'] || ENV['RS_DESTROY'],
-  }.delete_if {|key, value| value.nil?}
+    :color       => ENV['BEAKER_color'] || ENV.fetch('RS_COLOR', nil),
+    :nodeset     => ENV['BEAKER_set'] || ENV.fetch('RS_SET', nil),
+    :nodesetfile => ENV['BEAKER_setfile'] || ENV.fetch('RS_SETFILE', nil),
+    :provision   => ENV['BEAKER_provision'] || ENV.fetch('RS_PROVISION', nil),
+    :keyfile     => ENV['BEAKER_keyfile'] || ENV.fetch('RS_KEYFILE', nil),
+    :debug       => ENV['BEAKER_debug'] || ENV.fetch('RS_DEBUG', nil),
+    :destroy     => ENV['BEAKER_destroy'] || ENV.fetch('RS_DESTROY', nil),
+  }.compact
   #combine defaults and env_vars to determine overall options
   options = defaults.merge(env_vars)
 

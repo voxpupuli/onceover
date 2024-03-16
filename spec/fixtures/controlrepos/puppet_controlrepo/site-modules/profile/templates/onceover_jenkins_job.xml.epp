@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description>Runs onceover tests</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.0">
+      <projectUrl>https://github.com/dylanratcliffe/puppet_controlrepo/</projectUrl>
+      <displayName>Controlrepo</displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>H/5 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>node {
+   def mvnHome
+   stage(&apos;Git Checkout&apos;) { // for display purposes
+      // Get some code from a GitHub repository
+      checkout([
+          $class: &apos;GitSCM&apos;,
+          branches: [[name: &apos;**&apos;]],
+          doGenerateSubmoduleConfigurations: false,
+          userRemoteConfigs: [[url: &apos;https://github.com/dylanratcliffe/puppet_controlrepo.git&apos;]]])
+   }
+   stage(&apos;Install Gems&apos;) {
+      // Run the onceover tests
+      sh &apos;&apos;&apos;source /usr/local/rvm/scripts/rvm
+bundle install --path=.gems --binstubs&apos;&apos;&apos;
+   }
+   stage(&apos;Run Tests&apos;) {
+      // Run the onceover tests
+      sh &apos;&apos;&apos;source /usr/local/rvm/scripts/rvm
+./bin/onceover run spec&apos;&apos;&apos;
+   }
+   stage(&apos;Parse Results&apos;) {
+      junit &apos;.onceover/spec.xml&apos;
+   }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

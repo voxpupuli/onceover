@@ -1,0 +1,531 @@
+{
+  "name": "master.prod.puppet.com",
+  "values": {
+    "aio_agent_build": "5.3.3",
+    "aio_agent_version": "5.3.3",
+    "architecture": "x86_64",
+    "augeas": {
+      "version": "1.8.1"
+    },
+    "augeasversion": "1.8.1",
+    "bios_release_date": "04/01/2014",
+    "bios_vendor": "SeaBIOS",
+    "bios_version": "1.9.1-5.el7",
+    "blockdevice_vda_size": 68719476736,
+    "blockdevice_vda_vendor": "0x1af4",
+    "blockdevices": "vda",
+    "chassistype": "Other",
+    "cidr_facts": {
+      "foo": "bar"
+    },
+    "collectd_version": "5.8.0",
+    "dhcp_servers": {
+      "eth0": "192.168.0.1",
+      "system": "192.168.0.1"
+    },
+    "dmi": {
+      "bios": {
+        "release_date": "04/01/2014",
+        "vendor": "SeaBIOS",
+        "version": "1.9.1-5.el7"
+      },
+      "chassis": {
+        "type": "Other"
+      },
+      "manufacturer": "Fedora Project",
+      "product": {
+        "name": "OpenStack Nova",
+        "serial_number": "072c6176-42ad-4054-87ee-7e8600e73717",
+        "uuid": "7A6E3957-2DEB-E44D-91F3-B66F523F13C1"
+      }
+    },
+    "domain": "prod.puppet.com",
+    "ec2_metadata": {
+      "ami-id": "ami-00000007",
+      "ami-launch-index": "0",
+      "ami-manifest-path": "FIXME",
+      "block-device-mapping": {
+        "ami": "vda",
+        "root": "/dev/vda"
+      },
+      "hostname": "master.prod.puppet.com",
+      "instance-action": "none",
+      "instance-id": "i-0021c380",
+      "instance-type": "g1.xlarge",
+      "local-hostname": "master.prod.puppet.com",
+      "local-ipv4": "192.168.0.21",
+      "placement": {
+        "availability-zone": "opdx1"
+      },
+      "public-hostname": "master.prod.puppet.com",
+      "public-ipv4": "10.32.169.61",
+      "public-keys": {
+        "0": {
+          "openssh-key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCsW6oyaz2B3XxbFofHwOHn2gm4GWJVGnBIj+e6rg/LEYQLpO8hKS2TCqXPxI+3zj74YolADS3x+Mt8LCUx+HP9NiMiNoL1Y2ibkplKpLw6i0HbAw8jzPQ/IZTfGEswZKIoMU6GA5jS2BdsILAYYROafQ19cEgC6M3/tanOQciYOqPKVTiF/lVeg3P1HSFcSLf+J6mTQqYkGFJk5FwC1GAa3iIB1ymaEzXk1x+PSd6Hr63D95nLelagV18lrWawVpuOiYi3C8BGMcVinl+W04Rd+p3A7e378hIbjzZ64tUpxapqCYUE7PgTS31kRpXFJ35igIrBr73xgnw9fdn6CyP0D1ZaX8pD56kNpm6bwd9n1Gv9An5NXwknNg8FpqcFaoX16H9tfuF2l6jtmjD3HtZAUVjGkZWBQSpSv3C1gmMhSz0nZp6dTZN68drSt15UZh+uo55gFgzohp9uuSC8/a1G4gxvsgD1xb4+I/nbkVLfW9r7Wbh1vgvBVvQoaqfJq8zY1AGik7rWi3mpP3z4opQeAXDTeYPLm5usN2HVYXstYsg2Ab4E4BcO/oz0V7eRP/WVF+pg0uoJ+pFIxV/bpYutVAAs/l/4VanDKKh8U+Ya9hEN5HVTDFbXXyoppEjsmye6Qt193zga70A9yUfPQJ9S/RxjkLgr+D7A2qwnu7imbw== dylan@Dylans-MacBook-Pro.local"
+        }
+      },
+      "reservation-id": "r-kpq4ot6x",
+      "security-groups": "sg0"
+    },
+    "env_temp_variable": "\\tmp",
+    "fact": "test",
+    "facterversion": "3.9.3",
+    "filesystems": "xfs",
+    "fqdn": "master.prod.puppet.com",
+    "gemhome": "/opt/puppetlabs/puppet/lib/ruby/gems/2.4.0",
+    "gid": "root",
+    "git_exec_path": "/usr/libexec/git-core",
+    "git_html_path": "/usr/share/doc/git-1.8.3.1",
+    "git_version": "1.8.3.1",
+    "gnupg_command": "/bin/gpg",
+    "gnupg_installed": true,
+    "hardwareisa": "x86_64",
+    "hardwaremodel": "x86_64",
+    "hostname": "master",
+    "hypervisors": {
+      "kvm": {
+        "openstack": true
+      }
+    },
+    "id": "root",
+    "identity": {
+      "gid": 0,
+      "group": "root",
+      "privileged": true,
+      "uid": 0,
+      "user": "root"
+    },
+    "initsystem": "systemd",
+    "interfaces": "eth0,lo",
+    "ip6tables_version": "1.4.21",
+    "ipaddress": "192.168.0.21",
+    "ipaddress6": "fe80::f816:3eff:fead:f422",
+    "ipaddress6_eth0": "fe80::f816:3eff:fead:f422",
+    "ipaddress6_lo": "::1",
+    "ipaddress_eth0": "192.168.0.21",
+    "ipaddress_lo": "127.0.0.1",
+    "iptables_version": "1.4.21",
+    "is_pe": false,
+    "is_virtual": true,
+    "jenkins_plugins": "",
+    "kernel": "Linux",
+    "kernelmajversion": "3.10",
+    "kernelrelease": "3.10.0-327.el7.x86_64",
+    "kernelversion": "3.10.0",
+    "load_averages": {
+      "15m": 0.58,
+      "1m": 0.76,
+      "5m": 0.77
+    },
+    "macaddress": "fa:16:3e:ad:f4:22",
+    "macaddress_eth0": "fa:16:3e:ad:f4:22",
+    "manufacturer": "Fedora Project",
+    "mco_confdir": "/etc/mcollective/etc",
+    "mco_server_config": "/etc/mcollective/server.cfg",
+    "mco_server_settings": {
+      "plugin.yaml": "/etc/puppetlabs/mcollective/facts.yaml",
+      "libdir": "/opt/puppet/libexec/mcollective:/opt/puppetlabs/mcollective/plugins"
+    },
+    "memory": {
+      "system": {
+        "available": "4.05 GiB",
+        "available_bytes": 4345696256,
+        "capacity": "47.02%",
+        "total": "7.64 GiB",
+        "total_bytes": 8202584064,
+        "used": "3.59 GiB",
+        "used_bytes": 3856887808
+      }
+    },
+    "memoryfree": "4.05 GiB",
+    "memoryfree_mb": 4144.37890625,
+    "memorysize": "7.64 GiB",
+    "memorysize_mb": 7822.59375,
+    "mountpoints": {
+      "/": {
+        "available": "59.59 GiB",
+        "available_bytes": 63983071232,
+        "capacity": "6.87%",
+        "device": "/dev/vda1",
+        "filesystem": "xfs",
+        "options": [
+          "rw",
+          "relatime",
+          "attr2",
+          "inode64",
+          "noquota"
+        ],
+        "size": "63.98 GiB",
+        "size_bytes": 68702453760,
+        "used": "4.40 GiB",
+        "used_bytes": 4719382528
+      },
+      "/dev/shm": {
+        "available": "3.82 GiB",
+        "available_bytes": 4101287936,
+        "capacity": "0.00%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev"
+        ],
+        "size": "3.82 GiB",
+        "size_bytes": 4101292032,
+        "used": "4.00 KiB",
+        "used_bytes": 4096
+      },
+      "/run": {
+        "available": "3.80 GiB",
+        "available_bytes": 4084166656,
+        "capacity": "0.42%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "mode=755"
+        ],
+        "size": "3.82 GiB",
+        "size_bytes": 4101292032,
+        "used": "16.33 MiB",
+        "used_bytes": 17125376
+      },
+      "/run/user/1000": {
+        "available": "782.26 MiB",
+        "available_bytes": 820260864,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "relatime",
+          "size=801036k",
+          "mode=700",
+          "uid=1000",
+          "gid=1000"
+        ],
+        "size": "782.26 MiB",
+        "size_bytes": 820260864,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/run/user/994": {
+        "available": "782.26 MiB",
+        "available_bytes": 820260864,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "relatime",
+          "size=801036k",
+          "mode=700",
+          "uid=994",
+          "gid=991"
+        ],
+        "size": "782.26 MiB",
+        "size_bytes": 820260864,
+        "used": "0 bytes",
+        "used_bytes": 0
+      },
+      "/sys/fs/cgroup": {
+        "available": "3.82 GiB",
+        "available_bytes": 4101292032,
+        "capacity": "0%",
+        "device": "tmpfs",
+        "filesystem": "tmpfs",
+        "options": [
+          "ro",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "mode=755"
+        ],
+        "size": "3.82 GiB",
+        "size_bytes": 4101292032,
+        "used": "0 bytes",
+        "used_bytes": 0
+      }
+    },
+    "mtu_eth0": 1500,
+    "mtu_lo": 65536,
+    "mysql_server_id": 16977186,
+    "netmask": "255.255.255.0",
+    "netmask6": "ffff:ffff:ffff:ffff::",
+    "netmask6_eth0": "ffff:ffff:ffff:ffff::",
+    "netmask6_lo": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+    "netmask_eth0": "255.255.255.0",
+    "netmask_lo": "255.0.0.0",
+    "network": "192.168.0.0",
+    "network6": "fe80::",
+    "network6_eth0": "fe80::",
+    "network6_lo": "::1",
+    "network_eth0": "192.168.0.0",
+    "network_lo": "127.0.0.0",
+    "networking": {
+      "dhcp": "192.168.0.1",
+      "domain": "prod.puppet.com",
+      "fqdn": "master.prod.puppet.com",
+      "hostname": "master",
+      "interfaces": {
+        "eth0": {
+          "bindings": [
+            {
+              "address": "192.168.0.21",
+              "netmask": "255.255.255.0",
+              "network": "192.168.0.0"
+            }
+          ],
+          "bindings6": [
+            {
+              "address": "fe80::f816:3eff:fead:f422",
+              "netmask": "ffff:ffff:ffff:ffff::",
+              "network": "fe80::"
+            }
+          ],
+          "dhcp": "192.168.0.1",
+          "ip": "192.168.0.21",
+          "ip6": "fe80::f816:3eff:fead:f422",
+          "mac": "fa:16:3e:ad:f4:22",
+          "mtu": 1500,
+          "netmask": "255.255.255.0",
+          "netmask6": "ffff:ffff:ffff:ffff::",
+          "network": "192.168.0.0",
+          "network6": "fe80::"
+        },
+        "lo": {
+          "bindings": [
+            {
+              "address": "127.0.0.1",
+              "netmask": "255.0.0.0",
+              "network": "127.0.0.0"
+            }
+          ],
+          "bindings6": [
+            {
+              "address": "::1",
+              "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+              "network": "::1"
+            }
+          ],
+          "ip": "127.0.0.1",
+          "ip6": "::1",
+          "mtu": 65536,
+          "netmask": "255.0.0.0",
+          "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+          "network": "127.0.0.0",
+          "network6": "::1"
+        }
+      },
+      "ip": "192.168.0.21",
+      "ip6": "fe80::f816:3eff:fead:f422",
+      "mac": "fa:16:3e:ad:f4:22",
+      "mtu": 1500,
+      "netmask": "255.255.255.0",
+      "netmask6": "ffff:ffff:ffff:ffff::",
+      "network": "192.168.0.0",
+      "network6": "fe80::",
+      "primary": "eth0"
+    },
+    "operatingsystem": "CentOS",
+    "operatingsystemmajrelease": "7",
+    "operatingsystemrelease": "7.2.1511",
+    "os": {
+      "architecture": "x86_64",
+      "family": "RedHat",
+      "hardware": "x86_64",
+      "name": "CentOS",
+      "release": {
+        "full": "7.2.1511",
+        "major": "7",
+        "minor": "2"
+      },
+      "selinux": {
+        "enabled": false
+      }
+    },
+    "osfamily": "RedHat",
+    "ostempdir": "/tmp",
+    "package_provider": "yum",
+    "path": "/sbin:/bin:/usr/sbin:/usr/bin:/opt/puppetlabs/bin",
+    "pe_build": "2017.3.2",
+    "pe_cert_change": "master.prod.puppet.com",
+    "pe_concat_basedir": "/opt/puppetlabs/puppet/cache/pe_concat",
+    "pe_postgresql_info": {
+      "installed_server_version": "9.6",
+      "data_partition_size_bytes": 68702453760,
+      "data_partition_available_bytes": 63983071232,
+      "versions": {
+        "9.6": {
+          "app_dir": "/opt/puppetlabs/server/apps/postgresql",
+          "data_dir": "/opt/puppetlabs/server/data/postgresql/9.6",
+          "tablespaces": [
+            "/opt/puppetlabs/server/data/postgresql/activity/PG_9.6_201608131",
+            "/opt/puppetlabs/server/data/postgresql/classifier/PG_9.6_201608131",
+            "/opt/puppetlabs/server/data/postgresql/orchestrator/PG_9.6_201608131",
+            "/opt/puppetlabs/server/data/postgresql/puppetdb/PG_9.6_201608131",
+            "/opt/puppetlabs/server/data/postgresql/rbac/PG_9.6_201608131"
+          ],
+          "used_bytes": 141352960
+        }
+      }
+    },
+    "pe_razor_server_version": "package pe-razor-server is not installed",
+    "pe_server_version": "2017.3.2",
+    "physicalprocessorcount": 8,
+    "platform_symlink_writable": true,
+    "platform_tag": "el-7-x86_64",
+    "processor0": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor1": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor2": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor3": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor4": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor5": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor6": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processor7": "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+    "processorcount": 8,
+    "processors": {
+      "count": 8,
+      "isa": "x86_64",
+      "models": [
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz",
+        "Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz"
+      ],
+      "physicalcount": 8
+    },
+    "productname": "OpenStack Nova",
+    "puppet_agent_pid": 5575,
+    "puppet_client_datadir": "/opt/puppetlabs/puppet/cache/client_data",
+    "puppet_confdir": "/etc/puppetlabs/puppet",
+    "puppet_config": "/etc/puppetlabs/puppet/puppet.conf",
+    "puppet_environmentpath": "/etc/puppetlabs/code/environments",
+    "puppet_files_dir_present": false,
+    "puppet_inventory_metadata": {
+      "packages": {
+        "collection_enabled": false,
+        "last_collection_time": "0.0s"
+      }
+    },
+    "puppet_master_server": "master.prod.puppet.com",
+    "puppet_server": "master.prod.puppet.com",
+    "puppet_ssldir": "/etc/puppetlabs/puppet/ssl",
+    "puppet_sslpaths": {
+      "privatedir": {
+        "path": "/etc/puppetlabs/puppet/ssl/private",
+        "path_exists": true
+      },
+      "privatekeydir": {
+        "path": "/etc/puppetlabs/puppet/ssl/private_keys",
+        "path_exists": true
+      },
+      "publickeydir": {
+        "path": "/etc/puppetlabs/puppet/ssl/public_keys",
+        "path_exists": true
+      },
+      "certdir": {
+        "path": "/etc/puppetlabs/puppet/ssl/certs",
+        "path_exists": true
+      },
+      "requestdir": {
+        "path": "/etc/puppetlabs/puppet/ssl/certificate_requests",
+        "path_exists": true
+      },
+      "hostcrl": {
+        "path": "/etc/puppetlabs/puppet/ssl/crl.pem",
+        "path_exists": true
+      }
+    },
+    "puppet_stringify_facts": false,
+    "puppet_vardir": "/opt/puppetlabs/puppet/cache",
+    "puppetversion": "5.3.3",
+    "python_dir": "/usr/lib/python2.7/site-packages",
+    "r10k_environment": "production",
+    "r10k_path": "/opt/puppetlabs/bin/r10k",
+    "role": "role::puppetmaster::basic",
+    "root_home": "/root",
+    "ruby": {
+      "platform": "x86_64-linux",
+      "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.4.0",
+      "version": "2.4.2"
+    },
+    "rubyplatform": "x86_64-linux",
+    "rubysitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.4.0",
+    "rubyversion": "2.4.2",
+    "rvm_installed": false,
+    "selinux": false,
+    "selinux_semanage_is_python3": false,
+    "serialnumber": "072c6176-42ad-4054-87ee-7e8600e73717",
+    "service_provider": "systemd",
+    "ssh": {
+      "ecdsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 3 1 55b0f229fcaa3817e1aa2c83418e3ce88d5c727c",
+          "sha256": "SSHFP 3 2 e36ad209146fff0ebdbf7190fd593f3c7a0fb57ab893a435452360e40bdf6fbe"
+        },
+        "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJgR5Xe5EUGeGKVXLlAoVr9owoKUFXYknAq9i4SnGxh/ZRFccUKRUvdyzKbEZoCzLybROL4F7LQBfTdUrkSw7MA="
+      },
+      "ed25519": {
+        "fingerprints": {
+          "sha1": "SSHFP 4 1 f48ed6af2f4db78441665639dee904d4c627543b",
+          "sha256": "SSHFP 4 2 54044b687320b8939f5ea6b6b598355c4a4bc78f6a39fa8b5a61d2806e440418"
+        },
+        "key": "AAAAC3NzaC1lZDI1NTE5AAAAIDefCjGLwq6bIptLS+kuan/kPUvMQq1rtAo7jsat3ZTP"
+      },
+      "rsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 1 1 e5484279857f0d3050cc3b6192873b49ad4b24f6",
+          "sha256": "SSHFP 1 2 faf344e7782b02cee0e6c4156528105dc4c92a7f7680d969f3f643044ca4bc17"
+        },
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDg8YfWYOvO1gVHFLZeM6iqInOYdCam75s4KnBLxmgwzy6Z6rJRD4N9n72nJyP5tAvnxcUpBOsYs8SNRtpsHWW4r9+tWV8p4MJRuJmeMhivz9AbErNR0gVL0gzU+xG/cGyCX/gRQVQcMsQ9/7McwZPYR5Yw7uo4SBMVttysKze6Z/mJQxa1yR1OnAsBOe+l49IyKC/VU3b5XVcFcwswuJYkpm6IgPTvKBXYnP8OC/+gOBSucrMuYJCBOsL6pOi19O39shkHgXwa+1fjkAw5XvWWt7LMEaGlWY/HHkIco/9PkFosHmO+4/I2qIMwMeBaXuzFG9GTDVP1AdRR3AMXtUzL"
+      }
+    },
+    "sshecdsakey": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJgR5Xe5EUGeGKVXLlAoVr9owoKUFXYknAq9i4SnGxh/ZRFccUKRUvdyzKbEZoCzLybROL4F7LQBfTdUrkSw7MA=",
+    "sshed25519key": "AAAAC3NzaC1lZDI1NTE5AAAAIDefCjGLwq6bIptLS+kuan/kPUvMQq1rtAo7jsat3ZTP",
+    "sshfp_ecdsa": "SSHFP 3 1 55b0f229fcaa3817e1aa2c83418e3ce88d5c727c\nSSHFP 3 2 e36ad209146fff0ebdbf7190fd593f3c7a0fb57ab893a435452360e40bdf6fbe",
+    "sshfp_ed25519": "SSHFP 4 1 f48ed6af2f4db78441665639dee904d4c627543b\nSSHFP 4 2 54044b687320b8939f5ea6b6b598355c4a4bc78f6a39fa8b5a61d2806e440418",
+    "sshfp_rsa": "SSHFP 1 1 e5484279857f0d3050cc3b6192873b49ad4b24f6\nSSHFP 1 2 faf344e7782b02cee0e6c4156528105dc4c92a7f7680d969f3f643044ca4bc17",
+    "sshrsakey": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDg8YfWYOvO1gVHFLZeM6iqInOYdCam75s4KnBLxmgwzy6Z6rJRD4N9n72nJyP5tAvnxcUpBOsYs8SNRtpsHWW4r9+tWV8p4MJRuJmeMhivz9AbErNR0gVL0gzU+xG/cGyCX/gRQVQcMsQ9/7McwZPYR5Yw7uo4SBMVttysKze6Z/mJQxa1yR1OnAsBOe+l49IyKC/VU3b5XVcFcwswuJYkpm6IgPTvKBXYnP8OC/+gOBSucrMuYJCBOsL6pOi19O39shkHgXwa+1fjkAw5XvWWt7LMEaGlWY/HHkIco/9PkFosHmO+4/I2qIMwMeBaXuzFG9GTDVP1AdRR3AMXtUzL",
+    "staging_http_get": "curl",
+    "system_uptime": {
+      "days": 0,
+      "hours": 0,
+      "seconds": 621,
+      "uptime": "0:10 hours"
+    },
+    "systemd": true,
+    "systemd_internal_services": {
+      "systemd-bootchart.service": "disabled",
+      "systemd-nspawn@.service": "disabled",
+      "systemd-readahead-collect.service": "enabled",
+      "systemd-readahead-drop.service": "enabled",
+      "systemd-readahead-replay.service": "enabled"
+    },
+    "systemd_version": "219",
+    "timezone": "UTC",
+    "uptime": "0:10 hours",
+    "uptime_days": 0,
+    "uptime_hours": 0,
+    "uptime_seconds": 621,
+    "uuid": "7A6E3957-2DEB-E44D-91F3-B66F523F13C1",
+    "vcsrepo_svn_ver": "",
+    "virtual": "kvm",
+    "clientcert": "master.prod.puppet.com",
+    "clientversion": "5.3.3",
+    "clientnoop": false
+  },
+  "timestamp": "2018-01-08T02:57:31.920805838+00:00",
+  "expiration": "2018-01-08T03:27:31.921647334+00:00"
+}
