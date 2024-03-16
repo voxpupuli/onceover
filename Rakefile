@@ -51,6 +51,7 @@ task :syntax do
   require 'find'
   Find.find(*paths) do |path|
     next unless path =~ /\.rb$/
+
     if windows?
       sh "ruby -cw #{path} > NUL"
     else

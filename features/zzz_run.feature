@@ -94,7 +94,7 @@ Feature: Run rspec and acceptance test suites
     And I should not see message pattern "role::"
 
   # This test is a full test using my controlrepo. It should remain at the end because it takes ages
-  # Scenario: Run advanced spec tests
-  #   Given control repo "puppet_controlrepo"
-  #   When I run onceover command "run spec -p --force"
-  #   Then I should not see any errors
+  Scenario: Run advanced spec tests
+    Given control repo "puppet_controlrepo"
+    When I run onceover command "run spec -p --force"
+    Then I should not see any errors
