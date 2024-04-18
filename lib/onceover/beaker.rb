@@ -11,9 +11,8 @@ class Onceover
       # se or an array
 
       if facts.is_a?(Array)
-        returnval = []
-        facts.each do |fact|
-          returnval << self.facts_to_vagrant_box(fact)
+        returnval = facts.map do |fact|
+          self.facts_to_vagrant_box(fact)
         end
         return returnval
       end
@@ -64,9 +63,8 @@ class Onceover
       warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
       if facts.is_a?(Array)
-        returnval = []
-        facts.each do |fact|
-          returnval << self.facts_to_platform(fact)
+        returnval = facts.map do |fact|
+          self.facts_to_platform(fact)
         end
         return returnval
       end

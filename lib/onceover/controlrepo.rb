@@ -182,9 +182,8 @@ class Onceover
       end
 
       # Get all the classes from all of the manifests
-      classes = []
-      code_dirs.each do |dir|
-        classes << get_classes(dir)
+      classes = code_dirs.map do |dir|
+        get_classes(dir)
       end
       classes.flatten
     end
@@ -208,9 +207,8 @@ class Onceover
         raise "Filter param must be a hash" unless filter.is_a?(Hash)
 
         all_facts.keep_if do |hash|
-          matches = []
-          filter.each do |filter_fact,value|
-            matches << keypair_is_in_hash(hash,filter_fact,value)
+          matches = filter.map do |filter_fact,value|
+            keypair_is_in_hash(hash,filter_fact,value)
           end
           !matches.include? false
         end
@@ -231,10 +229,9 @@ class Onceover
       puppetfile.load!
 
       output_array = []
-      threads      = []
       error_array  = []
-      puppetfile.modules.each do |mod|
-        threads << Thread.new do
+      threads = puppetfile.modules.map do |mod|
+        Thread.new do
           begin
             row = []
             logger.debug "Loading data for #{mod.full_name}"
@@ -313,13 +310,12 @@ class Onceover
       # TODO: Make sure we can deal with :latest
 
       # Create threading resources
-      threads = []
       queue   = Queue.new
       queue.push(puppetfile_string)
 
       puppetfile.modules.keep_if {|m| m.is_a?(R10K::Module::Forge)}
-      puppetfile.modules.each do |mod|
-        threads << Thread.new do
+      threads = puppetfile.modules.map do |mod|
+        Thread.new do
           logger.debug "Getting latest version of #{mod.full_name}"
           latest_version = mod.v3_module.current_release.version
 

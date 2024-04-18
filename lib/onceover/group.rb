@@ -28,10 +28,8 @@ class Onceover
         @members = []
       else
         # Turn it into a full list
-        member_objects = []
-
         # This should also handle lists that include groups
-        members.each { |member| member_objects << Onceover::TestConfig.find_list(member) }
+        member_objects = members.map { |member| Onceover::TestConfig.find_list(member) }
         member_objects.flatten!
 
         # Check that they are all the same type
