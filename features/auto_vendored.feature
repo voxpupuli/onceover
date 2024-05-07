@@ -1,4 +1,4 @@
-@vendored
+@vendored @puppet6
 Feature: Automatically resolve modules vendored with puppet-agent package
   Onceover should optionally attempt to resolve these vendored modules so that
   users do not need to maintain these in their Puppetfile's unless they have a reason
