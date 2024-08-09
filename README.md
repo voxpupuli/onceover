@@ -4,8 +4,6 @@
 [![Donated by dylanratcliffe](https://img.shields.io/badge/donated%20by-dylanratcliffe-fb7047.svg)](#transfer-notice)
 [![RubyGem Version](https://img.shields.io/gem/v/onceover.svg)](https://rubygems.org/gems/onceover)
 [![RubyGem Downloads](https://img.shields.io/gem/dt/onceover.svg)](https://rubygems.org/gems/onceover)
-[![Build Status](https://travis-ci.com/voxpupuli/onceover.svg?branch=master)](https://travis-ci.com/voxpupuli/onceover)
-[![Build status](https://ci.appveyor.com/api/projects/status/2ys2ggkgln69hmyf/branch/master?svg=true)](https://ci.appveyor.com/project/voxpupuli/onceover/branch/master)
 
 *The gateway drug to automated infrastructure testing with Puppet*
 
