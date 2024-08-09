@@ -4,4 +4,4 @@ This directory is where we put any custom factsets that we want to use. They can
 
 **Hot tip:** If you already have factsets in here when you run `onceover init` they will be picked up and added to the config file Automatically
 
-More info: https://github.com/dylanratcliffe/onceover#factsets
+More info: https://github.com/voxpupuli/onceover#factsets
