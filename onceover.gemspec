@@ -7,7 +7,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.version     = "3.22.0"
   s.authors     = ["Dylan Ratcliffe"]
   s.email       = ["dylan.ratcliffe@puppet.com"]
-  s.homepage    = "https://github.com/dylanratcliffe/onceover"
+  s.homepage    = "https://github.com/voxpupuli/onceover"
   s.summary     = "Testing tools for Puppet controlrepos"
   s.description = "Automatically generates tests for your Puppet code"
   s.licenses    = 'Apache-2.0'
