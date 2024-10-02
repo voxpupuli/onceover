@@ -24,6 +24,7 @@ It includes automatic parsing of the `Puppetfile`, `environment.conf` and others
     - [Puppetfile](#puppetfile)
   - [Spec testing](#spec-testing)
     - [Adding your own spec tests](#adding-your-own-spec-tests)
+    - [Vendored Modules](#vendored-modules)
   - [Using Workarounds](#using-workarounds)
   - [Extra tooling](#extra-tooling)
     - [Plugins](#plugins)
@@ -36,6 +37,7 @@ It includes automatic parsing of the `Puppetfile`, `environment.conf` and others
     - [Ruby Warnings](#ruby-warnings)
     - [Rake tasks](#rake-tasks)
       - [generate_fixtures](#generate_fixtures)
+      - [generate_vendor_cache](#generate_vendor_cache)
 
 ## Overview
 
@@ -616,6 +618,30 @@ If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environ
 
 `SHOW_PUPPET_OUTPUT=true onceover run spec`
 
+### Vendored Modules
+
+As of Puppet 6.0 some resource types were removed from Puppet and repackaged as individual modules. These supported type modules are still included in the `puppet-agent` package, so you don't have to download them from the Forge. However, this does not apply to the `puppet` gem used when spec testing. This frequently results in users wondering why their Puppet manifests apply just fine on a node, but their tests fail with messages like `Unknown resource type: cron_core` for example. A common workaround for this problem was to add said modules into your Puppetfile, thus requiring manual management.
+
+Onceover now has the ability to remove that manual process for you by querying Github's API to determine which versions are in use by the version of the [puppet-agent package](https://github.com/puppetlabs/puppet-agent/tree/main/configs/components) you are testing against.
+
+This functionality is opt in, so to use it configure the following:
+
+```yaml
+# onceover.yaml
+opts:
+  auto_vendored: true
+```
+
+or on the cli:
+
+```shell
+bundle exec onceover run spec --auto_vendored=true
+```
+
+Essentially what this is doing is resolving any of these [supported type modules](https://www.puppet.com/docs/puppet/8/type#supported-type-modules-in-puppet-agent) that are not already specified in your Puppetfile, and adding them to the copy Onceover uses to deploy into its working directory structure.
+
+CI/CD pipeline users are encouraged to provide Onceover with a cache of the module versions to test against in order to avoid hitting Githubs API ratelimit. To do so, the [generate_vendor_cache](#generate_vendor_cache) rake task can be used to populate the cache into your `spec/vendored_modules` directory.
+
 ## Using workarounds
 
 There may be situations where you cannot test everything that is in your puppet code, some common reasons for this include:
@@ -889,6 +915,12 @@ fixtures:
 ```
 
 Notice that the symlinks are not the ones that we provided in `environment.conf`? This is because the rake task will go into each of directories, find the modules and create a symlink for each of them (This is what rspec expects).
+
+#### generate_vendor_cache
+
+`bundle exec rake generate_vendor_cache`
+
+This task will query Github's API to determine the versions of the vendored modules in use by the version of the puppet agent you are testing against, and cache that information in `control-repo/spec/vendored_modules`. This way your pipelines won't need to reach out for this information each time Onceover is ran with `auto_vendored` enabled.
 
 ## Developing Onceover
 

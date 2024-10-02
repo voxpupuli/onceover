@@ -11,6 +11,7 @@ end
 group :test do
   # Required for the final controlrepo tests
   gem 'toml-rb'
+  gem 'rexml'
 end
 
 group :development do
