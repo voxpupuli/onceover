@@ -127,9 +127,9 @@ class OnceoverFormatter
 
         scanned_errors.map do |error_matches|
           {
-            text:   error_matches[0],
-            file:   calculate_relative_source(error_matches[1]),
-            line:   error_matches[2],
+            text: error_matches[0],
+            file: calculate_relative_source(error_matches[1]),
+            line: error_matches[2],
             column: error_matches[3],
           }
         end
@@ -223,7 +223,6 @@ class OnceoverFormatter
   def longest_group
     RSpec.configuration.world.example_groups.max { |a,b| a.description.length <=> b.description.length}.description.length
   end
-
 end
 
 class OnceoverFormatterParallel < OnceoverFormatter

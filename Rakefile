@@ -32,9 +32,7 @@ Cucumber::Rake::Task.new(:cucumber) do |t|
   t.cucumber_opts = "--tags \"#{skip_string}\"" # Any valid command line option can go here.
 end
 
-
 task default: :full_tests
-
 
 desc "Run unit tests"
 task rspec_unit_tests: [:syntax, :spec]

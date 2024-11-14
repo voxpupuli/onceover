@@ -10,13 +10,13 @@ end
 
 group :test do
   # Required for the final controlrepo tests
-  gem 'toml-rb'
   gem 'rexml', '~> 3.3', '>= 3.3.9'
+  gem 'toml-rb'
 end
 
 group :development do
-  gem 'pry'
   gem 'cucumber'
+  gem 'pry'
   gem 'rubocop'
   gem 'rubygems-tasks'
 end

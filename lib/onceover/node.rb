@@ -4,7 +4,6 @@ class Onceover
   class Node
     @@all = []
 
-
     attr_accessor :name
     attr_accessor :beaker_node
     attr_accessor :fact_set
@@ -44,7 +43,6 @@ class Onceover
       end
 
       @@all << self
-
     end
 
     def self.find(node_name)

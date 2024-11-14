@@ -27,19 +27,19 @@ Given(/^control repo "([^"]*)" without "([^"]*)"$/) do |controlrepo_name, filena
   FileUtils.rm_rf "#{@repo.root_folder}/#{filename}"
 end
 
-When(/^I run onceover command "([^"]*)"$/)  do |command|
+When(/^I run onceover command "([^"]*)"$/) do |command|
   @cmd.command = "#{command} --debug"
   log(@cmd)
   @cmd.run
 end
 
-When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/)  do |command, cls|
+When(/^I run onceover command "([^"]*)" with class "([^"]*)"$/) do |command, cls|
   @cmd.command = "#{command} --classes #{cls}"
   log(@cmd)
   @cmd.run
 end
 
-When(/^I run onceover command "([^"]*)" with class "([^"]*)" on nodes "([^"]*)"$/)  do |command, cls, nodes|
+When(/^I run onceover command "([^"]*)" with class "([^"]*)" on nodes "([^"]*)"$/) do |command, cls, nodes|
   @cmd.command = "#{command} --classes #{cls} --nodes #{nodes}"
   log(@cmd)
   @cmd.run
@@ -109,7 +109,7 @@ Then(/^I should (not )?see message pattern "([^"]*)"$/) do |notword, msg_regexp|
   end
 end
 
-When(/^I run onceover command "([^"]*)" with \-\-puppetfile ([^"]*)$/)  do |command, puppetfile|
+When(/^I run onceover command "([^"]*)" with \-\-puppetfile ([^"]*)$/) do |command, puppetfile|
   puppetfile_path = @repo.root_folder + puppetfile
   @cmd.command = "#{command} --puppetfile #{puppetfile_path} --debug"
   log(@cmd)
@@ -117,7 +117,7 @@ When(/^I run onceover command "([^"]*)" with \-\-puppetfile ([^"]*)$/)  do |comm
 end
 
 Then(/^([^"]*) should be copied to Puppetfile$/) do |puppetfile|
-  source =  @repo.root_folder + puppetfile
+  source = @repo.root_folder + puppetfile
   destination = @repo.onceover_temp_puppetfile
   expect(IO.read(source)).to eq(IO.read(destination))
 end

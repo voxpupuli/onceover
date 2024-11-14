@@ -4,7 +4,6 @@ require 'pathname'
 @repo   = nil
 @config = nil
 
-
 desc 'Writes a `fixtures.yml` file based on the Puppetfile'
 task :generate_fixtures do
   repo = Onceover::Controlrepo.new
@@ -14,7 +13,6 @@ task :generate_fixtures do
 
   File.write(File.expand_path('./.fixtures.yml', repo.root), repo.fixtures)
 end
-
 
 desc "Modifies your `hiera.yaml` to point at the hieradata relative to its position."
 task :hiera_setup do
@@ -45,7 +43,6 @@ task :generate_onceover_yaml do
   puts ERB.new(onceover_yaml_template, nil, '-').result(binding)
 end
 
-
 task :generate_nodesets do
   warn "[DEPRECATION] #{__method__} is deprecated due to the removal of Beaker"
 
@@ -75,7 +72,7 @@ task :generate_nodesets do
       comment_out = false
       box_info = MultiJson.load(response.body)
       box_info['current_version']['providers'].each do |provider|
-        if  provider['name'] == 'virtualbox'
+        if provider['name'] == 'virtualbox'
           url = provider['original_url']
         end
       end
@@ -86,7 +83,6 @@ task :generate_nodesets do
     fixtures_template = File.read(File.expand_path('./nodeset.yaml.erb', template_dir))
     puts ERB.new(fixtures_template, nil, '-').result(binding)
   end
-
 end
 
 desc 'Create cache for vendored modules'
