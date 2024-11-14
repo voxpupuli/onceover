@@ -63,7 +63,11 @@ class Onceover
           # add to list of files copied to cache by onceover
           onceover_manifest << relative_source
 
-          if File.directory? source
+          if File.symlink?(source)
+            # Handle symlinks
+            link_target = File.readlink(source) # Get the target of the symlink
+            FileUtils.ln_s link_target, target, force: true # Create symlink at target
+          elsif File.directory? source
             Find.prune if excluded_dirs.include? source
             FileUtils.mkdir target
           else
