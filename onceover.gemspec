@@ -37,4 +37,5 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_runtime_dependency 'rspec-puppet', ">= 2.4.0"
   s.add_runtime_dependency 'terminal-table', '>= 1.8.0'
   s.add_runtime_dependency 'versionomy', '>= 0.5.0'
+  s.add_development_dependency 'voxpupuli-rubocop', '~> 3.0.0'
 end
