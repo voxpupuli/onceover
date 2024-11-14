@@ -1,9 +1,13 @@
 name: Tests
+
 on:
-  - push
-  - pull_request
+  pull_request: {}
+  push:
+    branches:
+      - master
+
 jobs:
-  full_tests:
+  test:
     strategy:
       fail-fast: false
       matrix:
@@ -35,3 +39,11 @@ jobs:
       - env:
           PUPPET_VERSION: ${{ matrix.puppet }}
         run: bundle exec rake full_tests
+
+  tests:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    name: Test suite
+    steps:
+      - run: echo Test suite completed
