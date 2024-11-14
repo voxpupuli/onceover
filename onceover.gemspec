@@ -17,6 +17,8 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.bindir       = 'bin'
   s.executables  = 'onceover'
 
+  s.required_ruby_version = Gem::Requirement.new('>= 2.7')
+
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_runtime_dependency 'backticks', '>= 1.0.2'
   s.add_runtime_dependency 'colored', '>= 1.2'
