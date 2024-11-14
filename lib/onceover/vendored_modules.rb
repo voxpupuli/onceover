@@ -22,7 +22,6 @@ require 'onceover/logger'
 
 class Onceover
   class VendoredModules
-
     attr_reader :vendored_references, :missing_vendored
 
     def initialize(opts = {})
@@ -51,11 +50,11 @@ class Onceover
       # https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28#get-a-tree
       puppet_agent_tree = query_or_cache(
         "https://api.github.com/repos/puppetlabs/puppet-agent/git/trees/#{@puppet_version}",
-        { :recursive => true },
-        component_cache('repo_tree')
+        { recursive: true },
+        component_cache('repo_tree'),
       )
       # Get only the module-puppetlabs-<something>_core.json component files
-      vendored_components =  puppet_agent_tree['tree'].select { |file| /configs\/components\/module-puppetlabs-\w+\.json/.match(file['path']) }
+      vendored_components =  puppet_agent_tree['tree'].select { |file| %r{configs/components/module-puppetlabs-\w+\.json}.match(file['path']) }
       # Get the contents of each component file
       # https://docs.github.com/en/rest/git/blobs?apiVersion=2022-11-28#get-a-blob
       @vendored_references = vendored_components.map do |component|
@@ -64,7 +63,7 @@ class Onceover
         query_or_cache(
           component['url'],
           nil,
-          component_cache(mod_name)
+          component_cache(mod_name),
         )
       end
     end
@@ -75,42 +74,38 @@ class Onceover
       # By default look for any caches created during previous runs
       cache_file = File.join(@cachedir, desired_name)
 
-      unless @force_update
-        # If the user provides their own cache
-        if File.directory?(@manual_vendored_dir)
-          # Check for any '<component>-puppet_agent-<puppet version>.json' files
-          dg = Dir.glob(File.join(@manual_vendored_dir, "#{component}-puppet_agent*"))
-          # Check if there are multiple versions of the component cache
-          if dg.size > 1
-            # If there is the same version supplied as whats being tested against use that
-            if dg.any? { |s| s[desired_name] }
-              cache_file = File.join(@manual_vendored_dir, desired_name)
-            # If there are any with the same major version, use the latest supplied
-            elsif dg.any? { |s| s["#{component}-puppet_agent-#{@puppet_major_version}"] }
-              maj_match = dg.select { |f| /#{component}-puppet_agent-#{@puppet_major_version}.\d+\.\d+\.json/.match(f) }
-              maj_match.each do |f|
-                if (version_from_file(cache_file) == version_from_file(desired_name)) || (version_from_file(f) >= version_from_file(cache_file))
-                  # if the current cache version matches the desired version, use the first matching major version in user cache
-                  # if there are multiple major version matches in user cache, use the latest
-                  cache_file = f
+      # If the user provides their own cache
+      if !@force_update && File.directory?(@manual_vendored_dir)
+                # Check for any '<component>-puppet_agent-<puppet version>.json' files
+                dg = Dir.glob(File.join(@manual_vendored_dir, "#{component}-puppet_agent*"))
+                # Check if there are multiple versions of the component cache
+                if dg.size > 1
+                  # If there is the same version supplied as whats being tested against use that
+                  if dg.any? { |s| s[desired_name] }
+                    cache_file = File.join(@manual_vendored_dir, desired_name)
+                  # If there are any with the same major version, use the latest supplied
+                  elsif dg.any? { |s| s["#{component}-puppet_agent-#{@puppet_major_version}"] }
+                    maj_match = dg.select { |f| /#{component}-puppet_agent-#{@puppet_major_version}.\d+\.\d+\.json/.match(f) }
+                    maj_match.each do |f|
+                      next unless (version_from_file(cache_file) == version_from_file(desired_name)) || (version_from_file(f) >= version_from_file(cache_file))
+
+                      # if the current cache version matches the desired version, use the first matching major version in user cache
+                      # if there are multiple major version matches in user cache, use the latest
+                      cache_file = f
+                    end
+                  # Otherwise just use the latest supplied
+                  else
+                    dg.each { |f| cache_file = f if version_from_file(f) >= version_from_file(cache_file) }
+                  end
+                # If there is only one use that
+                elsif dg.size == 1
+                  cache_file = dg[0]
                 end
-              end
-            # Otherwise just use the latest supplied
-            else
-              dg.each { |f| cache_file = f if version_from_file(f) >= version_from_file(cache_file) }
-            end
-          # If there is only one use that
-          elsif dg.size == 1
-            cache_file = dg[0]
-          end
-        end
       end
 
       # Warn the user if cached version does not match whats being used to test
       cache_version = version_from_file(cache_file)
-      if cache_version != @puppet_version
-        logger.warn "Cache for #{component} is for puppet_agent #{cache_version}, while you are testing against puppet_agent #{@puppet_version}. Consider updating your cache to ensure consistent behavior in your tests"
-      end
+      logger.warn "Cache for #{component} is for puppet_agent #{cache_version}, while you are testing against puppet_agent #{@puppet_version}. Consider updating your cache to ensure consistent behavior in your tests" if cache_version != @puppet_version
 
       cache_file
     end
@@ -134,7 +129,7 @@ class Onceover
           # Change url to https instead of ssh to allow anonymous git clones
           # so that users do not need to have an ssh keypair associated with a Github account
           url = mod['url'].gsub('git@github.com:', 'https://github.com/')
-          @missing_vendored << {mod_slug => {git: url, ref: mod['ref']}}
+          @missing_vendored << { mod_slug => { git: url, ref: mod['ref'] } }
           logger.debug "#{mod_name} found to be missing in Puppetfile"
         else
           logger.debug "#{mod_name} found in Puppetfile. Using the specified version"
@@ -173,7 +168,7 @@ class Onceover
       else
         # Expose the ratelimit response headers
         # https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#checking-the-status-of-your-rate-limit
-        ratelimit_headers = response.to_hash.select { |k, v| k =~ /x-ratelimit.*/ }
+        ratelimit_headers = response.to_hash.select { |k, _v| k =~ /x-ratelimit.*/ }
         raise "#{response.code} #{response.message} #{ratelimit_headers}"
       end
     end

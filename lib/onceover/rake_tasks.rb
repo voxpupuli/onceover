@@ -95,5 +95,5 @@ task :generate_vendor_cache do
   require 'onceover/vendored_modules'
 
   repo = Onceover::Controlrepo.new(debug: true)
-  Onceover::VendoredModules.new({repo: repo, cachedir: File.join(repo.spec_dir, 'vendored_modules'), force_update: true})
+  Onceover::VendoredModules.new({ repo: repo, cachedir: File.join(repo.spec_dir, 'vendored_modules'), force_update: true })
 end
