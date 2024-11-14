@@ -1,7 +1,6 @@
 require 'rubygems/tasks'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
-require 'rubocop/rake_task'
 require 'puppet/version'
 Gem::Tasks.new
 
@@ -38,10 +37,10 @@ task default: :full_tests
 
 
 desc "Run unit tests"
-task rspec_unit_tests: [:syntax, :rubocop, :spec]
+task rspec_unit_tests: [:syntax, :spec]
 
 desc "Run acceptance cucumber tests"
-task cucumber_acceptance_tests: [:syntax, :rubocop, :fixtures, :cucumber]
+task cucumber_acceptance_tests: [:syntax, :fixtures, :cucumber]
 
 desc "Run full set of tests"
 task full_tests: [:rspec_unit_tests, :cucumber_acceptance_tests]
@@ -60,16 +59,13 @@ task :syntax do
   end
 end
 
-RuboCop::RakeTask.new(:rubocop) do |task|
-  task.options << '--display-cop-names'
-  task.formatters = ['simple']
-  task.patterns = [
-    "lib/**/*.rb",
-    "ext/**/*.rb",
-  ]
-end
-
 task :fixtures do
   system 'git submodule init && git submodule update --recursive'
   raise "Couldn't clone controlrepo to fixtures directory" unless $?.success?
+end
+
+begin
+  require 'voxpupuli/rubocop/rake'
+rescue LoadError
+  # the voxpupuli-rubocop gem is optional
 end
