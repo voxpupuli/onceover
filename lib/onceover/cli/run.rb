@@ -44,6 +44,7 @@ This includes deploying using r10k and running all custom tests.
             optional nil, :format, 'Which RSpec formatter to use, valid options are: documentation, progress, FailureCollector, OnceoverFormatter. You also specify this multiple times', multiple: true, default: :defaults
             optional nil, :no_workarounds, 'Disables workarounds that have been added for convenience to get around common RSPec issues such as https://github.com/rodjek/rspec-puppet/issues/665'
             optional :ff, :fail_fast, 'Abort the run after the first failure'
+            optional nil, :auto_vendored, 'Attempt to resolve vendored puppet modules. Ex: puppetlabs/cron_core', default: false
 
             run do |opts, args, cmd|
               repo = Onceover::Controlrepo.new(opts)

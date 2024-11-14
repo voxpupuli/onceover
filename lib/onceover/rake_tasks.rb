@@ -88,3 +88,12 @@ task :generate_nodesets do
   end
 
 end
+
+desc 'Create cache for vendored modules'
+task :generate_vendor_cache do
+  require 'onceover/controlrepo'
+  require 'onceover/vendored_modules'
+
+  repo = Onceover::Controlrepo.new(debug: true)
+  Onceover::VendoredModules.new({ repo: repo, cachedir: File.join(repo.spec_dir, 'vendored_modules'), force_update: true })
+end
