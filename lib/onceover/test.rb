@@ -12,9 +12,8 @@ class Onceover
     # it will then detect them and expand them out into their respective objects so that
     # we just end up with a list of nodes and classes
     def initialize(on_this, test_this, test_config)
-
       @default_test_config = {
-        'check_idempotency'       => true,
+        'check_idempotency' => true,
         'runs_before_idempotency' => 1
       }
 

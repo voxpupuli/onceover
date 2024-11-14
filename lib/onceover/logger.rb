@@ -8,8 +8,8 @@ module Onceover::Logger
         'bright',
         :levels => {
           :debug => :cyan,
-          :info  => :green,
-          :warn  => :yellow,
+          :info => :green,
+          :warn => :yellow,
           :error => :red,
           :fatal => [:white, :on_red]
         }
@@ -18,7 +18,7 @@ module Onceover::Logger
       Logging.appenders.stdout(
         'stdout',
         :layout => Logging.layouts.pattern(
-          :pattern      => '%l\t -> %m\n',
+          :pattern => '%l\t -> %m\n',
           :color_scheme => 'bright'
         )
       )

@@ -119,7 +119,7 @@ class Onceover
       @spec_dir         = opts[:spec_dir]         || File.expand_path('./spec', @root)
       @facts_dir        = opts[:facts_dir]        || File.expand_path('factsets', @spec_dir)
       _facts_dirs       = [@facts_dir, File.expand_path('../../factsets', __dir__)]
-      _facts_files      = opts[:facts_files]      || _facts_dirs.map{|d| File.join(d, '*.json')}
+      _facts_files      = opts[:facts_files] || _facts_dirs.map{|d| File.join(d, '*.json')}
       @facts_files      = _facts_files.map{|_path| Dir[_path]}.flatten
 
       @nodeset_file     = opts[:nodeset_file]     || File.expand_path('./spec/acceptance/nodesets/onceover-nodes.yml', @root)
@@ -138,7 +138,6 @@ class Onceover
         @manifest = File.expand_path(manifest, @root)
       end
     end
-
 
     def to_s
       require 'colored'
@@ -265,7 +264,7 @@ class Onceover
                         "PatchLevel_minor".green
                       else
                         "No".green
-                      end
+                     end
 
               row << mod.v3_module.endorsement
               superseded_by = mod.v3_module.superseded_by
@@ -287,8 +286,8 @@ class Onceover
             error_array << error
             logger.debug "Error loading module #{mod.full_name} - #{e.inspect}"
           end
-          end
         end
+      end
 
       threads.map(&:join)
 
@@ -310,7 +309,7 @@ class Onceover
       # TODO: Make sure we can deal with :latest
 
       # Create threading resources
-      queue   = Queue.new
+      queue = Queue.new
       queue.push(puppetfile_string)
 
       puppetfile.modules.keep_if {|m| m.is_a?(R10K::Module::Forge)}
@@ -356,14 +355,14 @@ class Onceover
             # Set it up as a symlink, because we are using local files in the Puppetfile
             symlinks << {
               'name' => mod.name,
-              'dir'  => mod.expected_version[:path]
+              'dir' => mod.expected_version[:path]
             }
           elsif mod.expected_version.is_a?(String)
             # Set it up as a normal forge module
             forge_modules << {
               'name' => mod.name,
               'repo' => mod.title,
-              'ref'  => mod.expected_version
+              'ref' => mod.expected_version
             }
           end
         elsif mod.is_a? R10K::Module::Git
@@ -373,7 +372,7 @@ class Onceover
               # I know I shouldn't be doing this, but trust me, there are no methods
               # anywhere that expose this value, I looked.
               'repo' => mod.instance_variable_get(:@remote),
-              'ref'  => mod.version
+              'ref' => mod.version
             }
         end
       end
@@ -388,7 +387,7 @@ class Onceover
         Dir["#{dir}/*"].each do |mod|
           symlinks << {
             'name' => File.basename(mod),
-            'dir'  => Pathname.new(File.expand_path(mod)).relative_path_from(Pathname.new(@root))#File.expand_path(mod)
+            'dir' => Pathname.new(File.expand_path(mod)).relative_path_from(Pathname.new(@root))#File.expand_path(mod)
           }
         end
       end
@@ -570,9 +569,9 @@ class Onceover
         # Add the resulting info to the hosts hash. This is what the
         # template will output
         hosts_hash[node_name] = {
-          :platform    => platform,
-          :boxname     => boxname,
-          :url         => url,
+          :platform => platform,
+          :boxname => boxname,
+          :url => url,
           :comment_out => comment_out
         }
       end

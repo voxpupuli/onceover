@@ -1,5 +1,4 @@
 class ControlRepo_Helper
-
   attr_reader :tmp_folder
 
   def initialize( name )
@@ -34,5 +33,4 @@ class ControlRepo_Helper
   def add_line_to_puppetfile( line )
     open(puppetfile, 'a') { |f| f.puts line }
   end
-
 end

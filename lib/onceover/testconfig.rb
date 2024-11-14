@@ -282,9 +282,9 @@ class Onceover
     def run_filters(tests)
       # All of this needs to be applied AFTER deduplication but BEFORE writing
       filters = {
-        'tags'    => @filter_tags,
+        'tags' => @filter_tags,
         'classes' => @filter_classes,
-        'nodes'   => @filter_nodes
+        'nodes' => @filter_nodes
       }
       filters.each do |method, filter_list|
         if filter_list

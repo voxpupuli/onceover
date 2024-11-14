@@ -1,7 +1,6 @@
 require 'pathname'
 
 class Cache_Helper
-
   def cache_exists?
     File.directory?(dir + '/.onceover')
   end
