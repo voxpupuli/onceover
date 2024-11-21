@@ -1,24 +1,32 @@
-name: Publish Gem
+name: Release
 
 on:
-  workflow_dispatch:
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+  push:
+    tags:
+      - '*'
 
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'voxpupuli'
     steps:
       - uses: actions/checkout@v4
-      - uses: fregante/setup-git-user@v2
-      - uses: ruby/setup-ruby@v1
+      - name: Install Ruby 3.3
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.3
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-
-      - name: Release Gem
-        uses: cadwallion/publish-rubygems-action@master
+          ruby-version: '3.3'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-          RELEASE_COMMAND: bundle exec rake release
+          BUNDLE_WITHOUT: release:development:rubocop
+      - name: Build gem
+        run: gem build --verbose *.gemspec
+      - name: Publish gem to rubygems.org
+        run: gem push *.gem
+        env:
+          GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_AUTH_TOKEN }}'
+      - name: Setup GitHub packages access
+        run: |
+          mkdir -p ~/.gem
+          echo ":github: Bearer ${{ secrets.GITHUB_TOKEN }}" >> ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+      - name: Publish gem to GitHub packages
+        run: gem push --key github --host https://rubygems.pkg.github.com/voxpupuli *.gem
