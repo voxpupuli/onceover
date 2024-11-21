@@ -30,3 +30,8 @@ end
 if File.exist?(File.join(Dir.home, '.gemfile'))
   eval(File.read(File.join(Dir.home, '.gemfile')), binding)
 end
+
+group :release do
+  gem 'faraday-retry', require: false
+  gem 'github_changelog_generator', require: false
+end
