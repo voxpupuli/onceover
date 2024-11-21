@@ -1,7 +1,6 @@
 require "open3"
 
 class Command_Helper
-
   attr_reader(:output, :result)
 
   attr_writer(:command, :params, :controlrepo)
@@ -30,5 +29,4 @@ class Command_Helper
   def to_s
     return generate_command
   end
-
 end

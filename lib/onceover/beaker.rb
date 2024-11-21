@@ -129,9 +129,9 @@ class Onceover
 
       # Do an r10k deploy
       r10k_deploy(host, {
-        :puppetfile => true,
-        :configfile => '/tmp/r10k.yaml',
-        })
+                    :puppetfile => true,
+                    :configfile => '/tmp/r10k.yaml',
+                  })
     end
 
     # This actually provisions a node and checks that puppet will be able to run and
@@ -150,7 +150,6 @@ class Onceover
       opts = {:runs_before_idempotency => 1}.merge(opts)
       opts = {:check_idempotency => true}.merge(opts)
       opts = {:deploy_controlrepo => true}.merge(opts)
-
 
       raise "Hosts must be a single host object, not an array" if host.is_a?(Array)
       raise "Class must be a single Class [String], not an array" unless puppet_class.is_a?(String)
@@ -214,8 +213,8 @@ class Onceover
       # to refer to each key as either a string or an object
       current_opts.default_proc = proc do |h, k|
         case k
-          when String then sym = k.to_sym; h[sym] if h.key?(sym)
-          when Symbol then str = k.to_s; h[str] if h.key?(str)
+        when String then sym = k.to_sym; h[sym] if h.key?(sym)
+        when Symbol then str = k.to_s; h[str] if h.key?(str)
         end
       end
 
