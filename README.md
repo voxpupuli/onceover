@@ -347,7 +347,7 @@ puppet facts --terminus puppetdb > fact_set_name.json
 or
 
 ```shell
-puppet facts --terminus puppetdb <node certname> > fact_set_name.json
+puppet facts find <node certname> --terminus puppetdb > fact_set_name.json
 ```
 
 Factsets are named based on their filename, i.e. `myfactset` in `onceover.yaml` refers `spec/factsets/myfactset.json`
