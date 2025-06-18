@@ -338,7 +338,7 @@ puppet facts > fact_set_name.json
 
 Its recommended to run this on each of the types of nodes that you run in your infrastructure to have good coverage.
 
-If you are using [Trusted Facts](#trusted-facts) or [Trusted External Data](#trusted-external-data) and can use the [PE client tools](https://puppet.com/docs/pe/latest/installing_pe_client_tools.html) you can generate a factset which contains this information by running:
+If you are using [Trusted Facts](#trusted-facts) or [Trusted External Data](#trusted-external-data) run the following on a primary, compiler or host with the [PE client tools](https://puppet.com/docs/pe/latest/installing_pe_client_tools.html):
 
 ```shell
 puppet facts --terminus puppetdb > fact_set_name.json
