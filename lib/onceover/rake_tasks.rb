@@ -48,7 +48,7 @@ task :generate_nodesets do
 
   require 'onceover/beaker'
   require 'net/http'
-  require 'multi_json'
+  require 'json'
 
   repo = Onceover::Controlrepo.new
 
@@ -70,7 +70,7 @@ task :generate_nodesets do
       comment_out = true
     else
       comment_out = false
-      box_info = MultiJson.load(response.body)
+      box_info = JSON.parse(response.body)
       box_info['current_version']['providers'].each do |provider|
         if provider['name'] == 'virtualbox'
           url = provider['original_url']
