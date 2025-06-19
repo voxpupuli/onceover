@@ -30,8 +30,8 @@ describe "<%= cls.name %>"<%= test.tags.map { |tag| ",#{tag}: true "}.join %> do
     # Create a from_json function so that we can parse the output of json for mocked functions
     before :each do
       Puppet::Parser::Functions.newfunction(:from_json, :type => :rvalue) { |args|
-          require 'multi_json'
-          MultiJson.load(args[0])
+          require 'json'
+          JSON.parse(args[0])
         }
     end
 <% end -%>
@@ -127,7 +127,6 @@ $onceover_node  = '<%= node.name %>'
 # End user-specified pre_condition
 
 <% if @mock_functions -%>
-<% require 'multi_json' -%>
 # Mocking functions
 <% @mock_functions.each do |function,params| -%>
 <% if params['returns'].is_a? String -%>

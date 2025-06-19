@@ -26,7 +26,6 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'deep_merge', '>= 1.0.0'
   s.add_dependency 'git'
   s.add_dependency 'logging', '>= 2.0.0'
-  s.add_dependency 'multi_json', '>= 1.10'
   s.add_dependency 'parallel_tests', ">= 2.0.0"
   s.add_dependency 'puppet', '>=4.0'
   s.add_dependency 'puppetlabs_spec_helper', ">= 0.4.0"

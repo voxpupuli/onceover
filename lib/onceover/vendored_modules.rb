@@ -1,7 +1,7 @@
 require 'puppet/version'
 require 'net/http'
 require 'uri'
-require 'multi_json'
+require 'json'
 require 'r10k/module_loader/puppetfile'
 require 'onceover/logger'
 
@@ -164,7 +164,7 @@ class Onceover
 
       case response
       when Net::HTTPOK # 200
-        MultiJson.load(response.body)
+        JSON.parse(response.body)
       else
         # Expose the ratelimit response headers
         # https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#checking-the-status-of-your-rate-limit
@@ -175,12 +175,12 @@ class Onceover
 
     # Returns parsed json of file
     def read_json_dump(filepath)
-      MultiJson.load(File.read(filepath))
+      JSON.parse(File.read(filepath))
     end
 
     # Writes json to a file
     def write_json_dump(filepath, json_data)
-      File.write(filepath, MultiJson.dump(json_data))
+      File.write(filepath, JSON.generate(json_data))
     end
   end
 end
