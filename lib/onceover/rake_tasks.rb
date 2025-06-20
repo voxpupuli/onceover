@@ -1,5 +1,6 @@
 require 'onceover/controlrepo'
 require 'pathname'
+require 'rspec/core/rake_task'
 
 @repo   = nil
 @config = nil
