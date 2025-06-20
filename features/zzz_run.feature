@@ -69,7 +69,7 @@ Feature: Run rspec and acceptance test suites
   Scenario: Running tests that fail to compile
     Given control repo "function_mocking"
     When I run onceover command "run spec" with class "role::fail"
-    Then I should see message pattern "Syntax error"
+    Then I should see message pattern "Syntax error .*"
     And Onceover should exit 1
 
   Scenario: Run with a custom Puppetfile
