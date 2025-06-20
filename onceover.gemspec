@@ -17,7 +17,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.bindir       = 'bin'
   s.executables  = 'onceover'
 
-  s.required_ruby_version = Gem::Requirement.new('>= 3.1')
+  s.required_ruby_version = Gem::Requirement.new('>= 3.2')
 
   # Runtime dependencies, but also probably dependencies of requiring projects
   s.add_dependency 'backticks', '~> 1.0'
@@ -27,7 +27,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'git', '~> 3.1'
   s.add_dependency 'logging', '~> 2.0'
   s.add_dependency 'multi_json', '~> 1.10'
-  s.add_dependency 'openvox', '~> 8.19'
+  s.add_dependency 'puppet', '~> 8.0'
   s.add_dependency 'parallel_tests', '~> 5.3'
   s.add_dependency 'r10k', '~> 5.0'
   s.add_dependency 'rake', '~> 13.3'
