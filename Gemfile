@@ -5,7 +5,7 @@ gemspec
 gem 'pry-coolline', '> 0.0', '< 1.0.0'
 
 if ENV['PUPPET_VERSION']
-  gem 'puppet', ENV['PUPPET_VERSION']
+  gem 'openvox', ENV['PUPPET_VERSION']
 end
 
 group :test do
