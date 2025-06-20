@@ -34,7 +34,8 @@ jobs:
           - "~> 8.0"
         include:
           - puppet: "~> 7.0"
-            ruby: 2.7
+            # ruby: 2.7
+            ruby: 3.2
           - puppet: "~> 8.0"
             ruby: 3.2
 

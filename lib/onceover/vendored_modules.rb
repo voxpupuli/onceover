@@ -49,7 +49,7 @@ class Onceover
       # Get the entire file tree of the puppetlabs/puppet-agent repository
       # https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28#get-a-tree
       puppet_agent_tree = query_or_cache(
-        "https://api.github.com/repos/puppetlabs/puppet-agent/git/trees/#{@puppet_version}",
+        "https://api.github.com/repos/OpenVoxProject/puppet-agent/git/trees/#{@puppet_version}",
         { recursive: true },
         component_cache('repo_tree'),
       )
