@@ -1,5 +1,13 @@
 ---
 inherit_from: .rubocop_todo.yml
 
-inherit_gem:
-  voxpupuli-rubocop: rubocop.yml
+AllCops:
+  NewCops: enable
+  DisplayCopNames: true
+  ExtraDetails: true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 3.2
+  Exclude:
+    - vendor/**/*
+    - .vendor/**/*
+    - spec/fixtures/**/*

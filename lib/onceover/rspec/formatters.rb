@@ -1,5 +1,7 @@
 require 'rspec'
+require 'rspec-puppet'
 require 'pathname'
+require 'English'
 
 class OnceoverFormatter
   RSpec::Core::Formatters.register(
@@ -279,7 +281,7 @@ class OnceoverFormatterParallel < OnceoverFormatter
       # Read all files and merge them
       errs.merge(YAML.load_file(file)) {|key, oldval, newval| [oldval, newval].flatten }
     end
-  
+
     # Delete files from the disk
     files.each { |f| File.delete(f) }
 

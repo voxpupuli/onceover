@@ -92,8 +92,8 @@ class Onceover
           result = run_command(@command_prefix.strip.split, 'rake', 'parallel_spec')
         else
           require 'io/console'
-          logger.debug "Running #{@command_prefix}rake spec_standalone from #{@repo.tempdir}"
-          result = run_command(@command_prefix.strip.split, 'rake', 'spec_standalone')
+          logger.debug "Running #{@command_prefix}rake spec:standalone from #{@repo.tempdir}"
+          result = run_command(@command_prefix.strip.split, 'rake', 'spec:standalone')
         end
 
         # Reset env to previous state if we modified it
@@ -118,7 +118,7 @@ class Onceover
 
       Dir.chdir(@repo.tempdir) do
         #`bundle install --binstubs`
-        #`bin/rake spec_standalone`
+        #`bin/rake spec:standalone`
         logger.debug "Running #{@command_prefix}rake acceptance from #{@repo.tempdir}"
         result = run_command(@command_prefix.strip.split, 'rake', 'acceptance')
       end

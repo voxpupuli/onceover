@@ -30,11 +30,8 @@ jobs:
           - macos-latest
           - ubuntu-24.04-arm
         puppet:
-          - "~> 7.0"
           - "~> 8.0"
         include:
-          - puppet: "~> 7.0"
-            ruby: 2.7
           - puppet: "~> 8.0"
             ruby: 3.2
 

@@ -2,6 +2,7 @@ require 'rubygems/tasks'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 require 'puppet/version'
+require 'voxpupuli/test/rake'
 Gem::Tasks.new
 
 def windows?
@@ -63,9 +64,9 @@ task :fixtures do
 end
 
 begin
-  require 'voxpupuli/rubocop/rake'
+  require 'voxpupuli/test/rake'
 rescue LoadError
-  # the voxpupuli-rubocop gem is optional
+  # the voxpupuli-test gem is optional
 end
 
 begin
@@ -82,3 +83,5 @@ else
     config.future_release = gem_version
   end
 end
+
+PuppetSyntax.exclude_paths = ['vendor/**/*', 'templates/**/*', 'spec/fixtures/**/*']

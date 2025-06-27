@@ -1,5 +1,6 @@
 require 'onceover/controlrepo'
 require 'pathname'
+require 'voxpupuli/test/rake'
 
 @repo   = nil
 @config = nil
