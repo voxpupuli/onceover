@@ -1,8 +1,8 @@
 # Changelog
 
-## [5.0.0](https://github.com/voxpupuli/onceover/tree/5.0.0) (2025-06-27)
+## [v5.0.0](https://github.com/voxpupuli/onceover/tree/v5.0.0) (2025-06-27)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...5.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...v5.0.0)
 
 **Breaking changes:**
 
@@ -23,7 +23,7 @@
 
 ## [v4.0.0](https://github.com/voxpupuli/onceover/tree/v4.0.0) (2024-11-21)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/vm_test1...v4.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v3.22.0...v4.0.0)
 
 **Breaking changes:**
 
@@ -45,10 +45,6 @@
 - dependabot: check for github actions and bundler [\#338](https://github.com/voxpupuli/onceover/pull/338) ([bastelfreak](https://github.com/bastelfreak))
 - Adapt to Voxpupuli [\#336](https://github.com/voxpupuli/onceover/pull/336) ([rwaffen](https://github.com/rwaffen))
 - \(maint\) - fix rubocop [\#334](https://github.com/voxpupuli/onceover/pull/334) ([garrettrowell](https://github.com/garrettrowell))
-
-## [vm_test1](https://github.com/voxpupuli/onceover/tree/vm_test1) (2024-10-02)
-
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/v3.22.0...vm_test1)
 
 ## [v3.22.0](https://github.com/voxpupuli/onceover/tree/v3.22.0) (2024-03-16)
 
