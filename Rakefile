@@ -66,7 +66,7 @@ end
 begin
   require 'voxpupuli/test/rake'
 rescue LoadError
-  # the voxpupuli-rubocop gem is optional
+  # the voxpupuli-test gem is optional
 end
 
 begin

@@ -15,7 +15,7 @@ end
 group :development do
   gem 'cucumber'
   gem 'pry'
-  gem 'rubocop'
+  gem 'voxpupuli-rubocop'
   gem 'rubygems-tasks'
 end
 
