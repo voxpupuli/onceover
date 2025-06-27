@@ -1,44 +1,7 @@
-require 'rspec/core/rake_task'
+require 'voxpupuli/test/rake'
+require 'voxpupuli/acceptance/rake'
 
 desc "Run acceptance tests"
 RSpec::Core::RakeTask.new(:acceptance) do |t|
   t.pattern = 'spec/acceptance'
-end
-
-# https://github.com/puppetlabs/puppetlabs_spec_helper/blob/main/lib/puppetlabs_spec_helper/rake_tasks.rb#L48
-pattern = 'spec/{aliases,classes,defines,functions,hosts,integration,plans,tasks,type_aliases,types,unit}/**/*_spec.rb'
-
-# https://github.com/puppetlabs/puppetlabs_spec_helper/blob/main/lib/puppetlabs_spec_helper/rake_tasks.rb#L50-L72
-RSpec::Core::RakeTask.new(:spec_standalone) do |t, args|
-  t.rspec_opts = []
-  t.rspec_opts << ENV['CI_SPEC_OPTIONS'] unless ENV['CI_SPEC_OPTIONS'].nil?
-  if ENV['CI_NODE_TOTAL'] && ENV['CI_NODE_INDEX']
-    ci_total = ENV['CI_NODE_TOTAL'].to_i
-    ci_index = ENV['CI_NODE_INDEX'].to_i
-    raise "CI_NODE_INDEX must be between 1-#{ci_total}" unless ci_index >= 1 && ci_index <= ci_total
-
-    files = Rake::FileList[pattern].to_a
-    per_node = (files.size / ci_total.to_f).ceil
-    t.pattern = if args.extras.nil? || args.extras.empty?
-                  files.each_slice(per_node).to_a[ci_index - 1] || files.first
-                else
-                  args.extras.join(',')
-                end
-  else
-    t.pattern = if args.extras.nil? || args.extras.empty?
-                  pattern
-                else
-                  args.extras.join(',')
-                end
-  end
-end
-
-# https://github.com/puppetlabs/puppetlabs_spec_helper/blob/main/lib/puppetlabs_spec_helper/rake_tasks.rb#L80-L87
-desc 'Run spec tests and clean the fixtures directory if successful'
-task :spec do |_t, args|
-  Rake::Task[:spec_prep].invoke
-  Rake::Task[:spec_standalone].invoke(*args.extras)
-  Rake::Task[:spec_clean].invoke
-ensure
-  Rake::Task[:spec_clean_symlinks].invoke
 end

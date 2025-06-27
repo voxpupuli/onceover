@@ -1,6 +1,7 @@
 require 'onceover/controlrepo'
 require 'pathname'
-require 'rspec/core/rake_task'
+require 'voxpupuli/test/rake'
+require 'voxpupuli/acceptance/rake'
 
 @repo   = nil
 @config = nil

@@ -16,7 +16,7 @@ else
 end
 
 gem 'hiera-eyaml'
-gem 'openvox', ENV['PUPPET_version'] || '~> 8'
+gem 'openvox', ENV['PUPPET_version'] ||  '>= 7', '< 9'
 
 # Require by telegraf module
 gem 'toml-rb'

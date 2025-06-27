@@ -1,4 +1,4 @@
-require 'rspec/core/rake_task'
+require 'voxpupuli/test/rake'
 
 #desc "Run acceptance tests"
 #RSpec::Core::RakeTask.new(:acceptance) do |t|

@@ -2,6 +2,7 @@ require 'rubygems/tasks'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 require 'puppet/version'
+require 'voxpupuli/test/rake'
 Gem::Tasks.new
 
 def windows?
