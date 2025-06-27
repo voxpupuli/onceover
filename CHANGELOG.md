@@ -1,8 +1,8 @@
 # Changelog
 
-## [4.0.0](https://github.com/voxpupuli/onceover/tree/4.0.0) (2025-06-27)
+## [5.0.0](https://github.com/voxpupuli/onceover/tree/5.0.0) (2025-06-27)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...4.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...5.0.0)
 
 **Breaking changes:**
 
@@ -18,9 +18,7 @@
 
 **Merged pull requests:**
 
-- docs: add info about trusted facts/data to README.md of factsets dir
- [\#352](https://github.com/voxpupuli/onceover/pull/352) ([rwaffen](https://github.com/rwaffen))
- [\#352](https://github.com/voxpupuli/onceover/pull/352) ([rwaffen](https://github.com/rwaffen))
+- docs: add info about trusted facts/data to README.md of factsets dir [\#352](https://github.com/voxpupuli/onceover/pull/352) ([rwaffen](https://github.com/rwaffen))
 - Fix example on how to pull facts from puppetdb [\#345](https://github.com/voxpupuli/onceover/pull/345) ([tuxmea](https://github.com/tuxmea))
 
 ## [v4.0.0](https://github.com/voxpupuli/onceover/tree/v4.0.0) (2024-11-21)
