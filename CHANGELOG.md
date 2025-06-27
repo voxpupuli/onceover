@@ -1,8 +1,29 @@
 # Changelog
 
-## [4.0.0](https://github.com/voxpupuli/onceover/tree/4.0.0) (2024-11-21)
+## [4.0.0](https://github.com/voxpupuli/onceover/tree/4.0.0) (2025-06-27)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/v3.22.0...4.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...4.0.0)
+
+**Breaking changes:**
+
+- Update: switch to openvox gem, remove puppetlabs\_spec\_helper gem, update gem dependencies, require Ruby 3.2+ [\#354](https://github.com/voxpupuli/onceover/pull/354) ([rwaffen](https://github.com/rwaffen))
+
+**Implemented enhancements:**
+
+- Add ARM runner to CI [\#347](https://github.com/voxpupuli/onceover/pull/347) ([bastelfreak](https://github.com/bastelfreak))
+
+**Closed issues:**
+
+- be more clear where/how to generate factssets [\#351](https://github.com/voxpupuli/onceover/issues/351)
+
+**Merged pull requests:**
+
+- docs: add info about trusted facts/data to README.md of factsets dir [\#352](https://github.com/voxpupuli/onceover/pull/352) ([rwaffen](https://github.com/rwaffen))
+- Fix example on how to pull facts from puppetdb [\#345](https://github.com/voxpupuli/onceover/pull/345) ([tuxmea](https://github.com/tuxmea))
+
+## [v4.0.0](https://github.com/voxpupuli/onceover/tree/v4.0.0) (2024-11-21)
+
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/vm_test1...v4.0.0)
 
 **Breaking changes:**
 
@@ -24,6 +45,10 @@
 - dependabot: check for github actions and bundler [\#338](https://github.com/voxpupuli/onceover/pull/338) ([bastelfreak](https://github.com/bastelfreak))
 - Adapt to Voxpupuli [\#336](https://github.com/voxpupuli/onceover/pull/336) ([rwaffen](https://github.com/rwaffen))
 - \(maint\) - fix rubocop [\#334](https://github.com/voxpupuli/onceover/pull/334) ([garrettrowell](https://github.com/garrettrowell))
+
+## [vm_test1](https://github.com/voxpupuli/onceover/tree/vm_test1) (2024-10-02)
+
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v3.22.0...vm_test1)
 
 ## [v3.22.0](https://github.com/voxpupuli/onceover/tree/v3.22.0) (2024-03-16)
 
@@ -993,15 +1018,15 @@
 
 ## [v2.0.1](https://github.com/voxpupuli/onceover/tree/v2.0.1) (2015-11-16)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/2.0.0...v2.0.1)
-
-## [2.0.0](https://github.com/voxpupuli/onceover/tree/2.0.0) (2015-11-11)
-
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/v2.0.0...2.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v2.0.0...v2.0.1)
 
 ## [v2.0.0](https://github.com/voxpupuli/onceover/tree/v2.0.0) (2015-11-11)
 
-[Full Changelog](https://github.com/voxpupuli/onceover/compare/1.1.1...v2.0.0)
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/2.0.0...v2.0.0)
+
+## [2.0.0](https://github.com/voxpupuli/onceover/tree/2.0.0) (2015-11-11)
+
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/1.1.1...2.0.0)
 
 ## [1.1.1](https://github.com/voxpupuli/onceover/tree/1.1.1) (2015-11-10)
 
