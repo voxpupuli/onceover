@@ -64,7 +64,7 @@ task :fixtures do
 end
 
 begin
-  require 'voxpupuli/rubocop/rake'
+  require 'voxpupuli/test/rake'
 rescue LoadError
   # the voxpupuli-rubocop gem is optional
 end

@@ -37,6 +37,4 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'terminal-table', '~> 4.0'
   s.add_dependency 'versionomy', '~> 0.5'
   s.add_dependency 'voxpupuli-test', '~> 11.0'
-
-  s.add_development_dependency 'voxpupuli-rubocop', '~> 4.1.0'
 end
