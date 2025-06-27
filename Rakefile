@@ -83,3 +83,5 @@ else
     config.future_release = gem_version
   end
 end
+
+PuppetSyntax.exclude_paths = ['vendor/**/*', 'templates/**/*', 'spec/fixtures/**/*']
