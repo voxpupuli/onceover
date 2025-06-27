@@ -80,7 +80,7 @@ else
     config.user = 'voxpupuli'
     config.project = 'onceover'
     gem_version = Gem::Specification.load("#{config.project}.gemspec").version
-    config.future_release = gem_version
+    config.future_release = "v#{gem_version}"
   end
 end
 
