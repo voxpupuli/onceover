@@ -24,7 +24,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'colored', '~> 1.2'
   s.add_dependency 'cri', '~> 2.6'
   s.add_dependency 'deep_merge', '~> 1.0'
-  s.add_dependency 'git', '~> 3.1'
+  s.add_dependency 'git', '>= 3.1', '< 5.0'
   s.add_dependency 'logging', '~> 2.0'
   s.add_dependency 'multi_json', '~> 1.10'
   s.add_dependency 'openvox', '~> 8.0'
