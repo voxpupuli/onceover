@@ -50,6 +50,8 @@ jobs:
       - env:
           PUPPET_VERSION: ${{ matrix.puppet }}
         run: bundle exec rake full_tests
+      - name: Build gem
+        run: gem build --strict --verbose *.gemspec
 
   tests:
     needs:
