@@ -9,8 +9,6 @@ on:
 
 jobs:
   rubocop:
-    env:
-      BUNDLE_WITHOUT: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
