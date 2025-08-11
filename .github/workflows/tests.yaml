@@ -1,3 +1,4 @@
+---
 name: Tests
 
 on:
@@ -6,10 +7,11 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   rubocop:
-    env:
-      BUNDLE_WITHOUT: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -52,10 +54,14 @@ jobs:
         run: bundle exec rake full_tests
 
   tests:
+    if: always()
     needs:
       - rubocop
       - test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Test suite
     steps:
-      - run: echo Test suite completed
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
