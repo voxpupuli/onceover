@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path('lib', __dir__)
 
 Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.name        = "onceover"
-  s.version     = "5.0.1"
+  s.version     = "5.0.2"
   s.authors     = ["Dylan Ratcliffe", 'Vox Pupuli']
   s.email       = ["voxpupuli@groups.io"]
   s.homepage    = "https://github.com/voxpupuli/onceover"
@@ -24,7 +24,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'colored', '~> 1.2'
   s.add_dependency 'cri', '~> 2.6'
   s.add_dependency 'deep_merge', '~> 1.0'
-  s.add_dependency 'git', '~> 3.1'
+  s.add_dependency 'git', '~> 4.0', '>= 4.0.5'
   s.add_dependency 'logging', '~> 2.0'
   s.add_dependency 'multi_json', '~> 1.10'
   s.add_dependency 'openvox', '~> 8.0'
