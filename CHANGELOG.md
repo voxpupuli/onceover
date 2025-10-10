@@ -1,5 +1,21 @@
 # Changelog
 
+## [v5.0.2](https://github.com/voxpupuli/onceover/tree/v5.0.2) (2025-10-10)
+
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v5.0.1...v5.0.2)
+
+**Merged pull requests:**
+
+- chore: Require git 4.x [\#367](https://github.com/voxpupuli/onceover/pull/367) ([rwaffen](https://github.com/rwaffen))
+
+## [v5.0.1](https://github.com/voxpupuli/onceover/tree/v5.0.1) (2025-10-10)
+
+[Full Changelog](https://github.com/voxpupuli/onceover/compare/v5.0.0...v5.0.1)
+
+**Merged pull requests:**
+
+- chore: Require voxpupuli-test 13.x [\#365](https://github.com/voxpupuli/onceover/pull/365) ([rwaffen](https://github.com/rwaffen))
+
 ## [v5.0.0](https://github.com/voxpupuli/onceover/tree/v5.0.0) (2025-06-27)
 
 [Full Changelog](https://github.com/voxpupuli/onceover/compare/v4.0.0...v5.0.0)
