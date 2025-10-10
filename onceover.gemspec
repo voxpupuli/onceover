@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path('lib', __dir__)
 
 Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.name        = "onceover"
-  s.version     = "5.0.0"
+  s.version     = "5.0.1"
   s.authors     = ["Dylan Ratcliffe", 'Vox Pupuli']
   s.email       = ["voxpupuli@groups.io"]
   s.homepage    = "https://github.com/voxpupuli/onceover"
@@ -36,5 +36,5 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'rspec-puppet', '~> 5.0'
   s.add_dependency 'terminal-table', '~> 4.0'
   s.add_dependency 'versionomy', '~> 0.5'
-  s.add_dependency 'voxpupuli-test', '~> 11.0'
+  s.add_dependency 'voxpupuli-test', '~> 13.0'
 end
