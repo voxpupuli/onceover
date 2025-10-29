@@ -761,7 +761,7 @@ Onceover::Controlrepo.new.spec_tests do |class_name, node_name, facts, trusted_f
 end
 ```
 
-This will use the `soe` [shared example](https://www.relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples) on all of the tests that are configured in your `onceover.yaml` including any [pre_conditions](#using-workarounds) that you have set up.
+This will use the `soe` [shared example](https://web.archive.org/web/20220319011206/https://relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples) on all of the tests that are configured in your `onceover.yaml` including any [pre_conditions](#using-workarounds) that you have set up.
 
 **Note:** Onceover will automatically run any extra Rspec tests that it finds in the normal directories `spec/{classes,defines,unit,functions,hosts,integration,types}` so you can easily use auto-generated spec tests in conjunction with your own Rspec tests.
 
