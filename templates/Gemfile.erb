@@ -1,3 +1,7 @@
 source 'https://rubygems.org'
 
+<% if ENV['ONCEOVER_GEM_SOURCE'] -%>
+gem 'onceover', path: '<%= ENV['ONCEOVER_GEM_SOURCE'] %>'
+<% else -%>
 gem 'onceover'
+<% end -%>
