@@ -49,12 +49,12 @@ class Onceover
       # Get the entire file tree of the puppetlabs/puppet-agent repository
       # https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28#get-a-tree
       puppet_agent_tree = query_or_cache(
-        "https://api.github.com/repos/OpenVoxProject/openvox-agent/git/trees/#{@puppet_version}",
+        "https://api.github.com/repos/OpenVoxProject/openvox/git/trees/#{@puppet_version}",
         { recursive: true },
         component_cache('repo_tree'),
       )
       # Get only the module-puppetlabs-<something>_core.json component files
-      vendored_components =  puppet_agent_tree['tree'].select { |file| %r{configs/components/module-puppetlabs-\w+\.json}.match(file['path']) }
+      vendored_components =  puppet_agent_tree['tree'].select { |file| %r{packaging/configs/components/module-puppetlabs-\w+\.json}.match(file['path']) }
       # Get the contents of each component file
       # https://docs.github.com/en/rest/git/blobs?apiVersion=2022-11-28#get-a-blob
       @vendored_references = vendored_components.map do |component|
