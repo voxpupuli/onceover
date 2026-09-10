@@ -15,7 +15,7 @@ Feature: Automatically resolve modules vendored with puppet-agent package
   Scenario: Auto resolve enabled and Puppetfile empty
     Given existing control repo "vendored"
     When I run onceover command "run spec --auto_vendored=true" with class "role::cron"
-    Then the temporary Puppetfile should contain /mod 'puppetlabs-cron_core',\n.*git: 'https://github.com/puppetlabs\/puppetlabs-cron_core.git',\n.*ref: 'refs\/tags\/.*'/
+    Then the temporary Puppetfile should contain /mod 'puppetlabs-cron_core',\n.*git: 'https://github.com/openvoxproject\/puppetlabs-cron_core.git',\n.*ref: 'refs\/tags\/.*'/
     And I should not see any errors
 
   Scenario: Auto resolve enabled and cron_core specified in Puppetfile
