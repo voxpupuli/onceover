@@ -33,7 +33,7 @@ Gem::Specification.new do |s| # rubocop:disable Gemspec/RequireMFA
   s.add_dependency 'rake', '~> 13.3'
   s.add_dependency 'rspec', '~> 3.0'
   s.add_dependency 'rspec_junit_formatter', '~> 0.6'
-  s.add_dependency 'rspec-puppet', '~> 5.0'
+  s.add_dependency 'rspec-puppet', '>= 5', '< 7'
   s.add_dependency 'terminal-table', '~> 4.0'
   s.add_dependency 'versionomy', '~> 0.5'
   s.add_dependency 'voxpupuli-test', '~> 14.0'
