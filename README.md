@@ -612,6 +612,20 @@ This will do the following things:
 
 When using this gem adding your own spec tests is exactly the same as if you were to add them to a module, simply create them under `spec/{classes,defines,etc.}` in the Controlrepo and they will be run like normal, along with all of the `it { should compile }` tests.
 
+Make sure to include at least one `context` block within the `describe` otherwise onceover's custom rspec formatter will error as it expects to find a parent for a failing example. Refer issue #393. Eg to test a custom fact `hello_world` the spec file at `spec/unit/facter/util/hello_world.rb` might look like: 
+
+```ruby
+require 'facter'
+
+describe Facter::Util::Fact do
+  context "hello_world fact basic behaviour" do
+    it { expect(Facter.fact(:hello_world).value).to match('hello world') }
+  end
+end
+```
+
+Nb: this then incorrectly is reported as using a factset named "hello_world fact basic behaviour" so perhaps a better fix is to use a different formatter for custom specs?
+
 ### Exposing Puppet output
 
 If you want to see Puppet's output, you can set the `SHOW_PUPPET_OUTPUT` environment variable to `true`, eg:
