@@ -171,6 +171,7 @@ class OnceoverFormatter
   #
   def calculate_relative_source(file)
     return nil if file.nil?
+    return nil if file == "inlined-epp-text"
 
     file            = Pathname.new(file)
     tempdir         = Pathname.new(RSpec.configuration.onceover_tempdir)
